@@ -143,7 +143,7 @@ void PlayerConnection1_7::sendWindowItem(JobTicket* j){
     AdvancedWriter writer;
 
     for(int i=0; i<job->numSlots; i++){
-        cout << job->slots[i] << endl;
+        cout << job->slotNums[i] << ": " << job->slots[i] << endl;
         writer.writeSetSlot(job->windowID, job->slotNums[i], job->slots[i]);
     }
     cout << "\n";
@@ -275,6 +275,8 @@ void PlayerConnection1_7::handleMessage(PacketReader &p){
         int len = p.readVarint().getInt();
         int currPos = p.getIndex();
         int packetID = p.readPacketID();
+        if(packetID < 3 || packetID > 6)
+            cout << "Reading packet: " << packetID << endl;
         /*
         cout << "Reading message from packet(" << mySocket;
         cout << "): " << state << ", " << packetID  << ", " << len << endl;
@@ -503,7 +505,6 @@ void PlayerConnection1_7::readPlayerBlockPlacement(PacketReader &p){
 }
 
 void PlayerConnection1_7::readClickWindow(PacketReader &p){
-    cout << "readClickWindow\n";
     ClickWindowJob* job = new ClickWindowJob();
 
     job->eid = eid;
@@ -511,7 +512,6 @@ void PlayerConnection1_7::readClickWindow(PacketReader &p){
     job->slotNum = p.readShort();
     job->button = p.readChar();
     job->actionNum = p.readShort();
-    cout << "Action number: " << job->actionNum << endl;
     job->mode = p.readChar();
 
     p.readSlot();

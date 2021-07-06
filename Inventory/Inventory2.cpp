@@ -92,6 +92,7 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
             switch(job->button){
             case 0:
                 //Pick up stack
+                cout << "Pick up stack case: " << slots[i] << ", " << hover << endl;
                 hover = slots[i];
                 slots[i].makeEmpty();
                 altered.add(i, slots[i]);
@@ -100,7 +101,7 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
             case 1:
             {
                 //Pick half up
-                int take = ceil((double) slots[i].itemCount / 2);
+                int take = ceil(slots[i].itemCount / 2.0);
                 hover.itemID = slots[i].itemID;
                 hover.itemDamage = slots[i].itemDamage;
                 hover.itemCount = take;
@@ -133,6 +134,12 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
                 if(hover.itemCount == 0){
                     hover.makeEmpty();
                 }
+                altered.add(i, slots[i]);
+            }
+            else{
+                Slot temp = slots[i];
+                slots[i] = hover;
+                hover = temp;
                 altered.add(i, slots[i]);
             }
         }
@@ -204,6 +211,7 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
         }
     };
 
+    cout << (int) job->mode << ", " << (int)job->button << ": " << (int)job->slotNum << endl;
 
     switch(job->mode){
     case 0: //"normal" clicks
@@ -217,7 +225,7 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
                 noShiftHoverLeft();
             }
         }
-        else if(job->button == 0){
+        else if(job->button == 1){
             //right click
 
             if(hover.isEmpty()){

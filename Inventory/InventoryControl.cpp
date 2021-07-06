@@ -34,7 +34,6 @@ void InventoryControl::sendWindowUpdate(PlayerConnection* conn){
 
     for(auto it = alteredSlots.altered.begin(); it != alteredSlots.altered.end(); it++){
         job->addSlot(it->first, it->second);
-        cout << "Added " << it->second << " to job " << job << endl;
     }
 
     conn->pushJobToPlayer(job);

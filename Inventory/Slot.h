@@ -49,6 +49,11 @@ public:
         itemID = 0;
         itemDamage = 0;
         itemCount = 0;
+
+        if(nbtData){
+            delete nbtData;
+            nbtData = 0;
+        }
     };
 
     //itemID & itemDamage
