@@ -267,7 +267,7 @@ void PlayerConnection1_7::sendWindowOpenClose(JobTicket* j){
 
     if(job->open){
         // Open window
-        writer.writeOpenWindow(job->windowID, job->windowID, "", job->numSlots, false);
+        writer.writeOpenWindow(job->windowID, job->windowID, job->name, job->numSlots, false);
     }
     else{
         // Close window

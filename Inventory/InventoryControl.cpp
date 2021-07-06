@@ -4,6 +4,7 @@
 
 #include "../JobTickets/WorldToProtocol/SendWindowItem.h"
 #include "../JobTickets/WorldToProtocol/ConfirmTransaction.h"
+#include "../JobTickets/WorldToProtocol/OpenCloseWindow.h"
 
 #include <algorithm>
 
@@ -49,7 +50,24 @@ void InventoryControl::openBlock(BlockData* b){
     b->open(this);
     windowID = b->getWindowID();
 
-    // This is where I sent a OpenCloseWindow job in the old Inventory
+    OpenCloseWindow* job = new OpenCloseWindow();
+    job->open = true;
+    job->windowID = windowID;
+
+    switch(job->windowID){
+    case 0:
+        job->name = "Chest";
+        job->numSlots = 27;
+        break;
+
+    case 1:
+        job->name = "Crafting Table";
+        job->numSlots = 10;
+        break;
+
+    }
+
+    conn->pushJobToPlayer(job);
 }
 
 
