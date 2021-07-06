@@ -629,7 +629,6 @@ void ThreadArea::animationHandler(JobTicket* j, PlayerEntity* p){
 
     if(job->animation == 1){
         //Currently only opens blocks
-        cout << "animationHandler open block\n";
 
         Coordinate<int> target = getTargetBlock(p);
 
@@ -1036,6 +1035,9 @@ void ThreadArea::setBlock(Coordinate<int> coord, Block val){
 BlockData* ThreadArea::getBlockData(Coordinate<int> pos){
     ChunkCoord cCoord = pos.getContainingChunk();
     Chunk* c = chunks.getVal(cCoord);
+
+    pos.x = pos.x % 16;
+    pos.z = pos.z % 16;
     if(!c)
         return 0;
     return c->getBlockData(pos);

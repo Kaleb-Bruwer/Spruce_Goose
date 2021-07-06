@@ -345,3 +345,28 @@ void AdvancedWriter::writeChat(string message){
 
     addMsgLen();
 }
+
+void AdvancedWriter::writeOpenWindow(short windowID, short invType, string title,
+        int numSlots, bool useTitle, int eid){
+    writePacketID(0x2d);
+
+    baseThis << (unsigned char) windowID;
+    baseThis << (unsigned char) invType;
+    baseThis << title;
+    baseThis << (unsigned char) numSlots;
+    baseThis << (bool) useTitle;
+
+    if(windowID == 11){ //Animal chest (horse inventory)
+        baseThis << (int) eid;
+    }
+
+    addMsgLen();
+}
+
+void AdvancedWriter::writeCloseWindow(short windowID){
+    writePacketID(0x2e);
+
+    baseThis << (unsigned char) windowID;
+
+    addMsgLen();
+}

@@ -22,7 +22,7 @@ protected:
 
     void sendChunks(JobTicket* job){};
     void blocksToPlayer(JobTicket* job){};
-    void sendWindowOpenClose(JobTicket* job){};
+    void sendWindowOpenClose(JobTicket* job);
 
     void receivePlayerLogin(JobTicket* job);
     void spawnIn(JobTicket* job);
@@ -46,6 +46,7 @@ protected:
     void readPlayerPosAndLook(PacketReader &p);
     void readPlayerDigging(PacketReader &p);
     void readPlayerBlockPlacement(PacketReader &p);
+    void readAnimation(PacketReader &p);
 
     void readClickWindow(PacketReader &p);
 

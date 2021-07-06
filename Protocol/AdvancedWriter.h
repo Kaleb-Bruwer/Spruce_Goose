@@ -59,4 +59,7 @@ public:
     void writeConfirmTransaction(int windowID, short actionNum, bool accepted);
 
     void writeChat(string message);
+
+    void writeOpenWindow(short windowID, short invType, string title, int numSlots, bool useTitle, int eid = -1);
+    void writeCloseWindow(short windowID);
 };

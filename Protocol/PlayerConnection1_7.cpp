@@ -17,12 +17,14 @@
 #include "../JobTickets/WorldToProtocol/DestroyEntityJob.h"
 #include "../JobTickets/WorldToProtocol/ChatToProtocol.h"
 #include "../JobTickets/WorldToProtocol/ConfirmTransaction.h"
+#include "../JobTickets/WorldToProtocol/OpenCloseWindow.h"
 
 #include "../JobTickets/ProtocolToWorld/SendPlayerPosToWorld.h"
 #include "../JobTickets/ProtocolToWorld/PlayerDiggingJob.h"
 #include "../JobTickets/ProtocolToWorld/PlayerBlockPlace.h"
 #include "../JobTickets/ProtocolToWorld/ClickWindowJob.h"
 #include "../JobTickets/ProtocolToWorld/ChatToWorld.h"
+#include "../JobTickets/ProtocolToWorld/AnimationJob.h"
 
 PlayerConnection1_7::PlayerConnection1_7(int sock, World* w)
         : PlayerConnection(sock, w){
@@ -259,6 +261,23 @@ void PlayerConnection1_7::sendConfirmTransaction(JobTicket* j){
     sendMessage(writer);
 }
 
+void PlayerConnection1_7::sendWindowOpenClose(JobTicket* j){
+    OpenCloseWindow* job = (OpenCloseWindow*)j;
+    AdvancedWriter writer;
+
+    if(job->open){
+        // Open window
+        writer.writeOpenWindow(job->windowID, job->windowID, "", job->numSlots, false);
+    }
+    else{
+        // Close window
+
+    }
+
+    sendMessage(writer);
+}
+
+
 
 void PlayerConnection1_7::handleMessage(char* start, int len){
     PacketReader r(start, len);
@@ -330,6 +349,9 @@ void PlayerConnection1_7::handleMessage(PacketReader &p){
                 break;
             case 8:
                 readPlayerBlockPlacement(p);
+                break;
+            case 0xa:
+                readAnimation(p);
                 break;
 
             case 0x0e:
@@ -503,6 +525,17 @@ void PlayerConnection1_7::readPlayerBlockPlacement(PacketReader &p){
 
     pushJobToServer(job);
 }
+
+void PlayerConnection1_7::readAnimation(PacketReader &p){
+    AnimationJob* job = new AnimationJob();
+
+    job->eid = eid;
+    p.readInt(); //eid, rather use serverside to prevent exploits
+    job->animation = p.readChar();
+
+    pushJobToServer(job);
+}
+
 
 void PlayerConnection1_7::readClickWindow(PacketReader &p){
     ClickWindowJob* job = new ClickWindowJob();
