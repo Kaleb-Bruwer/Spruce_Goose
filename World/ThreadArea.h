@@ -66,7 +66,7 @@ private:
     void sendChat(JobTicket* job);
     void handleClientSlotChange(JobTicket* job);
     void handlePlayerDigging(JobTicket* job);
-    void handleplayerBlock(JobTicket* job);
+    void handleplayerBlock(JobTicket* job, PlayerEntity* p);
     void receiveChunkClaim(JobTicket* job);
     void addExternalPlayer(JobTicket* job);
     void includeChunk(JobTicket* job);

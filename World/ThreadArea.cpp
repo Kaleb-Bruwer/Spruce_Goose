@@ -375,7 +375,7 @@ void ThreadArea::handleJobTicket(JobTicket* job, PlayerEntity* p){
         break;
 
     case PLAYERBLOCKPLACE:
-        handleplayerBlock(job);
+        handleplayerBlock(job, p);
         break;
 
     case CHUNKCLAINTOTHREADAREA:
@@ -629,6 +629,8 @@ void ThreadArea::animationHandler(JobTicket* j, PlayerEntity* p){
 
     if(job->animation == 1){
         //Currently only opens blocks
+        cout << "animationHandler open block\n";
+
         Coordinate<int> target = getTargetBlock(p);
 
         BlockData* blockData = getBlockData(target);
@@ -909,9 +911,8 @@ void ThreadArea::handlePlayerDigging(JobTicket* j){
     }
 }
 
-void ThreadArea::handleplayerBlock(JobTicket* j){
+void ThreadArea::handleplayerBlock(JobTicket* j, PlayerEntity* player){
     PlayerBlockPlace* job = (PlayerBlockPlace*)j;
-    PlayerEntity* player = (PlayerEntity*) entities.getByEid(job->eid);
 
     Slot* s = player->inventory.getHeldItem();
     if(!s)
