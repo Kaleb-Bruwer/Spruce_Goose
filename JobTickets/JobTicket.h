@@ -27,14 +27,4 @@ public:
     void drop();
 };
 
-/*
-enum jobType{
-    JobGivePlayerUUID,
-    JobJoinThreadArea,
-    JobJoinWorld,
-    JobLoadChunk,
-    JobSendChunks
-};
-*/
-
 #endif
