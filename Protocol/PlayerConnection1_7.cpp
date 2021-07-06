@@ -22,6 +22,7 @@
 #include "../JobTickets/ProtocolToWorld/SendPlayerPosToWorld.h"
 #include "../JobTickets/ProtocolToWorld/PlayerDiggingJob.h"
 #include "../JobTickets/ProtocolToWorld/PlayerBlockPlace.h"
+#include "../JobTickets/ProtocolToWorld/CloseWindowJob.h"
 #include "../JobTickets/ProtocolToWorld/ClickWindowJob.h"
 #include "../JobTickets/ProtocolToWorld/ChatToWorld.h"
 #include "../JobTickets/ProtocolToWorld/AnimationJob.h"
@@ -294,8 +295,7 @@ void PlayerConnection1_7::handleMessage(PacketReader &p){
         int len = p.readVarint().getInt();
         int currPos = p.getIndex();
         int packetID = p.readPacketID();
-        if(packetID < 3 || packetID > 6)
-            cout << "Reading packet: " << packetID << endl;
+
         /*
         cout << "Reading message from packet(" << mySocket;
         cout << "): " << state << ", " << packetID  << ", " << len << endl;
@@ -352,6 +352,10 @@ void PlayerConnection1_7::handleMessage(PacketReader &p){
                 break;
             case 0xa:
                 readAnimation(p);
+                break;
+
+            case 0x0d:
+                readCloseWindow(p);
                 break;
 
             case 0x0e:
@@ -548,5 +552,13 @@ void PlayerConnection1_7::readClickWindow(PacketReader &p){
     job->mode = p.readChar();
 
     p.readSlot();
+    pushJobToServer(job);
+}
+
+void PlayerConnection1_7::readCloseWindow(PacketReader &p){
+    CloseWindowJob* job = new CloseWindowJob();
+
+    job->windowID = p.readChar();
+
     pushJobToServer(job);
 }

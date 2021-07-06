@@ -48,6 +48,7 @@ protected:
     void readPlayerBlockPlacement(PacketReader &p);
     void readAnimation(PacketReader &p);
 
+    void readCloseWindow(PacketReader &p);
     void readClickWindow(PacketReader &p);
 
 public:
