@@ -15,10 +15,10 @@ class ThreadArea;
 
 class ChunkClaimToThreadArea : public JobTicket{
 public:
+    ChunkClaimToThreadArea() : JobTicket(CHUNKCLAINTOTHREADAREA){};
+
     ChunkCoord coord; //Chunk, not region
     ThreadArea* owner = 0;
-
-    string getType(){return "ChunkClaimToThreadArea";};
 };
 
 #endif

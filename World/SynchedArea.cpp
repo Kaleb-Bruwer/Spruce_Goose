@@ -60,23 +60,27 @@ void SynchedArea::handleJobTickets(){
         if(job == 0)
             return;
 
-        string jobType = job->getType();
-        if(jobType == "LoadChunk"){
+        switch(job->getType()){
+        case LOADCHUNK:
             loadChunk(job);
-        }
-        else if(jobType == "ChunkFromGenerator"){
-            receiveChunk(job);
-        }
-        else if(jobType == "ChunksFromTArea"){
-            receiveChunksTArea(job);
-        }
-        else if(jobType == "UnclaimRegionLocal"){
-            unclaimRegion(job);
-        }
-        else if(jobType == "Redirect"){
-            handleRedirect(job);
-        }
+            break;
 
+        case CHUNKFROMGENERATOR:
+            receiveChunk(job);
+            break;
+
+        case CHUNKSFROMTAREA:
+            receiveChunksTArea(job);
+            break;
+
+        case UNCLAIMREGIONLOCAL:
+            unclaimRegion(job);
+            break;
+
+        case REDIRECT:
+            handleRedirect(job);
+            break;
+        }
         job->drop();
     }
 }

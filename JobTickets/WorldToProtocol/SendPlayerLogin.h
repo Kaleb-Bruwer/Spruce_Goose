@@ -22,16 +22,13 @@ public:
 
     SendPlayerLogin(PlayerEntity*);
 
-    SendPlayerLogin(Coordinate<double> p, int e, double pi = 0, double y = 0){
+    SendPlayerLogin(Coordinate<double> p, int e, double pi = 0, double y = 0)
+             : JobTicket(SENDPLAYERLOGIN){
         pos = p;
         eid = e;
         pitch = pi;
         yaw = y;
-    }
-
-    string getType(){
-        return "SendPlayerLogin";
-    }
+    };
 };
 
 #endif

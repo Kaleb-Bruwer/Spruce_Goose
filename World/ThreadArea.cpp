@@ -348,52 +348,61 @@ void ThreadArea::releaseChunk(ChunkCoord c){
 }
 
 void ThreadArea::handleJobTicket(JobTicket* job, PlayerEntity* p){
-    string jobType = job->getType();
-
-    if(jobType == "JoinThreadArea"){
+    switch(job->getType()){
+    case JOINTHREADAREA:
         addPlayer(job);
-    }
-    else if(jobType == "SendPlayerPosToWorld"){
+        break;
+
+    case SENDPLAYERPOSTOWORLD:
         receivePlayerPos(job);
-    }
-    else if(jobType == "ChatToWorld"){
-        //Since there can be multiple ThreadAreas, this is nessesary
-        //in order to receive all messages
+        break;
+
+    case CHATTOWORLD:
         cout << "Received chat in " << this << endl;
         world->pushJob(job);
-        return; //Prevents job deletion
-    }
-    else if(jobType == "ChatToProtocol"){
-        //Comes from World
+        break;
+
+    case CHATTOPROTOCOL:
         sendChat(job);
-    }
-    else if(jobType == "ClientSlotChange"){
+        break;
+
+    case CLIENTSLOTCHANGE:
         handleClientSlotChange(job);
-    }
-    else if(jobType == "PlayerDiggingJob"){
+        break;
+
+    case PLAYERDIGGINGJOB:
         handlePlayerDigging(job);
-    }
-    else if(jobType == "PlayerBlockPlace"){
+        break;
+
+    case PLAYERBLOCKPLACE:
         handleplayerBlock(job);
-    }
-    else if(jobType == "ChunkClaimToThreadArea"){
+        break;
+
+    case CHUNKCLAINTOTHREADAREA:
         receiveChunkClaim(job);
-    }
-    else if(jobType == "ExternalPlayer"){
+        break;
+
+    case EXTERNALPLAYER:
         addExternalPlayer(job);
-    }
-    else if(jobType == "ChunkToThreadArea"){
+        break;
+
+    case CHUNKTOTHREADAREA:
         includeChunk(job);
-    }
-    else if(jobType == "ClickWindowJob"){
+        break;
+
+    case CLICKWINDOWJOB:
         clickWindowHandler(job, p);
-    }
-    else if(jobType == "CloseWindowJob"){
+        break;
+
+    case CLOSEWINDOWJOB:
         closeWindowHandler(job, p);
-    }
-    else if(jobType == "AnimationJob"){
+        break;
+
+    case ANIMATIONJOB:
         animationHandler(job, p);
-    }
+        break;
+
+    };
 
     job->drop();
 }

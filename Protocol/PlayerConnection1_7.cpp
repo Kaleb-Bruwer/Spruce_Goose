@@ -31,6 +31,86 @@ PlayerConnection1_7::PlayerConnection1_7(int sock, World* w)
 
 PlayerConnection1_7::~PlayerConnection1_7(){}
 
+void PlayerConnection1_7::handleJobTickets(){
+    if(quit)
+        return;
+
+    while(true){
+        JobTicket* job = toPlayerQueue.pop();
+        if(job == 0)
+            break;
+
+        switch(job->getType()){
+        case SENDCHUNKS:
+            sendChunks(job);
+            return; //Must wait for chunks to complete to preserve order
+
+        case SENDPLAYERPOS:
+            sendPosAndLook(job);
+            break;
+
+        case GIVEPLAYERUUID:
+            receiveUUID(job);
+            break;
+
+        case SENDPLAYERLOGIN:
+            receivePlayerLogin(job);
+            break;
+
+        case SENDTHREADAREA:
+            break;
+
+        case CHATTOPROTOCOL:
+            sendChat(job);
+            break;
+
+        case SENDITEM:
+            sendItem(job);
+            break;
+
+        case SENDWINDOWITEM:
+            sendWindowItem(job);
+            break;
+
+        case BLOCKUPDATETOPLAYER:
+            blocksToPlayer(job);
+            break;
+
+        case SENDPLAYER:
+            sendPlayer(job);
+            break;
+
+        case ENTITYMOVE:
+            entityMove(job);
+            break;
+
+        case DESTROYENTITYJOB:
+            destroyEntity(job);
+            break;
+
+        case SENDPACKET:
+            sendMessage(job);
+            break;
+
+        case OPENCLOSEWINDOW:
+            sendWindowOpenClose(job);
+            break;
+
+        case CANSPAWN:
+            spawnIn(job);
+            break;
+
+        case CONFIRMTRANSACTION:
+            sendConfirmTransaction(job);
+            break;
+        }
+
+        job->drop();
+
+    }
+    sendKeepAlive(); //Only actually sends it if neccessary
+}
+
 void PlayerConnection1_7::sendChat(JobTicket* j){
     ChatToProtocol* job = (ChatToProtocol*) j;
 

@@ -10,7 +10,7 @@ using namespace std;
 //Sent to PlayerConnection, will be handled by ConnectionHandler thread
 class SendChunks: public JobTicket{
 public:
-    SendChunks(int n){
+    SendChunks(int n) : JobTicket(SENDCHUNKS){
         numChunks = n;
         chunks = new Chunk*[numChunks];
     }
@@ -23,7 +23,6 @@ public:
 
     int numChunks = 0;
     Chunk** chunks  = 0; //Owned by this JobTicket, not a reference
-    string getType(){return "SendChunks";};
 };
 
 #endif

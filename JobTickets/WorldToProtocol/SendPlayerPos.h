@@ -17,15 +17,11 @@ public:
 
     unsigned char onGround = 0; //0: not included, 1=false, 3 = true
 
-    SendPlayerPos(){};
-    SendPlayerPos(Coordinate<double> p, double pi, double y){
+    SendPlayerPos() : JobTicket(SENDPLAYERPOS){};
+    SendPlayerPos(Coordinate<double> p, double pi, double y) : JobTicket(SENDPLAYERPOS){
         pos = p;
         pitch = pi;
         yaw = y;
-    };
-
-    string getType(){
-        return "SendPlayerPos";
     };
 };
 

@@ -7,6 +7,8 @@ private:
 
 protected:
 
+    void handleJobTickets();
+
     void sendChat(JobTicket* job);
     void sendSpawnPos(JobTicket* job);
     void sendPosAndLook(JobTicket* job);
@@ -18,6 +20,9 @@ protected:
     void destroyEntity(JobTicket* job);
     void sendConfirmTransaction(JobTicket* job);
 
+    void sendChunks(JobTicket* job){};
+    void blocksToPlayer(JobTicket* job){};
+    void sendWindowOpenClose(JobTicket* job){};
 
     void receivePlayerLogin(JobTicket* job);
     void spawnIn(JobTicket* job);

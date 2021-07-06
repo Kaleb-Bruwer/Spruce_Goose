@@ -7,9 +7,9 @@ using namespace std;
 
 class CloseWindowJob : public JobTicket{
 public:
-    unsigned char windowID;
+    CloseWindowJob() : JobTicket(CLOSEWINDOWJOB){};
 
-    string getType(){return "CloseWindowJob";};
+    unsigned char windowID;
 };
 
 #endif

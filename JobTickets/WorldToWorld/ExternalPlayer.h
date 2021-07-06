@@ -9,9 +9,9 @@ class PlayerEntity;
 
 class ExternalPlayer : public JobTicket{
 public:
-    PlayerEntity* player;
+    ExternalPlayer() : JobTicket(EXTERNALPLAYER){};
 
-    string getType(){return "ExternalPlayer";};
+    PlayerEntity* player;
 };
 
 #endif

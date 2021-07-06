@@ -12,17 +12,14 @@ using namespace std;
 class BlockUpdateToPlayer : public JobTicket{
 public:
     //PlayerConnection will have to separate block changes into chunks
-    BlockUpdateToPlayer(){};
-    BlockUpdateToPlayer(BlockUpdateToPlayer *b){
+    BlockUpdateToPlayer() : JobTicket(BLOCKUPDATETOPLAYER){};
+    BlockUpdateToPlayer(BlockUpdateToPlayer *b) : JobTicket(BLOCKUPDATETOPLAYER){
         positions = b->positions;
         blocks = b->blocks;
     };
 
     vector<Coordinate<int>> positions;
     vector<Block> blocks;
-
-    string getType(){return "BlockUpdateToPlayer";};
-
 };
 
 #endif

@@ -12,9 +12,8 @@ using namespace std;
 
 class UnclaimRegionLocal : public JobTicket{
 public:
+    UnclaimRegionLocal() : JobTicket(UNCLAIMREGIONLOCAL){};
     RegionCoord r;
-
-    string getType(){return "UnclaimRegionLocal";};
 };
 
 #endif

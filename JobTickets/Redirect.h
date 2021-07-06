@@ -19,7 +19,7 @@ protected:
             job->drop();
     };
 public:
-    Redirect(JobTicket* j, DestinationType d){
+    Redirect(JobTicket* j, DestinationType d) : JobTicket(REDIRECT){
         dest = d;
         job = j;
         j->pickup();
@@ -31,8 +31,6 @@ public:
 
     JobTicket* job = 0;
     DestinationType dest;
-
-    string getType(){return "Redirect";};
 };
 
 #endif

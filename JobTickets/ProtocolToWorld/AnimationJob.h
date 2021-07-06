@@ -7,10 +7,10 @@ using namespace std;
 
 class AnimationJob : public JobTicket{
 public:
+    AnimationJob() : JobTicket(ANIMATIONJOB){};
+
     int eid;
     unsigned char animation;
-
-    string getType(){return "AnimationJob";};
 };
 
 #endif

@@ -40,22 +40,8 @@ protected:
     void getUUID();//Call AFTER username has been set
     void genRandomUUID();
 
-    virtual void sendChat(JobTicket* job) = 0;
-    virtual void sendChunks(JobTicket* job){};
-    virtual void receiveUUID(JobTicket* job);
-    virtual void sendSpawnPos(JobTicket* job) = 0;
-    virtual void sendPosAndLook(JobTicket* job) = 0;
-    virtual void sendItem(JobTicket* job){};
-    virtual void sendPlayer(JobTicket* job){};
-    virtual void sendWindowItem(JobTicket* job){};
-    virtual void blocksToPlayer(JobTicket* job){};
-    virtual void entityMove(JobTicket* job){};
-    virtual void destroyEntity(JobTicket* job){};
-    virtual void sendWindowOpenClose(JobTicket* job){};
-    virtual void sendConfirmTransaction(JobTicket* job){};
-
-    virtual void receivePlayerLogin(JobTicket* job);
-    virtual void spawnIn(JobTicket* job) = 0;
+    virtual void receiveUUID(JobTicket*);
+    virtual void receivePlayerLogin(JobTicket*);
 
     void joinWorld();
 
@@ -94,7 +80,7 @@ public:
     //2nd parameter is either the index or length. Use 0 for unknown length
     //PacketReader will increase index by packet length
     //PacketReaderOld will increase index as it reads
-    virtual void handleJobTickets();
+    virtual void handleJobTickets() = 0;
 
     virtual bool sendKeepAlive();
     void receiveKeepAlive(int id);

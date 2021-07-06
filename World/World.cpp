@@ -60,25 +60,27 @@ void World::handleJobTickets(){
         if(job == 0)
             return;
 
-        string jobType = job->getType();
-
-        if(jobType == "JoinWorld"){
+        switch(job->getType()){
+        case JOINWORLD:
             addPlayer(job);
-        }
-        else if(jobType == "ChatToWorld"){
+            break;
+
+        case CHATTOWORLD:
             handleChat(job);
-        }
-        else if(jobType == "ExpandSynchedArea"){
+            break;
+
+        case EXPANDSYNCHEDAREA:
             handleExpandRequest(job);
-        }
-        else if(jobType == "UnclaimRegion"){
+            break;
+
+        case UNCLAIMREGION:
             synchedAreaMap.unclaimRegion(job);
-        }
-        //Following are all redirects to fix concurrency screwups
-        //that are created by splits
-        else if(jobType == "Redirect"){
+            break;
+
+        case REDIRECT:
             handleRedirect(job);
-        }
+            break;
+        };
         job->drop();
     }
 }

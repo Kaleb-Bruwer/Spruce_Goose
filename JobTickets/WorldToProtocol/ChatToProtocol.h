@@ -11,15 +11,11 @@ class ChatToProtocol : public JobTicket{
 public:
     string message;
 
-    ChatToProtocol(string s){
+    ChatToProtocol(string s) : JobTicket(CHATTOPROTOCOL){
         message = s;
     }
-    ChatToProtocol(ChatToProtocol* c){
+    ChatToProtocol(ChatToProtocol* c) : JobTicket(CHATTOPROTOCOL){
         message = c->message;
-    }
-
-    string getType(){
-        return "ChatToProtocol";
     }
 };
 

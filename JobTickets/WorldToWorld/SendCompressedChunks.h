@@ -11,9 +11,9 @@ class CompressedChunk;
 
 class SendCompressedChunks : public JobTicket{
 public:
-    vector<CompressedChunk*> data;
+    SendCompressedChunks() : JobTicket(SENDCOMPRESSEDCHUNKS){};
 
-    string getType(){return "SendCompressedChunks";};
+    vector<CompressedChunk*> data;
 };
 
 #endif

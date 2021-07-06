@@ -9,12 +9,8 @@ class JoinWorld : public JobTicket{
 public:
     PlayerConnection* player;
 
-    JoinWorld(PlayerConnection* p){
+    JoinWorld(PlayerConnection* p) : JobTicket(JOINWORLD){
         player = p;
-    };
-
-    string getType(){
-        return "JoinWorld";
     };
 };
 

@@ -10,10 +10,10 @@ class SynchedArea;
 
 class GenerateChunkRequest : public JobTicket{
 public:
+    GenerateChunkRequest() : JobTicket(GENERATECHUNKREQUEST){};
+
     ChunkCoord chunkPos;
     SynchedArea* origin = 0;
-
-    string getType(){return "GenerateChunkRequest";};
 };
 
 #endif

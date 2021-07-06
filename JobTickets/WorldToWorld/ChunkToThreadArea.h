@@ -7,9 +7,8 @@ using namespace std;
 
 class ChunkToThreadArea : public JobTicket{
 public:
+    ChunkToThreadArea() : JobTicket(CHUNKTOTHREADAREA){};
     Chunk* chunk = 0;
-
-    string getType(){return "ChunkToThreadArea";};
 };
 
 #endif

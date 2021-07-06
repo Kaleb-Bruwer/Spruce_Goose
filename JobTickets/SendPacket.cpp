@@ -4,7 +4,7 @@
 
 #include "../Protocol/PacketWriter.h"
 
-SendPacket::SendPacket(PacketWriter *p){
+SendPacket::SendPacket(PacketWriter *p) : JobTicket(SENDPACKET){
     size = p->getIndex();
     data = new char[size];
     char* b = p->getBuffer();

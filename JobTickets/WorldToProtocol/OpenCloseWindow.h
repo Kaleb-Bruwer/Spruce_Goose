@@ -7,12 +7,12 @@ using namespace std;
 
 class OpenCloseWindow : public JobTicket{
 public:
+    OpenCloseWindow() : JobTicket(OPENCLOSEWINDOW){};
+
     bool open;
     unsigned char windowID;
     unsigned short numSlots;
     string name;
-
-    string getType(){return "OpenCloseWindow";};
 };
 
 #endif

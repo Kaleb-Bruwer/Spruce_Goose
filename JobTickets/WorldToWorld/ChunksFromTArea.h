@@ -8,6 +8,8 @@ using namespace std;
 
 class ChunksFromTArea : public JobTicket{
 public:
+    ChunksFromTArea() : JobTicket(CHUNKSFROMTAREA){};
+
     bool forAutosave = false;
     Chunk** chunks = 0;
     int numChunks = 0;
@@ -16,8 +18,6 @@ public:
         if(chunks)
             delete [] chunks;
     };
-
-    string getType(){return "ChunksFromTArea";};
 };
 
 #endif

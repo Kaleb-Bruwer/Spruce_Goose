@@ -19,7 +19,7 @@ public:
     vector<int> slotNums;
     vector<Slot> slots;
 
-    SendWindowItem(){};
+    SendWindowItem() : JobTicket(SENDWINDOWITEM){};
 
     ~SendWindowItem(){};
 
@@ -31,8 +31,6 @@ public:
             numSlots++;
         }
     };
-
-    string getType(){return "SendWindowItem";};
 };
 
 #endif

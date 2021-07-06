@@ -13,12 +13,10 @@ public:
     ChunkCoord chunkPos;
     ThreadArea* origin = 0;
 
-    LoadChunk(ChunkCoord pos, ThreadArea* origin){
+    LoadChunk(ChunkCoord pos, ThreadArea* origin) : JobTicket(LOADCHUNK){
         chunkPos = pos;
         this->origin = origin;
     };
-
-    string getType(){return "LoadChunk";};
 };
 
 #endif

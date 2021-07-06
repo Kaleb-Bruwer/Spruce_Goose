@@ -8,10 +8,9 @@ using namespace std;
 class GivePlayerUUID : public JobTicket{
 public:
     string uuid;
-    GivePlayerUUID(string u){
+    GivePlayerUUID(string u) : JobTicket(GIVEPLAYERUUID){
         uuid = u;
     }
-    string getType(){return "GivePlayerUUID";}
 };
 
 #endif

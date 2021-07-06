@@ -41,9 +41,7 @@ void GeneratorThread::run(){
             continue;
         }
 
-        string jobType = job->getType();
-        if(jobType == "GenerateChunkRequest"){
-            //Generate chunk and return to SynchedArea
+        if(job->getType() == GENERATECHUNKREQUEST){
             generateChunk(job);
         }
         job->drop();

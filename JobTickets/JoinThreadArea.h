@@ -14,17 +14,14 @@ public:
     PlayerConnection* player;
     Coordinate<double> pos;
 
-    JoinThreadArea(PlayerConnection* p){
+    JoinThreadArea(PlayerConnection* p) : JobTicket(JOINTHREADAREA){
         player = p;
     };
-    JoinThreadArea(PlayerConnection* p, Coordinate<double> position){
+    JoinThreadArea(PlayerConnection* p, Coordinate<double> position) : JobTicket(JOINTHREADAREA){
         player = p;
         pos = position;
     };
 
-    string getType(){
-        return "JoinThreadArea";
-    };
 };
 
 #endif

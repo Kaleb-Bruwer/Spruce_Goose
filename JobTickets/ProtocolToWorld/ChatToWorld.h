@@ -12,13 +12,9 @@ public:
     string username;
     string message;
 
-    ChatToWorld(string s){
+    ChatToWorld(string s) : JobTicket(CHATTOWORLD){
         message = s;
-    }
-
-    string getType(){
-        return "ChatToWorld";
-    }
+    };
 };
 
 #endif

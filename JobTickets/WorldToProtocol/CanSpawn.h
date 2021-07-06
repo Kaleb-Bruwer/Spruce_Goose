@@ -12,12 +12,10 @@ public:
     float yaw;
     float pitch;
 
-    CanSpawn(){};
-    CanSpawn(Coordinate<double> p, float y, float pi){
+    CanSpawn() : JobTicket(CANSPAWN){};
+    CanSpawn(Coordinate<double> p, float y, float pi) : JobTicket(CANSPAWN){
         spawnPos = p;
         yaw = y;
         pitch = pi;
     };
-
-    string getType(){return "CanSpawn";};
 };

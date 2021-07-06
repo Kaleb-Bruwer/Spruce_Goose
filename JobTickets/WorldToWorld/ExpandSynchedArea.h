@@ -15,11 +15,11 @@ class ThreadArea;
 
 class ExpandSynchedArea : public JobTicket{
 public:
+    ExpandSynchedArea() : JobTicket(EXPANDSYNCHEDAREA){};
+
     ChunkCoord coord; //Chunk, not region
     SynchedArea* synchedArea = 0;
     ThreadArea* claimer = 0;
-
-    string getType(){return "ExpandSynchedArea";};
 };
 
 #endif

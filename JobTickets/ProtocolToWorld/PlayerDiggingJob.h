@@ -9,12 +9,12 @@ using namespace std;
 
 class PlayerDiggingJob : public JobTicket{
 public:
+    PlayerDiggingJob() : JobTicket(PLAYERDIGGINGJOB){};
+
     int eid;
     short action;
     Coordinate<int> pos;
     short face;
-
-    string getType(){return "PlayerDiggingJob";};
 };
 
 

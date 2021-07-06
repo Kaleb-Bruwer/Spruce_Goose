@@ -9,6 +9,8 @@ using namespace std;
 
 class PlayerBlockPlace : public JobTicket{
 public:
+    PlayerBlockPlace(): JobTicket(PLAYERBLOCKPLACE){};
+
     int eid;
     Coordinate<int> pos;
     int blockID;
@@ -16,8 +18,6 @@ public:
     char cursorY;
     char cursorZ;
     char direction;
-
-    string getType(){return "PlayerBlockPlace";};
 };
 
 

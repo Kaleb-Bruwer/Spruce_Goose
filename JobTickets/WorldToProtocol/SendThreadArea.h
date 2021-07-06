@@ -9,6 +9,8 @@ class ThreadArea;
 
 class SendThreadArea : public JobTicket{
 public:
+    SendThreadArea() : JobTicket(SENDTHREADAREA){};
+
     ThreadArea* threadArea = 0;
 
     string getType(){

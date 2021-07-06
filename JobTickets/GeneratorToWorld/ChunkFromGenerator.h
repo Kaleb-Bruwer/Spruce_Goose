@@ -9,9 +9,9 @@ class Chunk;
 
 class ChunkFromGenerator : public JobTicket{
 public:
-    Chunk* chunk = 0;
+    ChunkFromGenerator() : JobTicket(CHUNKFROMGENERATOR){};
 
-    string getType(){return "ChunkFromGenerator";};
+    Chunk* chunk = 0;
 };
 
 #endif

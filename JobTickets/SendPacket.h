@@ -14,7 +14,10 @@ public:
     char* data = 0;
     int size = 0;
 
-    SendPacket(){};
+    SendPacket() : JobTicket(SENDPACKET){
+
+    };
+
     SendPacket(PacketWriter* p);
 
     virtual ~SendPacket(){
@@ -33,8 +36,6 @@ public:
         data = newData;
         size = newSize;
     };
-
-    string getType(){return "SendPacket";};
 };
 
 #endif

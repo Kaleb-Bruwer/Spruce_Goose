@@ -19,15 +19,11 @@ public:
 
     unsigned char onGround = 0; //0: not included, 1=false, 3 = true
 
-    SendPlayerPosToWorld(){};
-    SendPlayerPosToWorld(Coordinate<double> p, double pi, double y){
+    SendPlayerPosToWorld() : JobTicket(SENDPLAYERPOSTOWORLD){};
+    SendPlayerPosToWorld(Coordinate<double> p, double pi, double y) : JobTicket(SENDPLAYERPOSTOWORLD){
         pos = p;
         pitch = pi;
         yaw = y;
-    }
-
-    string getType(){
-        return "SendPlayerPosToWorld";
     }
 };
 

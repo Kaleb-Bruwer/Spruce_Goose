@@ -9,15 +9,13 @@ using namespace std;
 
 class DestroyEntityJob : public JobTicket{
 public:
-    DestroyEntityJob(){};
-    DestroyEntityJob(DestroyEntityJob &j){
+    DestroyEntityJob() : JobTicket(DESTROYENTITYJOB){};
+    DestroyEntityJob(DestroyEntityJob &j) : JobTicket(DESTROYENTITYJOB){
         eid = j.eid;
     };
 
     int eid;
     int pickupBy = INT_MAX;
-
-    string getType(){return "DestroyEntityJob";};
 };
 
 #endif

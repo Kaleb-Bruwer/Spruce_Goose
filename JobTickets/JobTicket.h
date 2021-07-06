@@ -5,6 +5,8 @@
 #include <string>
 #include <iostream>
 
+#include "JobTicketType.h"
+
 using namespace std;
 
 //Mostly to be used as a container for info that a request needs
@@ -13,12 +15,19 @@ private:
     int holders = 0;
     mutex lock;
 
+    JobTicketType type;
+
 protected:
+    JobTicket(JobTicketType t){
+        type = t;
+    };
+
     virtual ~JobTicket(){
         //cout << holders << " Deleting Job " << this << endl;
     };
+
 public:
-    virtual string getType() = 0; //Must return a name
+    JobTicketType getType(){return type;};
 
     //Source of JobTicket must also hold its own pickup and drop to ensure it
     //doesn't hit 0 if it intends to use it again

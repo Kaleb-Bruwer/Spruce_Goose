@@ -16,13 +16,10 @@ public:
     bool movRelative = true; //Only relevant with existing items
     Item item;
 
-    SendItem(){};
-    SendItem(Item* original){
+    SendItem() : JobTicket(SENDITEM){};
+    SendItem(Item* original) : JobTicket(SENDITEM){
         item = *original;
     };
-
-
-    string getType(){return "SendItem";};
 };
 
 #endif

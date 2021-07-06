@@ -4,7 +4,7 @@
 
 using namespace std;
 
-SendPlayerLogin::SendPlayerLogin(PlayerEntity* player){
+SendPlayerLogin::SendPlayerLogin(PlayerEntity* player) : JobTicket(SENDPLAYERLOGIN){
     pos = player->position;
     pitch = player->pitch;
     yaw = player->yaw;

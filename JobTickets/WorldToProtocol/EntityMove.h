@@ -9,8 +9,8 @@ using namespace std;
 
 class EntityMove : public JobTicket{
 public:
-    EntityMove(){};
-    EntityMove(EntityMove &e){
+    EntityMove() : JobTicket(ENTITYMOVE){};
+    EntityMove(EntityMove &e) : JobTicket(ENTITYMOVE){
         posIncluded = e.posIncluded;
         posRelative = e.posRelative;
         lookIncluded = e.lookIncluded;
@@ -22,7 +22,7 @@ public:
         if(e.heldItem)
             heldItem = new Slot(e.heldItem);
     };
-    
+
     ~EntityMove(){
         if(heldItem)
             delete heldItem;
@@ -40,8 +40,6 @@ public:
     char pitch;
 
     Slot* heldItem = 0;
-
-    string getType(){return "EntityMove";};
 };
 
 #endif
