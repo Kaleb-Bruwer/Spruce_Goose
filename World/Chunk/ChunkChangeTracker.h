@@ -1,0 +1,44 @@
+#ifndef CHUNKCHANGETRACKER_H
+#define CHUNKCHANGETRACKER_H
+
+#include <list>
+
+#include "../../Datastructures/Coordinate/Coordinate.h"
+#include "../../Datastructures/Coordinate/ChunkCoord.h"
+
+#include "Block.h"
+#include "ChunkChangeToken.h"
+
+#include <thread>
+
+using namespace std;
+
+class Chunk; //Can't include here, is component of Chunk
+class PlayerEntity;
+
+class ChunkChangeTracker{
+private:
+    ChunkCoord cCoord;
+    int numBlockChanges = 0;
+    list<ChunkChangeToken*> changes;
+
+    thread::id owner;
+
+public:
+    ChunkChangeTracker(){};
+    ChunkChangeTracker(Chunk*);
+
+    void create(Chunk*);
+
+    void sendChanges();
+
+    //Position can be real or relative to chunk
+    void addChange(Coordinate<int> pos, Block b);
+    void addPlayer(PlayerEntity* p);
+
+    //Important to remove player before deleting PlayerEntity
+    void removePlayer(PlayerEntity* p);
+    bool hasPlayers();
+};
+
+#endif
