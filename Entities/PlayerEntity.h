@@ -37,6 +37,10 @@ protected:
     friend class AddChunksToPlayerF;
 
 public:
+    bool sprinting = false;
+    bool crouching = false;
+
+
     bool isBreaking = false, doneBreaking = false;
     int breakCooldown = 0; //Set to 6 when finished breaking block
     Coordinate<int> breakTarget;

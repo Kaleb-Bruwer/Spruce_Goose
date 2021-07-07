@@ -47,6 +47,7 @@
 #include "../JobTickets/ProtocolToWorld/ClickWindowJob.h"
 #include "../JobTickets/ProtocolToWorld/CloseWindowJob.h"
 #include "../JobTickets/ProtocolToWorld/AnimationJob.h"
+#include "../JobTickets/ProtocolToWorld/EntityActionJob.h"
 
 #include "../JobTickets/WorldToWorld/ChunkClaimToThreadArea.h"
 #include "../JobTickets/WorldToWorld/ChunkToThreadArea.h"
@@ -402,6 +403,10 @@ void ThreadArea::handleJobTicket(JobTicket* job, PlayerEntity* p){
         animationHandler(job, p);
         break;
 
+    case ENTITYACTIONJOB:
+        entityActionHandler(job, p);
+        break;
+
     };
 
     job->drop();
@@ -637,6 +642,32 @@ void ThreadArea::animationHandler(JobTicket* j, PlayerEntity* p){
             return;
 
         p->inventory.openBlock(blockData);
+    }
+}
+
+void ThreadArea::entityActionHandler(JobTicket* j, PlayerEntity* p){
+    EntityActionJob* job = (EntityActionJob*)j;
+
+    //Read action and update player accordingly
+    switch(job->actionID){
+    case 1:
+        // Crouch
+        p->crouching = true;
+        break;
+
+    case 2:
+        // Uncrouch
+        p->crouching = false;
+        break;
+
+    case 4:
+        // Start sprinting
+        p->sprinting = true;
+        break;
+
+    case 5:
+        // Stop sprinting
+        p->sprinting = false;
     }
 }
 

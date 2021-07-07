@@ -73,6 +73,7 @@ private:
     void clickWindowHandler(JobTicket* job, PlayerEntity* p);
     void closeWindowHandler(JobTicket* job, PlayerEntity* p);
     void animationHandler(JobTicket* job, PlayerEntity* p);
+    void entityActionHandler(JobTicket* job, PlayerEntity* p);
 
     Coordinate<int> getTargetBlock(PlayerEntity* p);
     Coordinate<int> getTargetBlock(Coordinate<double> head, int pitch, int yaw);
