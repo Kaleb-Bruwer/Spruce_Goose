@@ -26,6 +26,7 @@
 #include "../JobTickets/ProtocolToWorld/ClickWindowJob.h"
 #include "../JobTickets/ProtocolToWorld/ChatToWorld.h"
 #include "../JobTickets/ProtocolToWorld/AnimationJob.h"
+#include "../JobTickets/ProtocolToWorld/EntityActionJob.h"
 
 PlayerConnection1_7::PlayerConnection1_7(int sock, World* w)
         : PlayerConnection(sock, w){
@@ -296,11 +297,6 @@ void PlayerConnection1_7::handleMessage(PacketReader &p){
         int currPos = p.getIndex();
         int packetID = p.readPacketID();
 
-        /*
-        cout << "Reading message from packet(" << mySocket;
-        cout << "): " << state << ", " << packetID  << ", " << len << endl;
-        */
-
         bool hasRead = false;
         switch(state){
         case 0: //handshake
@@ -353,6 +349,8 @@ void PlayerConnection1_7::handleMessage(PacketReader &p){
             case 0xa:
                 readAnimation(p);
                 break;
+            case 0xb:
+                readEntityAction(p);
 
             case 0x0d:
                 readCloseWindow(p);
@@ -536,6 +534,17 @@ void PlayerConnection1_7::readAnimation(PacketReader &p){
     job->eid = eid;
     p.readInt(); //eid, rather use serverside to prevent exploits
     job->animation = p.readChar();
+    pushJobToServer(job);
+}
+
+void PlayerConnection1_7::readEntityAction(PacketReader &p){
+    EntityActionJob* job = new EntityActionJob();
+
+    job->eid = eid;
+    p.readInt(); //eid
+
+    job->actionID = p.readChar();
+    job->jumpBoost = p.readInt();
 
     pushJobToServer(job);
 }
