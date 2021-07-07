@@ -222,6 +222,8 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
                 noShiftNoHover();
             }
             else{
+                if(i == 0)
+                    return;
                 noShiftHoverLeft();
             }
         }
@@ -232,6 +234,8 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
                 noShiftNoHover();
             }
             else{
+                if(i ==0)
+                    return;
                 noShiftHoverRight();
             }
         }
