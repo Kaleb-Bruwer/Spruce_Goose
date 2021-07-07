@@ -620,11 +620,14 @@ void ThreadArea::handleClientSlotChange(JobTicket* j){
     if(!player)
         return;
 
+    cout << "Player cursor: " << job->cursor << endl;
+
     if(job->cursor >= 0){
         player->inventory.inventory.cursor = job->cursor + 36;
     }
 
     // This would be begging for an exploit
+    // On second thought this might be a creative mode thing
     // if(job->slotNum >= 0){
     //     player->inventory.setSlot(job->slotNum, job->slot);
     //     job->slot = 0;

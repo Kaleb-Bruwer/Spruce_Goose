@@ -46,6 +46,7 @@ protected:
     void readPlayerPosAndLook(PacketReader &p);
     void readPlayerDigging(PacketReader &p);
     void readPlayerBlockPlacement(PacketReader &p);
+    void readClientSlotChange(PacketReader &p);
     void readAnimation(PacketReader &p);
     void readEntityAction(PacketReader &p);
 

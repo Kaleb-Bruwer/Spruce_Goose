@@ -27,6 +27,7 @@
 #include "../JobTickets/ProtocolToWorld/ChatToWorld.h"
 #include "../JobTickets/ProtocolToWorld/AnimationJob.h"
 #include "../JobTickets/ProtocolToWorld/EntityActionJob.h"
+#include "../JobTickets/ProtocolToWorld/ClientSlotChange.h"
 
 PlayerConnection1_7::PlayerConnection1_7(int sock, World* w)
         : PlayerConnection(sock, w){
@@ -346,6 +347,8 @@ void PlayerConnection1_7::handleMessage(PacketReader &p){
             case 8:
                 readPlayerBlockPlacement(p);
                 break;
+            case 9:
+                readClientSlotChange(p);
             case 0xa:
                 readAnimation(p);
                 break;
@@ -527,6 +530,16 @@ void PlayerConnection1_7::readPlayerBlockPlacement(PacketReader &p){
 
     pushJobToServer(job);
 }
+
+void PlayerConnection1_7::readClientSlotChange(PacketReader &p){
+    ClientSlotChange* job = new ClientSlotChange();
+
+    job->eid = eid;
+    job->cursor = p.readShort();
+
+    pushJobToServer(job);
+}
+
 
 void PlayerConnection1_7::readAnimation(PacketReader &p){
     AnimationJob* job = new AnimationJob();
