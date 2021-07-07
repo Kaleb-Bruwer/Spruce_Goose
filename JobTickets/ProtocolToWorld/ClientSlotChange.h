@@ -12,7 +12,7 @@ public:
 
     int eid; //To find player with
     short slotNum = -1; //if -1, no item change
-    Slot* slot = 0;
+    Slot slot = 0;
     short cursor = -1; //if -1, it doesn't change
 };
 

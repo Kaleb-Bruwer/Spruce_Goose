@@ -897,7 +897,8 @@ void ThreadArea::handlePlayerDigging(JobTicket* j){
 
         item->setPos(player->position);
         item->position.y += 1;
-        player->inventory.setSlot(player->inventory.inventory.cursor, 0);
+        player->inventory.clearSlot(player->inventory.inventory.cursor);
+        // player->inventory.setSlot(player->inventory.inventory.cursor, 0);
 
         newItemToPlayers(item);
         entities.addEntity(item);
@@ -922,7 +923,8 @@ void ThreadArea::handlePlayerDigging(JobTicket* j){
         item->count = 1;
         slot->itemCount--;
         if(slot->itemCount == 0)
-            player->inventory.setSlot(player->inventory.inventory.cursor, 0);
+            player->inventory.clearSlot(player->inventory.inventory.cursor);
+            // player->inventory.setSlot(player->inventory.inventory.cursor, 0);
 
         newItemToPlayers(item);
         entities.addEntity(item);

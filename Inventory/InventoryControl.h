@@ -30,20 +30,16 @@ public:
         conn = c;
     }
 
+    void clearSlot(int i){
+        inventory.slots[i].makeEmpty();
+    };
+
     void setSlot(int i, Slot& s){
         if(i >= inventory.numSlots)
             return;
 
         inventory.slots[i] = s;
     };
-
-    void setSlot(int i, Slot s){
-        if(i >= inventory.numSlots)
-            return;
-
-        inventory.slots[i] = s;
-    };
-
 
     Slot* getHeldItem(){
         return &inventory.slots[inventory.cursor];
