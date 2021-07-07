@@ -944,6 +944,7 @@ void ThreadArea::handlePlayerDigging(JobTicket* j){
 void ThreadArea::handleplayerBlock(JobTicket* j, PlayerEntity* player){
     PlayerBlockPlace* job = (PlayerBlockPlace*)j;
 
+    // Check if player is holding a placeable block
     Slot* s = player->inventory.getHeldItem();
     if(!s)
         return;
@@ -951,6 +952,12 @@ void ThreadArea::handleplayerBlock(JobTicket* j, PlayerEntity* player){
     Block block(*s);
     if(block.id == 0)
         return;
+
+    // Check if player is clicking on an interactive block w/o crouching
+    if(!player->crouching && getBlockData(job->pos))
+        return;
+
+
 
     switch(job->direction){
     case -1:
