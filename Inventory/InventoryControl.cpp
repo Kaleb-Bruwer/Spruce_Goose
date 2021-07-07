@@ -27,7 +27,7 @@ void InventoryControl::clickWindow(ClickWindowJob* job, bool creative){
 }
 
 
-void InventoryControl::sendWindowUpdate(PlayerConnection* conn){
+void InventoryControl::sendWindowUpdate(){
     if(alteredSlots.altered.empty())
         return;
 
@@ -73,8 +73,12 @@ void InventoryControl::openBlock(BlockData* b){
 
 
 void InventoryControl::closeBlock(bool byPlayer){
-    if(!activeBlock)
+    if(!activeBlock){
+        //inventory
+        inventory.close(alteredSlots);
+        sendWindowUpdate();
         return;
+    }
 
     // In old Inventory, I sent an OpenCloseWindow job if !byPlayer
 

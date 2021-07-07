@@ -6,6 +6,8 @@ using namespace std;
 
 class Item;
 
+// Was named Inventory2 to distinguish it from Inventory while I was refactoring
+// the inventory system
 class Inventory2 : public BlockDataS<45>{
 protected:
 
@@ -28,5 +30,7 @@ public:
     void clickWindow(ClickWindowJob*, Inventory2* inv, AlteredSlots &altered, bool creative);
 
     int tryPickup(Item* item, AlteredSlots& altered);
+
+    void close(AlteredSlots& altered);
 
 };

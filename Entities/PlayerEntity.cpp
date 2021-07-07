@@ -126,7 +126,7 @@ vector<ChunkCoord> PlayerEntity::getUnloads(){
 }
 
 void PlayerEntity::sendWindowUpdate(){
-    inventory.sendWindowUpdate(connection);
+    inventory.sendWindowUpdate();
 }
 
 void PlayerEntity::sendToPlayer(PlayerEntity* p){

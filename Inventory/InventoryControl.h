@@ -20,7 +20,7 @@ public:
     void clickWindow(ClickWindowJob* job, bool creative);
 
     //only sends if neccesary
-    void sendWindowUpdate(PlayerConnection* c);
+    void sendWindowUpdate();
 
     void openBlock(BlockData* b);
     void closeBlock(bool byPlayer = true);

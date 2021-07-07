@@ -273,3 +273,40 @@ int Inventory2::tryPickup(Item* item, AlteredSlots &altered){
 
     return initialCount - origin.itemCount;
 }
+
+void Inventory2::close(AlteredSlots& a){
+    // Flush crafting frame and hover
+    for(int i=1; i<5; i++){
+        if(slots[i].itemCount <= 0)
+            continue;
+
+        cout << "Clearing " << slots[i] << " from Inventory\n";
+        movHalf(slots[i], 36, 44, a);
+        movHalf(slots[i], 9, 35, a);
+        movEmpty(slots[i], 36, 44, a);
+        movEmpty(slots[i], 9, 35, a);
+
+        if(slots[i].isEmpty()){
+            slots[i].makeEmpty();
+        }
+
+        cout << "Leaving: " << slots[i] << endl;
+    }
+
+    if(hover.itemCount <= 0)
+        return;
+
+    cout << "Clearing " << hover << " from Inventory\n";
+    movHalf(hover, 36, 44, a);
+    movHalf(hover, 9, 35, a);
+    movEmpty(hover, 36, 44, a);
+    movEmpty(hover, 9, 35, a);
+
+    if(hover.isEmpty()){
+        hover.makeEmpty();
+    }
+
+    cout << "Leaving: " << hover << endl;
+
+
+}
