@@ -623,10 +623,12 @@ void ThreadArea::handleClientSlotChange(JobTicket* j){
     if(job->cursor >= 0){
         player->inventory.inventory.cursor = job->cursor + 36;
     }
-    if(job->slotNum >= 0){
-        player->inventory.setSlot(job->slotNum, job->slot);
-        job->slot = 0;
-    }
+
+    // This would be begging for an exploit
+    // if(job->slotNum >= 0){
+    //     player->inventory.setSlot(job->slotNum, job->slot);
+    //     job->slot = 0;
+    // }
 }
 
 void ThreadArea::animationHandler(JobTicket* j, PlayerEntity* p){
