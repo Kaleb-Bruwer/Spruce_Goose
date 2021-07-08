@@ -22,6 +22,17 @@ bool Slot::fullMatch(Slot* rhs){
         && itemCount == rhs->itemCount);
 }
 
+bool Slot::typeMatch(Slot &rhs){
+    return (itemID == rhs.itemID)
+        && (itemDamage == rhs.itemDamage
+            || itemDamage == -1 || rhs.itemDamage == -1);
+}
+
+bool Slot::fullMatch(Slot &rhs){
+    return (itemID == rhs.itemID
+        && itemDamage == rhs.itemDamage
+        && itemCount == rhs.itemCount);
+}
 
 bool operator< (const Slot &lhs, const Slot &rhs){
     if(lhs.itemID < rhs.itemID)

@@ -61,6 +61,11 @@ public:
     //also checks itemCount
     bool fullMatch(Slot* rhs);
 
+    //itemID & itemDamage
+    bool typeMatch(Slot &rhs);
+    //also checks itemCount
+    bool fullMatch(Slot &rhs);
+
     Slot& operator=(const Slot& rhs){
         itemID = rhs.itemID;
         itemCount = rhs.itemCount;
