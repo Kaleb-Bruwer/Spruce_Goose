@@ -313,17 +313,28 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
                 break;
 
             case 5: //add slot to right drag
-                if(dragData.dragMode == RIGHT){
-                    if(!slots[i].isEmpty() && !slots[i].typeMatch(hover))
-                        break;
-                    dragData.dragSlots.push_back(i);
+            if(dragData.dragMode == RIGHT){
+                if(!slots[i].isEmpty() && !slots[i].typeMatch(hover))
+                    break;
+
+                // Conditions where no action is required
+                if(hover.itemCount == 0)
+                    break;
+
+                // Add one item to new slot (if possible)
+                int maxStack = hover.maxStackSize();
+                if(slots[i].itemCount < maxStack){
+                    slots[i].itemCount++;
+                    hover.itemCount--;
+                    if(hover.itemCount == 0)
+                        hover.makeEmpty();
                 }
-                break;
+            }
+            break;
 
             case 6: //end right drag
 
                 dragData.dragMode = NONE;
-                dragData.dragSlots.clear();
                 break;
         }
 
