@@ -6,10 +6,26 @@ using namespace std;
 
 class Item;
 
+enum DragMode{
+    LEFT,
+    RIGHT,
+    NONE
+};
+
+struct DragData{
+    DragMode dragMode;
+
+    vector<int> dragSlots;
+    vector<int> baseCount;
+
+    int dragTotal = 0;
+};
+
 // Was named Inventory2 to distinguish it from Inventory while I was refactoring
 // the inventory system
 class Inventory2 : public BlockDataS<45>{
 protected:
+    DragData dragData;
 
     //0: only craft 1 unit. 1:craft maximum possible
     void craft(bool max, AlteredSlots &altered);

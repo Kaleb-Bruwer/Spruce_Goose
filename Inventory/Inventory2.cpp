@@ -224,6 +224,7 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
             else{
                 if(i == 0)
                     return;
+                cout << "Put down hover\n";
                 noShiftHoverLeft();
             }
         }
@@ -234,7 +235,7 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
                 noShiftNoHover();
             }
             else{
-                if(i ==0)
+                if(i == 0)
                     return;
                 noShiftHoverRight();
             }
@@ -250,6 +251,78 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
     case 1: //shift click
         shiftClick();
         break;
+    case 5: //mouse drags
+        switch(job->button){
+            case 0: //start left drag
+                cout << "Start left drag\n";
+                dragData.dragMode = LEFT;
+                dragData.dragTotal = hover.itemCount;
+                break;
+
+                case 1: //add slot to left drag
+                // First check some conditions
+                cout << "Add slot to left drag\n";
+                if(dragData.dragMode == LEFT){
+                    if(!slots[i].isEmpty() && !slots[i].typeMatch(hover))
+                        break;
+
+                    dragData.dragSlots.push_back(i);
+                    dragData.baseCount.push_back(slots[i].itemCount);
+
+                    // Conditions where no action is required
+                    int numSlotsInDrag = dragData.dragSlots.size();
+                    if(numSlotsInDrag <= 1 || numSlotsInDrag > dragData.dragTotal)
+                        break;
+
+                    // Split from scrach every time
+                    // numToAdd: num added to each slot in dragSlots
+                    int numToAdd = floor((float)dragData.dragTotal/numSlotsInDrag);
+                    int remainder = dragData.dragTotal - numToAdd * numSlotsInDrag;
+
+                    int maxStack = hover.maxStackSize();
+
+                    for(int i=0; i<dragData.dragSlots.size(); i++){
+                        int s = dragData.dragSlots[i];
+                        slots[s] = hover; // sets the type
+                        slots[s].itemCount = dragData.baseCount[i] + numToAdd;
+                        if(slots[s].itemCount > maxStack){
+                            remainder += slots[s].itemCount - maxStack;
+                            slots[s].itemCount = maxStack;
+                        }
+                        altered.add(s, slots[s]);
+                    }
+                    hover.itemCount = remainder;
+                }
+                break;
+
+            case 2: //end left drag
+                cout << "End left drag\n";
+                dragData.dragMode = NONE;
+                dragData.dragSlots.clear();
+                dragData.baseCount.clear();
+                break;
+
+
+            case 4: //start right drag
+                dragData.dragMode = RIGHT;
+                dragData.dragTotal = hover.itemCount;
+                break;
+
+            case 5: //add slot to right drag
+                if(dragData.dragMode == RIGHT){
+                    if(!slots[i].isEmpty() && !slots[i].typeMatch(hover))
+                        break;
+                    dragData.dragSlots.push_back(i);
+                }
+                break;
+
+            case 6: //end right drag
+
+                dragData.dragMode = NONE;
+                dragData.dragSlots.clear();
+                break;
+        }
+
     }
 
     if(i >= 1 && i <= 4){
