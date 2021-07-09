@@ -298,6 +298,13 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
             case 2: //end left drag
                 cout << "End left drag\n";
                 dragData.dragMode = NONE;
+
+                if(dragData.dragSlots.size() == 1){
+                    int s = dragData.dragSlots[0];
+                    slots[s] = hover;
+                    hover.makeEmpty();
+                }
+
                 dragData.dragSlots.clear();
                 dragData.baseCount.clear();
                 break;
