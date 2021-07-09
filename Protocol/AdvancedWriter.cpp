@@ -329,8 +329,8 @@ void AdvancedWriter::writeDestroyEntity(vector<int> eid){
 void AdvancedWriter::writeCollectItem(int player, int item){
     writePacketID(0x0d);
 
-    baseThis << player;
     baseThis << item;
+    baseThis << player;
 
     addMsgLen();
 }
