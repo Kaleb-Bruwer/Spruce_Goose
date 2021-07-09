@@ -143,16 +143,12 @@ void PlayerConnection1_7::sendPosAndLook(JobTicket* j){
 }
 
 void PlayerConnection1_7::sendWindowItem(JobTicket* j){
-    cout << "sendWindowItem\n";
     SendWindowItem* job = (SendWindowItem*) j;
     AdvancedWriter writer;
 
     for(int i=0; i<job->numSlots; i++){
-        cout << job->slotNums[i] << ": " << job->slots[i] << endl;
         writer.writeSetSlot(job->windowID, job->slotNums[i], job->slots[i]);
     }
-    cout << "\n";
-
     sendMessage(writer);
 }
 

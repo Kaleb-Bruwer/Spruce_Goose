@@ -92,7 +92,7 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
             switch(job->button){
             case 0:
                 //Pick up stack
-                cout << "Pick up stack case: " << slots[i] << ", " << hover << endl;
+                // cout << "Pick up stack case: " << slots[i] << ", " << hover << endl;
                 hover = slots[i];
                 slots[i].makeEmpty();
                 altered.add(i, slots[i]);
@@ -211,8 +211,8 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
         }
     };
 
-    cout << (int) job->mode << ", " << (int)job->button << ": ";
-    cout << (int)job->slotNum << "h:" << hover << endl;
+    // cout << (int) job->mode << ", " << (int)job->button << ": ";
+    // cout << (int)job->slotNum << "h:" << hover << endl;
 
     switch(job->mode){
     case 0: //"normal" clicks
