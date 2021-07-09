@@ -176,7 +176,7 @@ void ThreadArea::run(){
         usptI++;
         if(usptI == 20){
             uspt /= 20;
-            cout << "uspt: " << uspt << endl;
+            // cout << "uspt: " << uspt << endl;
             uspt = 0;
             usptI = 0;
         }

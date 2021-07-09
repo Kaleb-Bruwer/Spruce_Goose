@@ -211,7 +211,8 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
         }
     };
 
-    cout << (int) job->mode << ", " << (int)job->button << ": " << (int)job->slotNum << endl;
+    cout << (int) job->mode << ", " << (int)job->button << ": ";
+    cout << (int)job->slotNum << "h:" << hover << endl;
 
     switch(job->mode){
     case 0: //"normal" clicks
@@ -324,11 +325,14 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
                 // Add one item to new slot (if possible)
                 int maxStack = hover.maxStackSize();
                 if(slots[i].itemCount < maxStack){
+                    slots[i].itemID = hover.itemID;
+                    slots[i].itemDamage = hover.itemDamage;
                     slots[i].itemCount++;
                     hover.itemCount--;
                     if(hover.itemCount == 0)
                         hover.makeEmpty();
                 }
+                altered.add(i, slots[i]);
             }
             break;
 
