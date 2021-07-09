@@ -254,14 +254,12 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
     case 5: //mouse drags
         switch(job->button){
             case 0: //start left drag
-                cout << "Start left drag\n";
                 dragData.dragMode = LEFT;
                 dragData.dragTotal = hover.itemCount;
                 break;
 
                 case 1: //add slot to left drag
                 // First check some conditions
-                cout << "Add slot to left drag\n";
                 if(dragData.dragMode == LEFT){
                     if(!slots[i].isEmpty() && !slots[i].typeMatch(hover))
                         break;
@@ -296,7 +294,6 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
                 break;
 
             case 2: //end left drag
-                cout << "End left drag\n";
                 dragData.dragMode = NONE;
 
                 if(dragData.dragSlots.size() == 1){
