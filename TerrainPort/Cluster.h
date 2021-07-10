@@ -24,12 +24,23 @@ private:
 public:
 
     // Used to quickly exlude far coordinates, includes renderDistance buffer
-    // To be used from outside, to avoid excessive function calls
     ChunkCoord lowBound;
     ChunkCoord highBound;
 
     Cluster(int renderDist){
         renderDistance = renderDist;
+    };
+
+    Cluster(int renderDist, ChunkCoord c) : Cluster(renderDist){
+        add(c);
+    };
+
+    bool inBoundingBox(ChunkCoord c){
+        if(c.x >= lowBound.x && c.x <= highBound.x &&
+                c.z >= lowBound.z && c.z <= highBound.z){
+            return true;
+        }
+        return false;
     };
 
     bool fitsHere(ChunkCoord c);
