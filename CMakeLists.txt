@@ -166,6 +166,10 @@ add_executable(Widecraft
 
     ./TerrainPort/TerrainPort.h
     ./TerrainPort/TerrainPort.cpp
+    ./TerrainPort/ClusterGroup.h
+    ./TerrainPort/ClusterGroup.cpp
+    ./TerrainPort/Cluster.h
+    ./TerrainPort/Cluster.cpp
 
     ./JobTickets/JobTicket.h
     ./JobTickets/JobTicket.cpp
