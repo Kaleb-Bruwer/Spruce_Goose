@@ -12,6 +12,7 @@ private:
     // Multithreading-related
     thread* myThread = 0;
     bool quit = false;
+    const chrono::milliseconds sleepLen{10};
     void run(); //main loop for this class
 
     // Singleton-related
@@ -21,7 +22,12 @@ private:
     TerrainPort();
     ~TerrainPort();
 
+    bool handleJobTickets();
+
 public:
     static TerrainPort* getInstance();
-    void pushJob(JobTicket* job);
+    void pushJob(JobTicket* job){
+        job->pickup();
+        inQueue.push(job);
+    };
 };
