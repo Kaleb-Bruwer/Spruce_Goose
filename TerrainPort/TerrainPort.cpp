@@ -1,8 +1,12 @@
 #include "TerrainPort.h"
 
+#include "../JobTickets/WorldToGenerator/GenerateChunkRequest.h"
+#include "../JobTickets/GeneratorToWorld/ChunkFromGenerator.h"
+
 using namespace std;
 
 TerrainPort::TerrainPort(){
+    clusters.setRenderDistance(4);
     myThread = new thread(&TerrainPort::run, this);
 }
 
@@ -47,4 +51,22 @@ bool TerrainPort::handleJobTickets(){
         }
         job->drop();
     }
+}
+
+void TerrainPort::getChunk(ChunkCoord coord, SynchedArea* returnAddr){
+    // Check buffer
+    auto it = buffer.find(coord);
+    if(it != buffer.end()){
+        // Is in the buffer
+        sendChunk(it->second.chunk, returnAddr);
+        buffer.erase(it);
+        return;
+    }
+
+}
+
+void TerrainPort::sendChunk(Chunk* c, SynchedArea* dest){
+    ChunkFromGenerator* job = new ChunkFromGenerator();
+    job->chunk = c;
+    dest->pushJob(job);
 }

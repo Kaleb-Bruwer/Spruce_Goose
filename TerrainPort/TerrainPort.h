@@ -4,6 +4,14 @@
 
 #include "../Datastructures/BlockingQueue.h"
 #include "../JobTickets/JobTicket.h"
+#include "ClusterGroup.h"
+#include "../World/Chunk/Chunk.h"
+#include "../World/SynchedArea.h"
+
+struct TimestampedChunk{
+    chrono::high_resolution_clock::time_point time;
+    Chunk* chunk;
+};
 
 class TerrainPort{
 private:
@@ -19,10 +27,19 @@ private:
     inline static TerrainPort* instance = 0;
     inline static mutex constructMutex;
 
+    // Clusters
+    int renderDistance = 4;
+    ClusterGroup clusters;
+
+    // Buffer (timestamps are used to remove old, unused values)
+    map<ChunkCoord, TimestampedChunk> buffer;
+
     TerrainPort();
     ~TerrainPort();
 
     bool handleJobTickets();
+    void getChunk(ChunkCoord coord, SynchedArea* returnAddr);
+    void sendChunk(Chunk* c, SynchedArea* dest);
 
 public:
     static TerrainPort* getInstance();
