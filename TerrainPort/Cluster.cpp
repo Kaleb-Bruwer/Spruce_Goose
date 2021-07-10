@@ -37,3 +37,16 @@ void Cluster::add(ChunkCoord c){
     else if(c.z - renderDistance < lowBound.z)
     lowBound.z = c.z - renderDistance;
 }
+
+void Cluster::merge(Cluster &rhs){
+    lowBound.x = min(lowBound.x, rhs.lowBound.x);
+    lowBound.z = min(lowBound.z, rhs.lowBound.z);
+
+    highBound.x = max(highBound.x, rhs.highBound.x);
+    highBound.z = max(highBound.z, rhs.highBound.z);
+
+    for(ClusterVal a : rhs.values){
+        values.push_back(a);
+    }
+    rhs.values.clear();
+}

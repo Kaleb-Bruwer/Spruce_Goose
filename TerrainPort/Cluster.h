@@ -45,4 +45,7 @@ public:
 
     bool fitsHere(ChunkCoord c);
     void add(ChunkCoord c);
+
+    // moves everything from rhs into this
+    void merge(Cluster &rhs);
 };
