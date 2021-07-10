@@ -63,6 +63,9 @@ void TerrainPort::getChunk(ChunkCoord coord, SynchedArea* returnAddr){
         return;
     }
 
+    // If already in a request, just set returnAddr
+
+    // else, add to cluster
 }
 
 void TerrainPort::sendChunk(Chunk* c, SynchedArea* dest){

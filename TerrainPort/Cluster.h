@@ -7,8 +7,12 @@
 
 using namespace std;
 
+class SynchedArea;
+
 struct ClusterVal{
     ChunkCoord coord;
+    SynchedArea* dest = 0;
+
     chrono::high_resolution_clock::time_point arrive;
 
     bool wasSent = false;
@@ -31,10 +35,6 @@ public:
         renderDistance = renderDist;
     };
 
-    Cluster(int renderDist, ChunkCoord c) : Cluster(renderDist){
-        add(c);
-    };
-
     bool inBoundingBox(ChunkCoord c){
         if(c.x >= lowBound.x && c.x <= highBound.x &&
                 c.z >= lowBound.z && c.z <= highBound.z){
@@ -44,7 +44,7 @@ public:
     };
 
     bool fitsHere(ChunkCoord c);
-    void add(ChunkCoord c);
+    void add(ChunkCoord c, SynchedArea* dest);
 
     // moves everything from rhs into this
     void merge(Cluster &rhs);

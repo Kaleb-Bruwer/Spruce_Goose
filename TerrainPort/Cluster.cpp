@@ -18,9 +18,10 @@ bool Cluster::fitsHere(ChunkCoord c){
     return false;
 }
 
-void Cluster::add(ChunkCoord c){
+void Cluster::add(ChunkCoord c, SynchedArea* dest){
     ClusterVal val;
     val.coord = c;
+    val.dest = dest;
     val.arrive = chrono::high_resolution_clock::now();
 
     values.push_back(val);
