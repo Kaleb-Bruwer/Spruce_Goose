@@ -24,7 +24,7 @@ private:
 public:
 
     // Used to quickly exlude far coordinates, includes renderDistance buffer
-    // To be used from ClusterGroup, not Cluster (skip excessive func. calls)
+    // To be used from outside, to avoid excessive function calls
     ChunkCoord lowBound;
     ChunkCoord highBound;
 
@@ -33,4 +33,5 @@ public:
     };
 
     bool fitsHere(ChunkCoord c);
+    void add(ChunkCoord c);
 };
