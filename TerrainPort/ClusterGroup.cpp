@@ -24,6 +24,13 @@ void ClusterGroup::addChunk(ChunkCoord coord){
     }
     else{
         // Merge clusters
-        
+        for(int i=1; i<validClusters.size(); i++){
+            clusters[validClusters[0]].merge(clusters[validClusters[i]]);
+        }
+        clusters[validClusters[0]].add(coord);
+
+        for(int i=validClusters.size()-1; i>=0; i--){
+            clusters.erase(clusters.begin() + i);
+        }
     }
 }
