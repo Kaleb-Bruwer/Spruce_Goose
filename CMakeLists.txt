@@ -164,6 +164,9 @@ add_executable(Widecraft
     ./Entities/PlayerEntity.h
     ./Entities/PlayerEntity.cpp
 
+    ./TerrainPort/TerrainPort.h
+    ./TerrainPort/TerrainPort.cpp
+
     ./JobTickets/JobTicket.h
     ./JobTickets/JobTicket.cpp
     ./JobTickets/SendPacket.h
