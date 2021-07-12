@@ -16,7 +16,7 @@ void ClusterGroup::addChunk(ChunkCoord coord, SynchedArea* dest){
 
     if(validClusters.size() == 0){
         // Create new cluster
-        Cluster cluster(renderDistance);
+        Cluster cluster;
         cluster.add(coord, dest);
         clusters.push_back(cluster);
     }

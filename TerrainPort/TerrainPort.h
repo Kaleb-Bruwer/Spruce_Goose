@@ -4,6 +4,7 @@
 
 #include "../Datastructures/BlockingQueue.h"
 #include "../JobTickets/JobTicket.h"
+#include "Cluster.h"
 #include "ClusterGroup.h"
 #include "../World/Chunk/Chunk.h"
 #include "../World/SynchedArea.h"

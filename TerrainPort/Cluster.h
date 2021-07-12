@@ -22,7 +22,6 @@ struct ClusterVal{
 class Cluster{
 protected:
     // renderDistance of terrain-generating servers
-    int renderDistance;
     ChunkCoord center;
 
     chrono::high_resolution_clock::time_point oldestArrival;
@@ -30,14 +29,11 @@ protected:
     static const int oldAge = 100; //ms a chunk must wait until it is guarunteed to be sent
 
 public:
+    inline static int renderDistance;
 
     // Used to quickly exlude far coordinates, includes renderDistance buffer
     ChunkCoord lowBound;
     ChunkCoord highBound;
-
-    Cluster(int renderDist){
-        renderDistance = renderDist;
-    };
 
     bool inBoundingBox(ChunkCoord c){
         if(c.x >= lowBound.x && c.x <= highBound.x &&

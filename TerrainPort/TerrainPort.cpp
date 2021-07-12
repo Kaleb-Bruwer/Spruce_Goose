@@ -6,7 +6,7 @@
 using namespace std;
 
 TerrainPort::TerrainPort(){
-    clusters.setRenderDistance(4);
+    Cluster::renderDistance = 4;
     myThread = new thread(&TerrainPort::run, this);
 }
 
