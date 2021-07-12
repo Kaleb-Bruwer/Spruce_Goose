@@ -23,7 +23,9 @@ class Cluster{
 protected:
     // renderDistance of terrain-generating servers
     int renderDistance;
+    chrono::high_resolution_clock::time_point oldestArrival;
     vector<ClusterVal> values;
+    static const int oldAge = 200; //ms a chunk must wait until it is guarunteed to be sent
 
 public:
 
@@ -48,4 +50,7 @@ public:
 
     // moves everything from rhs into this
     void merge(Cluster &rhs);
+
+    // true if a chunk arrived long enough ago
+    bool isOld();
 };

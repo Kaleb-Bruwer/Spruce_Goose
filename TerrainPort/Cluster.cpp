@@ -23,6 +23,8 @@ void Cluster::add(ChunkCoord c, SynchedArea* dest){
     val.coord = c;
     val.dest = dest;
     val.arrive = chrono::high_resolution_clock::now();
+    if(values.size() == 0)
+        oldestArrival = val.arrive;
 
     values.push_back(val);
 
@@ -50,4 +52,10 @@ void Cluster::merge(Cluster &rhs){
         values.push_back(a);
     }
     rhs.values.clear();
+}
+
+bool Cluster::isOld(){
+    auto present = chrono::high_resolution_clock::now();
+    int age = chrono::duration_cast<chrono::milliseconds>(present - oldestArrival).count();
+    return(age >= oldAge);
 }
