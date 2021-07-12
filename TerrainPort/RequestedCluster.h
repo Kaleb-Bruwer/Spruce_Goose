@@ -7,9 +7,6 @@
 // Fully populates values with all chunks that it covers
 
 class RequestedCluster : public Cluster{
-private:
-    Coordinate<int> sentPosition;
-
 public:
     // Whether or not this request covers a specific chunk
     bool contains(ChunkCoord coord);

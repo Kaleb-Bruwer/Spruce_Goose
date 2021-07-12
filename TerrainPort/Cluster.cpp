@@ -9,13 +9,8 @@ bool Cluster::fitsHere(ChunkCoord c){
     // Calculate min distance to any coordinate within bounds
     // return true the moment something close enough is found
 
-    for(ClusterVal &v: values){
-        ChunkCoord &pos2 = v.coord;
-        int distance = min(abs(c.x - pos2.x), abs(c.z - pos2.z));
-        if(distance < renderDistance)
-            return true;
-    }
-    return false;
+    int distance = min(abs(center.x - c.x), abs(center.z - c.z));
+    return(distance < renderDistance);
 }
 
 void Cluster::add(ChunkCoord c, SynchedArea* dest){
@@ -23,22 +18,24 @@ void Cluster::add(ChunkCoord c, SynchedArea* dest){
     val.coord = c;
     val.dest = dest;
     val.arrive = chrono::high_resolution_clock::now();
-    if(values.size() == 0)
+    if(values.size() == 0){
+        center = c;
         oldestArrival = val.arrive;
+    }
 
     values.push_back(val);
 
     // Update bounding box
     if(c.x + renderDistance > highBound.x)
-    highBound.x = c.x + renderDistance;
+        highBound.x = c.x + renderDistance;
     else if(c.x - renderDistance < lowBound.x)
-    lowBound.x = c.x - renderDistance;
+        lowBound.x = c.x - renderDistance;
 
 
     if(c.z + renderDistance > highBound.z)
-    highBound.z = c.z + renderDistance;
+        highBound.z = c.z + renderDistance;
     else if(c.z - renderDistance < lowBound.z)
-    lowBound.z = c.z - renderDistance;
+        lowBound.z = c.z - renderDistance;
 }
 
 void Cluster::merge(Cluster &rhs){

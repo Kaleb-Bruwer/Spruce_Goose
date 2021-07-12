@@ -23,9 +23,11 @@ class Cluster{
 protected:
     // renderDistance of terrain-generating servers
     int renderDistance;
+    ChunkCoord center;
+
     chrono::high_resolution_clock::time_point oldestArrival;
     vector<ClusterVal> values;
-    static const int oldAge = 200; //ms a chunk must wait until it is guarunteed to be sent
+    static const int oldAge = 100; //ms a chunk must wait until it is guarunteed to be sent
 
 public:
 
