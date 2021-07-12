@@ -65,12 +65,7 @@ void TerrainPort::getChunk(ChunkCoord coord, SynchedArea* returnAddr){
     }
 
     //TODO: If already in a request, just set returnAddr
-    for(RequestedCluster &r : requestedClusters){
-        if(r.contains(coord)){
-            r.setDest(coord, returnAddr);
-            return;
-        }
-    }
+
 
     // else, add to cluster
     clusters.addChunk(coord, returnAddr);

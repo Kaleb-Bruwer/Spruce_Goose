@@ -22,4 +22,5 @@ public:
 
     // Adds chunk that must be requested
     void addChunk(ChunkCoord coord, SynchedArea* dest);
+
 };

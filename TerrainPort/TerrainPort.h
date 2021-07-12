@@ -5,7 +5,6 @@
 #include "../Datastructures/BlockingQueue.h"
 #include "../JobTickets/JobTicket.h"
 #include "ClusterGroup.h"
-#include "RequestedCluster.h"
 #include "../World/Chunk/Chunk.h"
 #include "../World/SynchedArea.h"
 
@@ -31,7 +30,6 @@ private:
     // Clusters
     int renderDistance = 4;
     ClusterGroup clusters;
-    vector<RequestedCluster> requestedClusters;
 
     // Buffer (timestamps are used to remove old, unused values)
     map<ChunkCoord, TimestampedChunk> buffer;
@@ -40,7 +38,7 @@ private:
     ~TerrainPort();
 
     bool handleJobTickets();
-    
+
     // Assumes that chunks will only be requested once
     void getChunk(ChunkCoord coord, SynchedArea* returnAddr);
     void sendChunk(Chunk* c, SynchedArea* dest);

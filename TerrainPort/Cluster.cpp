@@ -10,7 +10,7 @@ bool Cluster::fitsHere(ChunkCoord c){
     // return true the moment something close enough is found
 
     int distance = min(abs(center.x - c.x), abs(center.z - c.z));
-    return(distance < renderDistance);
+    return(distance <= renderDistance);
 }
 
 void Cluster::add(ChunkCoord c, SynchedArea* dest){
