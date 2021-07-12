@@ -20,7 +20,7 @@ struct ClusterVal{
 };
 
 class Cluster{
-private:
+protected:
     // renderDistance of terrain-generating servers
     int renderDistance;
     vector<ClusterVal> values;
