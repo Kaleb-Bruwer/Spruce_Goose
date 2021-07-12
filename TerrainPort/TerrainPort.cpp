@@ -47,7 +47,8 @@ bool TerrainPort::handleJobTickets(){
             foundJob = true;
 
         if(job->getType() == GENERATECHUNKREQUEST){
-            // Get this chunk somehow
+            GenerateChunkRequest* jobCast = (GenerateChunkRequest*) job;
+            getChunk(jobCast->chunkPos, jobCast->origin);
         }
         job->drop();
     }
