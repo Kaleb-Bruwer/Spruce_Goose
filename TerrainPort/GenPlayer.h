@@ -19,7 +19,7 @@ private:
     // BUFFER
     ChunkMap<Chunk*> uncollected;
 
-    sendChunk(Chunk* c, SynchedArea* s);
+    void sendChunk(Chunk* c, SynchedArea* s);
 
 public:
     bool onStandby(){

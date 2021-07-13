@@ -2,6 +2,8 @@
 
 #include "../World/Chunk/Chunk.h"
 #include "../JobTickets/GeneratorToWorld/ChunkFromGenerator.h"
+#include "../World/SynchedArea.h"
+
 
 void GenPlayer::setCluster(Cluster c){
     activeCluster  = c;
@@ -22,7 +24,7 @@ void GenPlayer::setCluster(Cluster c){
     outstanding = c.values.size();
 
     // Apply to connection
-    
+
 
 }
 
@@ -37,9 +39,9 @@ bool GenPlayer::addChunk(ChunkCoord coord, SynchedArea* dest){
     }
 
     ClusterVal val;
-    val.coord = c;
+    val.coord = coord;
     val.dest = dest;
-    c.values.push_back(val);
+    activeCluster.values.push_back(val);
     return true;
 }
 

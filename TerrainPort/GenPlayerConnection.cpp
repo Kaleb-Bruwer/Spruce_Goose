@@ -21,5 +21,12 @@ void GenPlayerConnection::openConnection(string address, int port){
         return;
     }
 
-    
+
+}
+
+
+void GenPlayerConnection::closeConnection(){
+    if(sock >= 0)
+        close(sock);
+    sock = -1;
 }

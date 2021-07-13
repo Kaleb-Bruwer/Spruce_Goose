@@ -2,6 +2,8 @@
 
 #include "../JobTickets/WorldToGenerator/GenerateChunkRequest.h"
 #include "../JobTickets/GeneratorToWorld/ChunkFromGenerator.h"
+#include "../World/SynchedArea.h"
+
 
 using namespace std;
 
