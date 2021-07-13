@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Cluster.h"
+#include "GenPlayerConnection.h"
 #include "../Datastructures/ChunkMap/ChunkMap.h"
 
 // Generate player: This represents a player on a generation server
@@ -13,7 +14,7 @@ private:
     int outstanding = 0;
 
     // CONNECTION INFO
-
+    GenPlayerConnection connection;
 
     // BUFFER
     ChunkMap<Chunk*> uncollected;
