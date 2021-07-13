@@ -26,6 +26,7 @@ public:
     };
 
     void setCluster(Cluster c);
-    void addChunk(ChunkCoord coord, SynchedArea* dest);
+
+    bool addChunk(ChunkCoord coord, SynchedArea* dest);
 
 };

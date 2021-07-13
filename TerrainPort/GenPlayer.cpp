@@ -26,17 +26,21 @@ void GenPlayer::setCluster(Cluster c){
 
 }
 
-void GenPlayer::addChunk(ChunkCoord coord, SynchedArea* dest){
+bool GenPlayer::addChunk(ChunkCoord coord, SynchedArea* dest){
+    if(!activeCluster.fitsHere(coord))
+        return false;
+
     Chunk* chunk = uncollected.getVal(coord);
     if(chunk){
         sendChunk(chunk, dest);
-        return;
+        return true;
     }
 
     ClusterVal val;
     val.coord = c;
     val.dest = dest;
     c.values.push_back(val);
+    return true;
 }
 
 
