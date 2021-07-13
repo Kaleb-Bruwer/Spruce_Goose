@@ -19,6 +19,8 @@ struct ClusterVal{
     chrono::high_resolution_clock::time_point sent;
 };
 
+class GenPlayer;
+
 class Cluster{
 protected:
     // renderDistance of terrain-generating servers
@@ -27,6 +29,8 @@ protected:
     chrono::high_resolution_clock::time_point oldestArrival;
     vector<ClusterVal> values;
     static const int oldAge = 100; //ms a chunk must wait until it is guarunteed to be sent
+
+    friend class GenPlayer;
 
 public:
     inline static int renderDistance;

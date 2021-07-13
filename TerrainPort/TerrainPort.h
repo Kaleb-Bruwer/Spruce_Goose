@@ -6,8 +6,9 @@
 #include "../JobTickets/JobTicket.h"
 #include "Cluster.h"
 #include "ClusterGroup.h"
-#include "../World/Chunk/Chunk.h"
-#include "../World/SynchedArea.h"
+
+class Chunk;
+class SynchedArea;
 
 struct TimestampedChunk{
     chrono::high_resolution_clock::time_point time;
