@@ -21,7 +21,6 @@ void GenPlayerConnection::openConnection(string address, int port){
         return;
     }
 
-
 }
 
 

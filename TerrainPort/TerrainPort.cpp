@@ -67,6 +67,10 @@ void TerrainPort::getChunk(ChunkCoord coord, SynchedArea* returnAddr){
     }
 
     //TODO: If already in a request, just set returnAddr
+    for(GenPlayer &p : players){
+        if(p.addChunk(coord, returnAddr))
+            return;
+    }
 
 
     // else, add to cluster

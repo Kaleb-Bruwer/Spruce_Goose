@@ -7,6 +7,7 @@
 #include "../JobTickets/JobTicket.h"
 #include "Cluster.h"
 #include "ClusterGroup.h"
+#include "GenPlayer.h"
 
 class Chunk;
 class SynchedArea;
@@ -33,6 +34,7 @@ private:
     // Clusters
     int renderDistance = 4;
     ClusterGroup clusters;
+    vector<GenPlayer> players;
 
     // Buffer (timestamps are used to remove old, unused values)
     map<ChunkCoord, TimestampedChunk> buffer;
