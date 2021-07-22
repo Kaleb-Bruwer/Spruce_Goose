@@ -1,8 +1,7 @@
 #include <gtest/gtest.h>
 
-TEST(aTest, Positive){
-    ASSERT_EQ(0, 0);
-}
+#include "testA.cpp"
+#include "./TerrainPort/TerrainPortTest.cpp"
 
 TEST(bTest, Negative){
     ASSERT_EQ(0x10, 16);

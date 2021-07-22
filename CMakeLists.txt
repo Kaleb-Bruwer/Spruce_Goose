@@ -16,8 +16,9 @@ include_directories(${GTEST_INCLUDE_DIRS})
 
 add_subdirectory(src/zlib)
 
-add_executable(Widecraft
-    ./src/main.cpp
+
+#Excludes main.cpp so that this can be used in test _and_ Widecraft
+SET (SRCS
     ./src/TestFunctions.h
     ./src/TestFunctions.cpp
     ./src/Server.h
@@ -271,10 +272,22 @@ add_executable(Widecraft
     ./src/Datastructures/Octree/Positional.h
     )
 
+add_executable(Widecraft
+    ./src/main.cpp
+    ${SRCS}
+    )
+
 add_executable(test
-    ./Test/firstTest.cpp
+    ./Test/testMain.cpp
+
+    ${SRCS}
 )
+
+
 target_link_libraries(test ${GTEST_LIBRARIES} pthread)
+target_link_libraries(test zlib)
+target_link_libraries(test curl)
+
 target_link_libraries(Widecraft zlib)
 target_link_libraries(Widecraft curl)
 target_link_libraries(Widecraft Threads::Threads)
