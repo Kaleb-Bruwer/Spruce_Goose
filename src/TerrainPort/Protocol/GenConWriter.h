@@ -1,11 +1,10 @@
 #pragma once
 
-#include "../../Protocol/AdvancedWriter.h"
+#include "../../Protocol/PacketWriter.h"
 
 
-// Private cuts off use of AdvancedWriter's packets, while keeping its
-// verison of addMsgLen
-class GenConWriter : private AdvancedWriter{
+
+class GenConWriter : public PacketWriter{
 public:
     void writeHandshake(string address = "localhost", unsigned short port = 25565);
     void writeLoginStart(string name);

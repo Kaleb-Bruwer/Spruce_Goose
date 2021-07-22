@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "Protocol/GenConWriter.h"
+
 using namespace std;
 
 void GenPlayerConnection::openConnection(string address, int port){
@@ -38,4 +40,22 @@ void GenPlayerConnection::closeConnection(){
     if(sock >= 0)
         close(sock);
     sock = -1;
+}
+
+void GenPlayerConnection::sendMessage(PacketWriter &p){
+    if(sock < 0)
+        return;
+
+    char* start = p.getBuffer();
+    int length = p.getIndex();
+    write(sock, start, length);
+}
+
+void GenPlayerConnection::handshake(){
+    GenConWriter writer;
+    writer.writeHandshake();
+    writer.writeLoginStart("Bot1234");
+
+    sendMessage(writer);
+    
 }

@@ -8,20 +8,13 @@
 
 using namespace std;
 
-//Used in child class(es) as well, like ChunkWriter
-#define baseThis *((PacketWriter*) this)
-
 class AdvancedWriter : public PacketWriter{
 private:
-    int lastPacket = 0;
 
     void writeEntityHeadLook(int eid, double yaw);
     void writeAbsolutePos(Coordinate<double> pos);
 public:
     AdvancedWriter(unsigned int size = 256);
-
-    //This version allows for multiple packets in same object
-    void addMsgLen();
 
     //state 1 packets
     void writeSLP(); //server list ping

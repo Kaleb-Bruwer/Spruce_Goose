@@ -8,7 +8,12 @@
 
 using namespace std;
 
+//Allows child classes to use operators
+#define baseThis *((PacketWriter*) this)
+
 class PacketWriter{
+private:
+    int lastPacket = 0;
 protected:
     const float resizeFactor = 2;
     int size;
@@ -43,8 +48,7 @@ public:
     void resizeBuffer(int newSize); //Uses newSize if greater than default val
 
     //Prepends message with varint containing message length
-    //Not used on old protocols like 1.4.5
-    virtual void addMsgLen();//Make sure to only call this once
+    void addMsgLen();
 
     //Compresses all the data in the buffer, no packet format stuff
     //returns compressed size

@@ -7,23 +7,6 @@
 
 AdvancedWriter::AdvancedWriter(unsigned int size) :PacketWriter(size){};
 
-void AdvancedWriter::addMsgLen(){
-    int lenVal = index - lastPacket;
-
-    Varint len(lenVal);
-
-    int lenlen = len.getNBytes();
-    int newSize = index + lenlen;
-    if(newSize >= size){
-        resizeBuffer(newSize);
-    }
-    memmove(&(buffer[lastPacket + lenlen]), &(buffer[lastPacket]), lenVal);
-    index += lenlen;
-
-    len.writeToBuffer(buffer, lastPacket);
-    lastPacket = index;
-}
-
 void AdvancedWriter::writeAbsolutePos(Coordinate<double> pos){
     baseThis << (int) (pos.x * 32);
     baseThis << (int) (pos.y * 32);

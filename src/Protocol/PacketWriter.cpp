@@ -67,19 +67,20 @@ void PacketWriter::writeEndianSwitched(void* data, unsigned int size){
 }
 
 void PacketWriter::addMsgLen(){
-    int lenVal = index;
+    int lenVal = index - lastPacket;
 
     Varint len(lenVal);
 
     int lenlen = len.getNBytes();
     int newSize = index + lenlen;
     if(newSize >= size){
-        resizeBuffer(newSize); //TODO: more efficient by adding varint to new buffer first
+        resizeBuffer(newSize);
     }
-    memmove(&(buffer[lenlen]), &(buffer[0]), index);
+    memmove(&(buffer[lastPacket + lenlen]), &(buffer[lastPacket]), lenVal);
     index += lenlen;
-    int temp = 0;
-    len.writeToBuffer(buffer, temp);
+
+    len.writeToBuffer(buffer, lastPacket);
+    lastPacket = index;
 }
 
 int PacketWriter::compressAll(){
