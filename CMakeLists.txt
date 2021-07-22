@@ -179,6 +179,8 @@ SET (SRCS
     ./src/TerrainPort/GenPlayer.cpp
     ./src/TerrainPort/GenPlayerConnection.h
     ./src/TerrainPort/GenPlayerConnection.cpp
+    ./src/TerrainPort/Protocol/GenConWriter.h
+    ./src/TerrainPort/Protocol/GenConWriter.cpp
 
     ./src/JobTickets/JobTicket.h
     ./src/JobTickets/JobTicket.cpp
