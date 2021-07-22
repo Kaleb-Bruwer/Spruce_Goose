@@ -9,13 +9,16 @@ class GenPlayer;
 
 class GenPlayerConnection{
 private:
-    int sock = 0;
+    bool isOpen = false;
+    int sock = -1;
     struct sockaddr_in serv_addr;
 
 
-    friend class GenPlayer;
+public:
 
-    void openConnection(string addr, int port);
+    void openConnection(std::string addr, int port);
     void closeConnection();
+
+    bool getIsOpen(){return isOpen;};
 
 };
