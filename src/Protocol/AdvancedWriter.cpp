@@ -24,6 +24,13 @@ void AdvancedWriter::addMsgLen(){
     lastPacket = index;
 }
 
+void AdvancedWriter::writeAbsolutePos(Coordinate<double> pos){
+    baseThis << (int) (pos.x * 32);
+    baseThis << (int) (pos.y * 32);
+    baseThis << (int) (pos.z * 32);
+}
+
+
 void AdvancedWriter::writeSLP(){
     writePacketID(0x00);
     //JSON response
@@ -165,7 +172,6 @@ void AdvancedWriter::writeSpawnObject(int eid, Coordinate<double> pos, double ya
     baseThis <<  Varint(eid);
     baseThis << (char) 2; //Type (2 = item stack)
 
-    Coordinate<int> absPos;
     baseThis << (int) pos.x * 32;
     baseThis << (int) pos.y * 32;
     baseThis << (int) pos.z * 32;

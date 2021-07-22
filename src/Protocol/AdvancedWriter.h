@@ -16,6 +16,7 @@ private:
     int lastPacket = 0;
 
     void writeEntityHeadLook(int eid, double yaw);
+    void writeAbsolutePos(Coordinate<double> pos);
 public:
     AdvancedWriter(unsigned int size = 256);
 

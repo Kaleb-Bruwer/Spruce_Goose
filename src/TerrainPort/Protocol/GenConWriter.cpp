@@ -15,3 +15,18 @@ void GenConWriter::writeLoginStart(string name){
     baseThis << name;
     addMsgLen();
 }
+
+void GenConWriter::writePosAndLook(Coordinate<double> pos, float yaw, float pitch, bool onGround){
+    writePacketID(0x06);
+
+    baseThis << pos.x;
+    baseThis << pos.y;
+    baseThis << pos.y + 1.8; //head pos
+    baseThis << pos.z;
+
+    baseThis << yaw;
+    baseThis << pitch;
+    baseThis << onGround;
+
+    addMsgLen();
+}
