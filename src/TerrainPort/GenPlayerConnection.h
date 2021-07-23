@@ -18,14 +18,19 @@ private:
     struct sockaddr_in serv_addr;
 
     int connState = 0; // Connection state, as in the Minecraft protocol
+    bool hasSpawned = false;
     Coordinate<double> pos;
     float yaw;
     float pitch;
+    bool onGround;
 
+    friend class GenPlayer;
+
+public:
     void sendMessage(PacketWriter &p);
     void readMessage();
 
-public:
+    void returnSpawnInPos();
 
     void openConnection(std::string addr, int port);
     void closeConnection();
@@ -33,5 +38,6 @@ public:
     void handshake();
 
     bool getIsOpen(){return isOpen;};
+    bool getHasSpawned(){return hasSpawned;};
 
 };

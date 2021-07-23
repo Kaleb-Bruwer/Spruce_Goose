@@ -41,6 +41,9 @@ public:
     void setIndex(int a){
         index = a;
     }
+    void skip(int numBytes){
+        index += numBytes;
+    }
 
     int readPacketID(){return readVarint().getInt();};
     short readShort();

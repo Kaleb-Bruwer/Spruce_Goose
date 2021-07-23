@@ -34,6 +34,8 @@ void GenPlayerConnection::openConnection(string address, int port){
     }
 
     isOpen = true;
+
+    handshake();
 }
 
 
@@ -57,15 +59,20 @@ void GenPlayerConnection::readMessage(){
     char buffer[bufferSize];
 
     int lenRead = read(sock, buffer, bufferSize);
-    PacketReader reader(start, len);
 
-    while(!reader.reachedEnd()){
-        int packetID = reader.readPacketID();
+    if(lenRead <= 0)
+        return;
+
+    PacketReader p((&buffer[0]), lenRead);
+
+    while(!p.reachedEnd()){
+        int len = p.readVarint().getInt();
+        int packetID = p.readPacketID();
 
         if(connState == 2){
             // Must be login success message
-            string UUID = reader.readString();
-            string username = reader.readString();
+            string UUID = p.readString();
+            string username = p.readString();
 
             connState = 3;
             continue;
@@ -73,34 +80,46 @@ void GenPlayerConnection::readMessage(){
 
         switch(packetID){
         case 0x01:{ //Join Game
+            cout << "JOIN GAME\n";
+
             int eid = p.readInt();
             unsigned char gamemode = p.readUChar();
             char dimension = p.readChar();
             unsigned char difficulty = p.readUChar();
             unsigned char maxPlayers = p.readUChar();
             string levelType = p.readString();
+            break;
         }
 
         case 0x05:{ //Spawn position ('home' spawn)
+
             p.readInt(); //x
             p.readInt(); //y
             p.readInt(); //z
+            break;
         }
         case 0x08:{ //Player position and look
-            Coordinate<double> pos;
             pos.x = p.readDouble();
             pos.y = p.readDouble();
             pos.z = p.readDouble();
-            float yaw = p.readFloat();
-            float pitch = p.readFloat();
-            bool onGround;
+            yaw = p.readFloat();
+            pitch = p.readFloat();
+            onGround = p.readBool();
+
+            if(!hasSpawned)
+                returnSpawnInPos();
+            break;
         }
 
         case 0x39:{ //Player abilities
+
             p.readChar(); //flags
             p.readFloat(); //flying speed
             p.readFloat(); //walking speed
+            break;
         }
+        default:
+            p.skip(len);
         }
 
     }
@@ -115,4 +134,10 @@ void GenPlayerConnection::handshake(){
     connState = 2;
     sendMessage(writer);
 
+}
+
+void GenPlayerConnection::returnSpawnInPos(){
+    GenConWriter writer;
+    writer.writePosAndLook(pos, yaw, pitch, onGround);
+    hasSpawned = true;
 }
