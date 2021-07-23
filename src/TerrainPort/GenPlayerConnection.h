@@ -6,6 +6,8 @@
 #include <unistd.h>
 
 #include "../Protocol/PacketWriter.h"
+#include "../Datastructures/Coordinate/Coordinate.h"
+
 
 class GenPlayer;
 
@@ -15,8 +17,13 @@ private:
     int sock = -1;
     struct sockaddr_in serv_addr;
 
-    void sendMessage(PacketWriter &p);
+    int connState = 0; // Connection state, as in the Minecraft protocol
+    Coordinate<double> pos;
+    float yaw;
+    float pitch;
 
+    void sendMessage(PacketWriter &p);
+    void readMessage();
 
 public:
 

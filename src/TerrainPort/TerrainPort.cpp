@@ -9,6 +9,9 @@ using namespace std;
 
 TerrainPort::TerrainPort(){
     Cluster::renderDistance = 4;
+
+    epfd = epoll_create(maxGenPlayers);
+
     myThread = new thread(&TerrainPort::run, this);
 }
 
@@ -33,6 +36,14 @@ void TerrainPort::run(){
             this_thread::sleep_for(sleepLen);
 
         // Read incoming packets
+        //timeout is in ms
+        const int timeout = 50;
+        int numToRead = epoll_wait(epfd, &(events[0]), maxGenPlayers, timeout);
+
+        for(int i=0; i<numToRead; i++){
+            int sock = events[i].data.fd;
+            int playerIndex = playersBySockets[sock];
+        }
 
     }
 }

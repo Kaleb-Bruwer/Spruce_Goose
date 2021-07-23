@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "Protocol/GenConWriter.h"
+#include "../Protocol/PacketReader.h"
 
 using namespace std;
 
@@ -51,11 +52,67 @@ void GenPlayerConnection::sendMessage(PacketWriter &p){
     write(sock, start, length);
 }
 
+void GenPlayerConnection::readMessage(){
+    const int bufferSize = 8192;
+    char buffer[bufferSize];
+
+    int lenRead = read(sock, buffer, bufferSize);
+    PacketReader reader(start, len);
+
+    while(!reader.reachedEnd()){
+        int packetID = reader.readPacketID();
+
+        if(connState == 2){
+            // Must be login success message
+            string UUID = reader.readString();
+            string username = reader.readString();
+
+            connState = 3;
+            continue;
+        }
+
+        switch(packetID){
+        case 0x01:{ //Join Game
+            int eid = p.readInt();
+            unsigned char gamemode = p.readUChar();
+            char dimension = p.readChar();
+            unsigned char difficulty = p.readUChar();
+            unsigned char maxPlayers = p.readUChar();
+            string levelType = p.readString();
+        }
+
+        case 0x05:{ //Spawn position ('home' spawn)
+            p.readInt(); //x
+            p.readInt(); //y
+            p.readInt(); //z
+        }
+        case 0x08:{ //Player position and look
+            Coordinate<double> pos;
+            pos.x = p.readDouble();
+            pos.y = p.readDouble();
+            pos.z = p.readDouble();
+            float yaw = p.readFloat();
+            float pitch = p.readFloat();
+            bool onGround;
+        }
+
+        case 0x39:{ //Player abilities
+            p.readChar(); //flags
+            p.readFloat(); //flying speed
+            p.readFloat(); //walking speed
+        }
+        }
+
+    }
+
+}
+
 void GenPlayerConnection::handshake(){
     GenConWriter writer;
     writer.writeHandshake();
     writer.writeLoginStart("Bot1234");
 
+    connState = 2;
     sendMessage(writer);
-    
+
 }

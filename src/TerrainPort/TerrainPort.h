@@ -2,6 +2,7 @@
 
 #include <thread>
 #include <map>
+#include <sys/epoll.h>
 
 #include "../Datastructures/BlockingQueue.h"
 #include "../JobTickets/JobTicket.h"
@@ -19,6 +20,12 @@ struct TimestampedChunk{
 
 class TerrainPort{
 private:
+    int epfd;
+
+    // This is an arbitrary value, just change it if needed
+    static const int maxGenPlayers = 32;
+    struct epoll_event events[maxGenPlayers];
+
     BlockingQueue<JobTicket*> inQueue;
 
     // Multithreading-related
@@ -34,7 +41,8 @@ private:
     // Clusters
     int renderDistance = 4;
     ClusterGroup clusters;
-    vector<GenPlayer> players;
+    GenPlayer players[maxGenPlayers];
+    map<int,int> playersBySockets;
 
     // Buffer (timestamps are used to remove old, unused values)
     map<ChunkCoord, TimestampedChunk> buffer;
