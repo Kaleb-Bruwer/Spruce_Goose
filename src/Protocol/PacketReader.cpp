@@ -140,6 +140,15 @@ Slot PacketReader::readSlot(){
     return result;
 }
 
+void PacketReader::readSegment(unsigned short numBytes, char* start){
+    if(index + numBytes > size)
+        return;
+
+    memcpy(start, &(buffer[index]), numBytes);
+    index += numBytes;
+}
+
+
 ostream& operator<<(ostream& out, const PacketReader& obj){
     if(obj.size < 128){
         for(int i=0; i<obj.size; i++){

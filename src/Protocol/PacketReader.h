@@ -14,7 +14,7 @@ using namespace std;
 //in order to read 1.4 packets. Its compatibility has been stripped out
 //since it is no longer needed
 
-class PlayerConnection1_16; //debug only
+class MapChunkBulkReader;
 
 class PacketReader{
 protected:
@@ -22,8 +22,9 @@ protected:
     int index = 0;
     char* buffer = 0;
 
-    friend class PlayerConnection1_16; //debug only
+    friend class MapChunkBulkReader;
 
+    PacketReader(){};
 
 public:
     //Will automatically read length from start of packet
@@ -31,6 +32,10 @@ public:
     virtual ~PacketReader();
 
     bool reachedEnd();
+
+    int lenRemaining(){
+        return size - index;
+    }
 
     int getSize(){
         return size;
@@ -60,6 +65,9 @@ public:
     Tag_Compound* readNBT();
     Coordinate<int> readPosition();
     Slot readSlot();
+
+    // Copies from buffer to start and moves buffer's index
+    void readSegment(unsigned short numBytes, char* start);
 
     friend ostream& operator<<(ostream& out, const PacketReader& obj);
 };
