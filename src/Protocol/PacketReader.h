@@ -1,12 +1,13 @@
 #ifndef PACKETREADER_H
 #define PACKETREADER_H
 
+#include <iostream>
+#include <gtest/gtest.h>
+
 #include "../Datastructures/Varint.h"
 #include "../Datastructures/Coordinate/Coordinate.h"
 #include "../Datastructures/NBT/Tag_Compound.h"
 #include "../Inventory/Slot.h"
-
-#include <iostream>
 
 using namespace std;
 
@@ -18,18 +19,21 @@ class MapChunkBulkReader;
 
 class PacketReader{
 protected:
-    int size;
+    int size; //useful data
+    int bufferSize; //actual buffer
     int index = 0;
     char* buffer = 0;
 
     friend class MapChunkBulkReader;
-
+    FRIEND_TEST(PacketReader, append);
     PacketReader(){};
 
 public:
     //Will automatically read length from start of packet
     PacketReader(char* start, int size);
     virtual ~PacketReader();
+
+    void append(char* start, int size);
 
     bool reachedEnd();
 

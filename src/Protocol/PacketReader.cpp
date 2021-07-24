@@ -10,8 +10,9 @@ using namespace std;
 PacketReader::PacketReader(char* start, int s){
     //MUST copy data to local buffer, start may be on the stack
     size = s;
+    bufferSize = s;
 
-    buffer = new char[size];
+    buffer = new char[bufferSize];
     memcpy(buffer, start, size);
 
     /*
@@ -28,6 +29,31 @@ PacketReader::PacketReader(char* start, int s){
 PacketReader::~PacketReader(){
     if(buffer)
         delete [] buffer;
+}
+
+void PacketReader::append(char* start, int len){
+    if((index + bufferSize - size) > len){
+        //Buffer has space if already-used data is removed
+        memmove(&(buffer[0]), &buffer[index], size - index);
+        memcpy(&buffer[size - index], start, len);
+        index = 0;
+        size = size - index + len;
+        return;
+    }
+    else{
+        int oldSize = size - index;
+        char* newBuffer = new char[oldSize + len];
+        memcpy(&(newBuffer[0]), &(buffer[index]), oldSize);
+        memcpy(&(newBuffer[oldSize]), start, len);
+
+        delete [] buffer;
+        buffer = newBuffer;
+
+        index = 0;
+        bufferSize = oldSize + len;
+        size = bufferSize;
+        return;
+    }
 }
 
 bool PacketReader::reachedEnd(){
