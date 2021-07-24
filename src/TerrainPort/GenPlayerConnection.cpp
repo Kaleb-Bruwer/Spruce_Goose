@@ -87,6 +87,17 @@ void GenPlayerConnection::readMessage(){
         //     cout << "PLUGIN CHANNEL " << channel << endl;
         //     break;
         // }
+        case 0:{
+            int keepAliveVal = p.readInt();
+
+            PacketWriter writer;
+            writer.writePacketID(0);
+            writer << keepAliveVal;
+            writer.addMsgLen();
+            sendMessage(writer);
+
+            break;
+        }
         case 0x01:{ //Join Game
 
             int eid = p.readInt();
