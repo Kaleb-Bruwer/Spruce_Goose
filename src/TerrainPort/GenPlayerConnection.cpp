@@ -66,7 +66,8 @@ void GenPlayerConnection::readMessage(){
     PacketReader p((&buffer[0]), lenRead);
 
     while(!p.reachedEnd()){
-        int len = p.readVarint().getInt();
+        Varint lenV = p.readVarint().getInt();
+        int len = lenV.getInt();
         int packetID = p.readPacketID();
 
         if(connState == 2){
@@ -79,8 +80,14 @@ void GenPlayerConnection::readMessage(){
         }
 
         switch(packetID){
+        // case 0x3F:{
+        //     string channel = p.readString();
+        //     short int arrLen = p.readShort();
+        //     p.skip(arrLen);
+        //     cout << "PLUGIN CHANNEL " << channel << endl;
+        //     break;
+        // }
         case 0x01:{ //Join Game
-            cout << "JOIN GAME\n";
 
             int eid = p.readInt();
             unsigned char gamemode = p.readUChar();
@@ -119,7 +126,7 @@ void GenPlayerConnection::readMessage(){
             break;
         }
         default:
-            p.skip(len);
+            p.skip(len - lenV.getNBytes());
         }
 
     }
