@@ -81,7 +81,7 @@ Chunk::Chunk(char* data, int size, ChunkCoord coord){
 }
 
 Chunk::Chunk(char* data, int &index, ChunkCoord pos, short bitmask, short addBitmask){
-    chunkCoord = coord;
+    chunkCoord = chunkCoord;
     commonConstructor();
 
     // Read Block Type

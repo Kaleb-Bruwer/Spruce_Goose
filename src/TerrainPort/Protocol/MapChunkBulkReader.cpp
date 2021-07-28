@@ -22,24 +22,12 @@ MapChunkBulkReader::~MapChunkBulkReader(){
 
 
 void MapChunkBulkReader::readAll(int end){
-    cout << "!!HEADER!!\n";
-    for(int i=0; i<7; i++){
-        cout << (int)(unsigned char)buffer[index + i] << " ";
-    }
-    cout << "\n\n";
-
     short int numChunks = readShort();
     int dataLen = readInt();
     bool skylightSent = readBool();
 
     char* data = new char[dataLen];
     readSegment(dataLen, data);
-
-    cout << "!!DATA!!\n";
-    for(int i=0; i<dataLen; i++){
-        cout << (int)(unsigned char)data[i] << " ";
-    }
-    cout << "\n\n";
 
     //using lenRemaining here would include packets after this one
     // each chunk has 12 bytes of metadata
@@ -61,17 +49,6 @@ void MapChunkBulkReader::readAll(int end){
         memcpy(&metaStructs[i].addBitmask, &(meta[12*i + 10]),2);
         switchEndian(&metaStructs[i].addBitmask, 2);
     }
-
-    cout << "!!META!!\n";
-    for(int i=0; i<metaLen; i++){
-        cout << (int)(unsigned char)meta[i] << " ";
-    }
-    cout << endl;
-
-    cout << "MapChunkBulk\n";
-    cout << "\tnum chunks: " << numChunks << endl;
-    cout << "\tdata len: " << dataLen << endl;
-    cout << "\tmeta len: " << metaLen << endl;
 
     delete [] data;
     delete [] meta;
