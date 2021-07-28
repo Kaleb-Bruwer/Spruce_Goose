@@ -181,6 +181,8 @@ SET (SRCS
     ./src/TerrainPort/GenPlayerConnection.cpp
     ./src/TerrainPort/Protocol/GenConWriter.h
     ./src/TerrainPort/Protocol/GenConWriter.cpp
+    ./src/TerrainPort/Protocol/MapChunkBulkReader.h
+    ./src/TerrainPort/Protocol/MapChunkBulkReader.cpp
 
     ./src/JobTickets/JobTicket.h
     ./src/JobTickets/JobTicket.cpp

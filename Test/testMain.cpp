@@ -2,6 +2,7 @@
 
 #include "./TerrainPort/TerrainPortTest.cpp"
 #include "./TerrainPort/GenPlayerConnectionTest.cpp"
+#include "./Protocol/PacketReaderTest.cpp"
 
 int main(int argc, char **argv){
     testing::InitGoogleTest(&argc, argv);

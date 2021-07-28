@@ -50,8 +50,10 @@ TEST(PacketReader, append2){
 
     int a = reader.readInt();
     ASSERT_TRUE(a == 66051);
+    ASSERT_TRUE(reader.lenRemaining() == 4);
 
     reader.append(&(data2[0]), data2Size);
+    ASSERT_TRUE(reader.lenRemaining() == 4 + data2Size);
 
 
     int b = reader.readInt();

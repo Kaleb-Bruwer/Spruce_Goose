@@ -4,7 +4,11 @@
 #include "GenPlayerConnection.h"
 #include "../Datastructures/ChunkMap/ChunkMap.h"
 
+#include <vector>
+
 // Generate player: This represents a player on a generation server
+
+class MapChunkBulkReader;
 
 class GenPlayer{
 private:
@@ -18,6 +22,7 @@ private:
 
     // BUFFER
     ChunkMap<Chunk*> uncollected;
+
 
     void sendChunk(Chunk* c, SynchedArea* s);
 

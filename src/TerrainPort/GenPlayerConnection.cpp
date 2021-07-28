@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "Protocol/GenConWriter.h"
+#include "Protocol/MapChunkBulkReader.h"
 #include "../Protocol/PacketReader.h"
 
 using namespace std;
@@ -68,7 +69,19 @@ void GenPlayerConnection::readMessage(){
     while(!p.reachedEnd()){
         Varint lenV = p.readVarint().getInt();
         int len = lenV.getInt();
-        int packetID = p.readPacketID();
+        int start = p.getIndex(); //used to get end index for MapChunkBulk
+
+        // Check if completely received
+        while(len > p.lenRemaining()){
+            // If here, it means that one packet was split over multiple
+            // TCP packets
+            lenRead = read(sock, buffer, bufferSize);
+            start += p.append((&buffer[0]), lenRead);
+        }
+
+        Varint packetIDV = p.readVarint().getInt();
+        int packetID = packetIDV.getInt();
+        cout << "Packet: " << hex << packetID << dec << "(" << len << ")" << endl;
 
         if(connState == 2){
             // Must be login success message
@@ -128,6 +141,13 @@ void GenPlayerConnection::readMessage(){
                 returnSpawnInPos();
             break;
         }
+        case 0x26:{
+            MapChunkBulkReader reader(p);
+            reader.readAll(start + len);
+
+            p.setIndex(reader.getIndex());
+            break;
+        }
 
         case 0x39:{ //Player abilities
 
@@ -137,7 +157,7 @@ void GenPlayerConnection::readMessage(){
             break;
         }
         default:
-            p.skip(len - lenV.getNBytes());
+            p.skip(len - packetIDV.getNBytes());
         }
 
     }
