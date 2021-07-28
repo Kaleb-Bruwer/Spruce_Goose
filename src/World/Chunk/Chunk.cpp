@@ -80,6 +80,51 @@ Chunk::Chunk(char* data, int size, ChunkCoord coord){
     activateChangeLog();
 }
 
+Chunk::Chunk(char* data, int &index, ChunkCoord pos, short bitmask, short addBitmask){
+    chunkCoord = coord;
+    commonConstructor();
+
+    // Read Block Type
+    for(int y=0; y<16; y++){
+        if(bitmask & (1 << y)){
+            sections[y] = new ChunkSection();
+            readRawBlocks(data + index, sections[y], y);
+            index += 4096;
+        }
+    }
+    for(int y=0; y<16; y++){
+        if(bitmask & (1 << y)){
+            readRawMeta(data + index, sections[y]);
+            index += 2048;
+        }
+    }
+
+    // I realize this isn't the most effective way to skip these fields, but
+    // that doesn't really matter. Plus I'll have to read them eventually anyways
+    for(int y=0; y<16; y++){
+        if(bitmask & (1 << y)){
+            //Block light
+            index += 2048;
+        }
+    }
+    for(int y=0; y<16; y++){
+        if(bitmask & (1 << y)){
+            //sky light
+            index += 2048;
+        }
+    }
+
+    for(int y=0; y<16; y++){
+        if(addBitmask & (1 << y)){
+            // Add data
+            index += 2048;
+        }
+    }
+
+    index += 256;
+}
+
+
 void Chunk::readRawBlocks(char* blocks, ChunkSection* sect, int sectIndex){
     for(int b=0; b<4096; b++){
         sect->blocks[b].id = (unsigned char) blocks[b];

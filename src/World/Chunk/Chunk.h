@@ -77,6 +77,7 @@ public:
     Chunk(ChunkCoord c);
     Chunk(Chunk*); //Used for FullChunk packets
     Chunk(char* data, int size, ChunkCoord pos); //Uncompressed chunk data from file
+    Chunk(char* data, int &index, ChunkCoord pos, short bitmask, short addBitmask); //Uncompressed chunk data from protocol
     ~Chunk();
 
     ChunkCoord getChunkCoord(){
