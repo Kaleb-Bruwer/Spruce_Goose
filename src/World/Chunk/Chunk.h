@@ -29,6 +29,10 @@ current state of this class is meant to be a temporary solution
 */
 
 class Chunk{
+private:
+    void readRawBlocks(char* data, ChunkSection* sect, int sectIndex);
+    void readRawMeta(char* data, ChunkSection* sect);
+
 protected:
     const int numSections = 16; //In case height limit changes (I hope it does)
     ChunkCoord chunkCoord;

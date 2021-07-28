@@ -68,33 +68,42 @@ Chunk::Chunk(char* data, int size, ChunkCoord coord){
         sections[y] = sect;
 
         char* blocks = ((Tag_Byte_Array*)s->getItem("Blocks"))->getArray();
-        for(int b=0; b<4096; b++){
-            sect->blocks[b].id = (unsigned char) blocks[b];
+        readRawBlocks(blocks, sect, i);
 
-            //This method means I don't need to calculate excessive coordinates
-            BlockData* bd = makeBlockData(blocks[b]);
-            if(bd){
-                Coordinate<int> pos;
-                pos.y = i * 16;
-                pos.y += floor(b/256);
-                pos.x = b % 16;
-                pos.z = (b >> 4) % 16;
-
-                makeBlockData(pos, bd);
-            }
-        }
         char* meta = ((Tag_Byte_Array*)s->getItem("Data"))->getArray();
-        for(int b=0; b<2048; b++){
-            char val = meta[b];
-            sect->blocks[2*b+1].metadata = val >> 4;
-            sect->blocks[2*b].metadata = val & 0xF;
-        }
+        readRawMeta(meta, sect);
 
         //Light values
     }
 
     //read nbt->Level->Entities
     activateChangeLog();
+}
+
+void Chunk::readRawBlocks(char* blocks, ChunkSection* sect, int sectIndex){
+    for(int b=0; b<4096; b++){
+        sect->blocks[b].id = (unsigned char) blocks[b];
+
+        //This method means I don't need to calculate excessive coordinates
+        BlockData* bd = makeBlockData(blocks[b]);
+        if(bd){
+            Coordinate<int> pos;
+            pos.y = sectIndex * 16;
+            pos.y += floor(b/256);
+            pos.x = b % 16;
+            pos.z = (b >> 4) % 16;
+
+            makeBlockData(pos, bd);
+        }
+    }
+}
+
+void Chunk::readRawMeta(char* meta, ChunkSection* sect){
+    for(int b=0; b<2048; b++){
+        char val = meta[b];
+        sect->blocks[2*b+1].metadata = val >> 4;
+        sect->blocks[2*b].metadata = val & 0xF;
+    }
 }
 
 void Chunk::activateChangeLog(){
