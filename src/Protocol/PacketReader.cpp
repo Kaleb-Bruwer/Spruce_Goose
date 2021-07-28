@@ -38,8 +38,8 @@ int PacketReader::append(char* start, int len){
 
         memmove(&(buffer[0]), &buffer[index], size - index);
         memcpy(&buffer[size - index], start, len);
-        index = 0;
         size = size - index + len;
+        index = 0;
         return dist;
     }
     else{
