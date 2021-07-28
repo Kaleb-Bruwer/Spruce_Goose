@@ -22,7 +22,7 @@ MapChunkBulkReader::~MapChunkBulkReader(){
 }
 
 
-void MapChunkBulkReader::readAll(int end){
+void MapChunkBulkReader::readAll(int end, vector<Chunk*> &chunks){
     short int numChunks = readShort();
     int dataLen = readInt();
     bool skylightSent = readBool();
@@ -78,7 +78,6 @@ void MapChunkBulkReader::readAll(int end){
     }
 
     int index = 0;
-    vector<Chunk*> chunks;
     for(int i=0; i<numChunks; i++){
         Chunk* chunk = new Chunk(uncompressed, index, metaStructs[i].coord,
             metaStructs[i].bitmask, metaStructs[i].addBitmask);

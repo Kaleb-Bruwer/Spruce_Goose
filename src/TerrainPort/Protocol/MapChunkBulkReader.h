@@ -9,6 +9,8 @@ struct RawChunkMeta{
     short int addBitmask;
 };
 
+class Chunk;
+
 class MapChunkBulkReader : public PacketReader{
 private:
     //If this object shadows another PacketReader, it can't delete its data
@@ -21,5 +23,5 @@ public:
     ~MapChunkBulkReader();
 
     // end: end index of this packet (excluded)
-    void readAll(int end);
+    void readAll(int end, vector<Chunk*> &dest);
 };

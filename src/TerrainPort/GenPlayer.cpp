@@ -51,3 +51,10 @@ void GenPlayer::sendChunk(Chunk* c, SynchedArea* dest){
     job->chunk = c;
     dest->pushJob(job);
 }
+
+void GenPlayer::readMessage(){
+    vector<Chunk*> newChunks = connection.readMessage();
+    for(int i=0; i< newChunks.size(); i++){
+        uncollected.setVal(newChunks[i]->getChunkCoord(), newChunks[i]);
+    }
+}

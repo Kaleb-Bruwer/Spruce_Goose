@@ -10,6 +10,7 @@
 
 
 class GenPlayer;
+class Chunk;
 
 class GenPlayerConnection{
 private:
@@ -28,7 +29,7 @@ private:
 
 public:
     void sendMessage(PacketWriter &p);
-    void readMessage();
+    vector<Chunk*> readMessage();
 
     void returnSpawnInPos();
 

@@ -35,6 +35,6 @@ public:
 
     bool addChunk(ChunkCoord coord, SynchedArea* dest);
 
-    void readMessage(){connection.readMessage();};
+    void readMessage();
 
 };

@@ -55,14 +55,16 @@ void GenPlayerConnection::sendMessage(PacketWriter &p){
     write(sock, start, length);
 }
 
-void GenPlayerConnection::readMessage(){
+vector<Chunk*> GenPlayerConnection::readMessage(){
+    vector<Chunk*> result;
+
     const int bufferSize = 8192;
     char buffer[bufferSize];
 
     int lenRead = read(sock, buffer, bufferSize);
 
     if(lenRead <= 0)
-        return;
+        return result;
 
     PacketReader p((&buffer[0]), lenRead);
 
@@ -143,7 +145,7 @@ void GenPlayerConnection::readMessage(){
         }
         case 0x26:{
             MapChunkBulkReader reader(p);
-            reader.readAll(start + len);
+            reader.readAll(start + len, result);
 
             p.setIndex(reader.getIndex());
             break;
@@ -161,7 +163,7 @@ void GenPlayerConnection::readMessage(){
         }
 
     }
-
+    return result;
 }
 
 void GenPlayerConnection::handshake(){
