@@ -144,6 +144,11 @@ Chunk* CompressedChunk::getChunk(){
         if(uncompress((Bytef*)uncompressed, &ucompSize, (Bytef*) data, compSize) == Z_OK)
             break;
 
+        if(size >= 1048576 * 256){
+            cout << "Can't decompress chunk in CompressedChunk::getChunk, too big\n";
+            throw -1;
+        }
+
         //If here, destination isn't big enough. Gonna increase
         //its size and try again
         size *= 4;
