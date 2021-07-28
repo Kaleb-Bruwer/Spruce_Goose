@@ -33,7 +33,8 @@ public:
     PacketReader(char* start, int size);
     virtual ~PacketReader();
 
-    void append(char* start, int size);
+    // Returns change to index, either 0 or negative (moved to left)
+    int append(char* start, int size);
 
     bool reachedEnd();
 

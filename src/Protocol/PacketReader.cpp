@@ -31,14 +31,16 @@ PacketReader::~PacketReader(){
         delete [] buffer;
 }
 
-void PacketReader::append(char* start, int len){
+int PacketReader::append(char* start, int len){
     if((index + bufferSize - size) > len){
         //Buffer has space if already-used data is removed
+        int dist = 0 - index;
+
         memmove(&(buffer[0]), &buffer[index], size - index);
         memcpy(&buffer[size - index], start, len);
         index = 0;
         size = size - index + len;
-        return;
+        return dist;
     }
     else{
         int oldSize = size - index;
@@ -52,7 +54,7 @@ void PacketReader::append(char* start, int len){
         index = 0;
         bufferSize = oldSize + len;
         size = bufferSize;
-        return;
+        return 0;
     }
 }
 
@@ -167,8 +169,10 @@ Slot PacketReader::readSlot(){
 }
 
 void PacketReader::readSegment(unsigned short numBytes, char* start){
-    if(index + numBytes > size)
+    if(index + numBytes > size){
+        cout << "Can't read segment\n";
         return;
+    }
 
     memcpy(start, &(buffer[index]), numBytes);
     index += numBytes;
