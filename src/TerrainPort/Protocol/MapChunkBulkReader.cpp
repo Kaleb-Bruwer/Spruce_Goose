@@ -1,7 +1,8 @@
 #include "MapChunkBulkReader.h"
 
+#include "../../World/Chunk/Chunk.h"
 #include "../../Protocol/ProtocolHelpers.h"
-
+#include "../../zlib/zlib.h"
 #include <vector>
 
 using namespace std;
@@ -49,7 +50,43 @@ void MapChunkBulkReader::readAll(int end){
         memcpy(&metaStructs[i].addBitmask, &(meta[12*i + 10]),2);
         switchEndian(&metaStructs[i].addBitmask, 2);
     }
-
-    delete [] data;
     delete [] meta;
+
+    // DECOMPRESSION
+
+    uLong compSize = dataLen;
+
+    uLong size = 524288; //Size of array, starts at 512kb
+    uLong ucompSize = size; //Size of data in array
+    char* uncompressed = new char[size];
+
+    while(true){
+        if(uncompress((Bytef*)uncompressed, &ucompSize, (Bytef*) data, compSize) == Z_OK)
+            break;
+
+        if(size >= 1048576 * 32){ //max of 32mb
+            cout << "Can't decompress in MapChunkBulk, result is too big\n";
+            throw -1;
+        }
+
+        //If here, destination isn't big enough. Gonna increase
+        //its size and try again
+        size *= 4;
+        delete [] uncompressed;
+        uncompressed = new char[size];
+        ucompSize = size;
+    }
+
+    int index = 0;
+    vector<Chunk*> chunks;
+    for(int i=0; i<numChunks; i++){
+        Chunk* chunk = new Chunk(uncompressed, index, metaStructs[i].coord,
+            metaStructs[i].bitmask, metaStructs[i].addBitmask);
+        chunks.push_back(chunk);
+        delete chunk; //temporary line
+    }
+
+
+    delete [] uncompressed;
+    delete [] data;
 }
