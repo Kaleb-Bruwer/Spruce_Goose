@@ -16,4 +16,7 @@ public:
     // Adds chunk that must be requested
     void addChunk(ChunkCoord coord, SynchedArea* dest);
 
+    // Also removes those clusters from ClusterGroup
+    vector<Cluster> getReadyClusters();
+
 };

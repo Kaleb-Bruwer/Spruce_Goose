@@ -68,6 +68,10 @@ void TerrainPort::read(){
     }
 }
 
+void TerrainPort::processClusters(){
+    
+}
+
 
 bool TerrainPort::handleJobTickets(){
     bool flag = true;

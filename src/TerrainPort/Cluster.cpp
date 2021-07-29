@@ -71,10 +71,20 @@ void Cluster::remove(ChunkCoord c){
     }
 }
 
-
-
 bool Cluster::isOld(){
     auto present = chrono::high_resolution_clock::now();
     int age = chrono::duration_cast<chrono::milliseconds>(present - oldestArrival).count();
     return(age >= oldAge);
+}
+
+bool Cluster::canSend(){
+    if(isOld())
+        return true;
+
+    int fullSize = renderDistance * 2 + 1;
+    fullSize *= fullSize;
+
+    const float minCutoff = 0.7;
+
+    return ((double) values.size()) / fullSize >= minCutoff; 
 }

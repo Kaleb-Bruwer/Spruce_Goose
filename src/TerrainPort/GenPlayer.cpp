@@ -12,7 +12,7 @@ void GenPlayer::setCluster(Cluster c){
     outstanding = c.values.size();
 
     // Apply to connection
-
+    connection.sendTeleport(c.center);
 
 }
 

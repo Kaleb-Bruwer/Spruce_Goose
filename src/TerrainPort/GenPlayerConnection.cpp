@@ -83,7 +83,6 @@ vector<Chunk*> GenPlayerConnection::readMessage(){
 
         Varint packetIDV = p.readVarint().getInt();
         int packetID = packetIDV.getInt();
-        cout << "Packet: " << hex << packetID << dec << "(" << len << ")" << endl;
 
         if(connState == 2){
             // Must be login success message

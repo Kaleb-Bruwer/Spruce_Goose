@@ -33,6 +33,7 @@ protected:
     friend class GenPlayer;
 
 public:
+    // Set in TerrainPort's constructor
     inline static int renderDistance;
 
     // Used to quickly exlude far coordinates, includes renderDistance buffer
@@ -57,4 +58,6 @@ public:
 
     // true if a chunk arrived long enough ago
     bool isOld();
+    // Cluster is ready to be sent (combination of age and % filled)
+    bool canSend();
 };

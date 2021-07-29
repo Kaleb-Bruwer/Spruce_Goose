@@ -35,6 +35,7 @@ private:
     void run(); //main loop for this class
 
     void read();
+    void processClusters();
 
     // Singleton-related
     inline static TerrainPort* instance = 0;

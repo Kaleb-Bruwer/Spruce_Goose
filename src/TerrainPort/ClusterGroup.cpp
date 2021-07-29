@@ -36,3 +36,17 @@ void ClusterGroup::addChunk(ChunkCoord coord, SynchedArea* dest){
         }
     }
 }
+
+vector<Cluster> ClusterGroup::getReadyClusters(){
+    vector<Cluster> result;
+    for(auto it = clusters.begin(); it != clusters.end();){
+        if(it->canSend()){
+            result.push_back(*it);
+            it = clusters.erase(it);
+        }
+        else{
+            it++;
+        }
+    }
+    return result;
+}
