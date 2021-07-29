@@ -46,6 +46,7 @@ void TerrainPort::run(){
     while(!quit){
         // Read and handle incoming requests
         if(!handleJobTickets())
+            // Will sleep if no jobs were found
             this_thread::sleep_for(sleepLen);
 
         // Read & handle incoming packets

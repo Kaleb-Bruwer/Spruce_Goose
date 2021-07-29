@@ -7,12 +7,13 @@
 
 #include "../Datastructures/BlockingQueueCounting.h"
 #include "../JobTickets/JobTicket.h"
+#include "TerrainInterface.h"
 
 using namespace std;
 
 class GeneratorThread;
 
-class WorldGenerator{
+class WorldGenerator : public TerrainInterface{
 private:
     const unsigned int nStartingThreads = 64;
 
@@ -25,14 +26,15 @@ private:
     bool stop = false;
     void run();
 
-    inline static WorldGenerator* instance = 0;
-    inline static mutex constructMutex;
+    // inline static WorldGenerator* instance = 0;
+    // inline static mutex constructMutex;
 
     WorldGenerator();
     ~WorldGenerator();
+    friend TerrainInterface;
 
 public:
-    static WorldGenerator* getInstance();
+    // static WorldGenerator* getInstance();
 
     void pushJob(JobTicket* job);
     void quit();

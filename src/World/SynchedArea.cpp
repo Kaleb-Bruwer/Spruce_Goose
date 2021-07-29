@@ -7,7 +7,7 @@
 #include "ThreadArea.h"
 #include "World.h"
 
-#include "../Generator/WorldGenerator.h"
+#include "../Generator/TerrainInterface.h"
 
 #include "../JobTickets/Redirect.h"
 #include "../JobTickets/LoadChunk.h"
@@ -26,7 +26,7 @@ using namespace std;
 
 SynchedArea::SynchedArea(World* w, bool makeT){
     world = w;
-    worldGenerator = WorldGenerator::getInstance();
+    terrainInterface = TerrainInterface::getInstance();
     lastWrite = chrono::steady_clock::now();
 
     if(makeT)
@@ -170,7 +170,7 @@ void SynchedArea::loadChunk(JobTicket* j){
         GenerateChunkRequest* job2 = new GenerateChunkRequest();
         job2->chunkPos = job->chunkPos;
         job2->origin = this;
-        worldGenerator->pushJob(job2);
+        terrainInterface->pushJob(job2);
     }
 }
 

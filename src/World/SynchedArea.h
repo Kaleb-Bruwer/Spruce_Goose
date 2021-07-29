@@ -24,7 +24,7 @@ using namespace std;
 class World;
 class ThreadArea;
 class SynchedAreaMap;
-class WorldGenerator;
+class TerrainInterface;
 
 class SynchedArea{
 private:
@@ -53,7 +53,7 @@ private:
 
     //!!!!!!!!!!!
     //This stuff is all related to myThread
-    WorldGenerator* worldGenerator = 0;
+    TerrainInterface* terrainInterface = 0;
     thread* myThread = 0;
     BlockingQueue<JobTicket*> inQueue;
     bool stop = false;

@@ -106,6 +106,8 @@ SET (SRCS
 
     ./src/Generator/WorldGenerator.h
     ./src/Generator/WorldGenerator.cpp
+    ./src/Generator/TerrainInterface.h
+    ./src/Generator/TerrainInterface.cpp
     ./src/Generator/GeneratorThread.h
     ./src/Generator/GeneratorThread.cpp
     ./src/Generator/SuperflatGenerator.h

@@ -26,16 +26,16 @@ WorldGenerator::~WorldGenerator(){
     }
 }
 
-WorldGenerator* WorldGenerator::getInstance(){
-    if(!instance){
-        constructMutex.lock();
-        if(!instance){
-            instance = new WorldGenerator();
-        }
-        constructMutex.unlock();
-    }
-    return instance;
-}
+// WorldGenerator* WorldGenerator::getInstance(){
+//     if(!instance){
+//         constructMutex.lock();
+//         if(!instance){
+//             instance = new WorldGenerator();
+//         }
+//         constructMutex.unlock();
+//     }
+//     return instance;
+// }
 
 void WorldGenerator::pushJob(JobTicket* job){
     job->pickup();
