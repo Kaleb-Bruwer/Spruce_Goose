@@ -49,6 +49,8 @@ public:
 
     bool fitsHere(ChunkCoord c);
     void add(ChunkCoord c, SynchedArea* dest);
+    SynchedArea* getDest(ChunkCoord c);
+    void remove(ChunkCoord c);
 
     // moves everything from rhs into this
     void merge(Cluster &rhs);

@@ -53,8 +53,19 @@ void GenPlayer::sendChunk(Chunk* c, SynchedArea* dest){
 }
 
 void GenPlayer::readMessage(){
+    // Note that none of the chunks are deleted here, they're all passed on
     vector<Chunk*> newChunks = connection.readMessage();
     for(int i=0; i< newChunks.size(); i++){
-        uncollected.setVal(newChunks[i]->getChunkCoord(), newChunks[i]);
+        ChunkCoord coord = newChunks[i]->getChunkCoord();
+        SynchedArea* dest = activeCluster.getDest(coord);
+        if(dest){
+            sendChunk(newChunks[i], dest);
+            activeCluster.remove(coord);
+        }
+        else{
+            uncollected.setVal(coord, newChunks[i]);
+
+        }
+
     }
 }

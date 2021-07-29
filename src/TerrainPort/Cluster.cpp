@@ -51,6 +51,28 @@ void Cluster::merge(Cluster &rhs){
     rhs.values.clear();
 }
 
+SynchedArea* Cluster::getDest(ChunkCoord coord){
+    if(!inBoundingBox(coord))
+        return 0;
+
+    for(ClusterVal &c : values){
+        if(c.coord == coord)
+            return c.dest;
+    }
+    return 0;
+}
+
+void Cluster::remove(ChunkCoord c){
+    for(int i=0; i!= values.size(); i++){
+        if(values[i].coord == c){
+            values.erase(values.begin() + i);
+            return;
+        }
+    }
+}
+
+
+
 bool Cluster::isOld(){
     auto present = chrono::high_resolution_clock::now();
     int age = chrono::duration_cast<chrono::milliseconds>(present - oldestArrival).count();
