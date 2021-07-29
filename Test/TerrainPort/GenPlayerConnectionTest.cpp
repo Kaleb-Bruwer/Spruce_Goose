@@ -2,6 +2,7 @@
 #include <string>
 #include <chrono>
 #include <vector>
+#include <thread>
 
 #include "../../src/TerrainPort/GenPlayerConnection.h"
 

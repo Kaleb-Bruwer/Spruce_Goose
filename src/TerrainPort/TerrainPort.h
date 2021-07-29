@@ -4,6 +4,7 @@
 #include <map>
 #include <sys/epoll.h>
 
+#include "../Generator/TerrainInterface.h"
 #include "../Datastructures/BlockingQueue.h"
 #include "../JobTickets/JobTicket.h"
 #include "Cluster.h"
@@ -18,7 +19,7 @@ struct TimestampedChunk{
     Chunk* chunk;
 };
 
-class TerrainPort{
+class TerrainPort : public TerrainInterface{
 private:
     int epfd;
 
@@ -40,10 +41,6 @@ private:
     // checkedIndex used to only iterate over players once instead of repeating it for every cluster
     bool trySendCluster(Cluster a, int &checkedIndex);
 
-    // Singleton-related
-    inline static TerrainPort* instance = 0;
-    inline static mutex constructMutex;
-
     // Clusters
     int renderDistance = 4;
     ClusterGroup clusters;
@@ -64,8 +61,9 @@ private:
     void getChunk(ChunkCoord coord, SynchedArea* returnAddr);
     void sendChunk(Chunk* c, SynchedArea* dest);
 
+    friend class TerrainInterface;
+
 public:
-    static TerrainPort* getInstance();
     void pushJob(JobTicket* job){
         job->pickup();
         inQueue.push(job);

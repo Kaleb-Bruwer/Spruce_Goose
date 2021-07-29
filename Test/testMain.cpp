@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 
-#include "./TerrainPort/TerrainPortTest.cpp"
 #include "./TerrainPort/GenPlayerConnectionTest.cpp"
 #include "./Protocol/PacketReaderTest.cpp"
 

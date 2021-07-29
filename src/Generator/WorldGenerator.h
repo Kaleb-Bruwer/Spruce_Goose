@@ -26,15 +26,11 @@ private:
     bool stop = false;
     void run();
 
-    // inline static WorldGenerator* instance = 0;
-    // inline static mutex constructMutex;
-
     WorldGenerator();
     ~WorldGenerator();
     friend TerrainInterface;
 
 public:
-    // static WorldGenerator* getInstance();
 
     void pushJob(JobTicket* job);
     void quit();

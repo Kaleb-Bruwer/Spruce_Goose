@@ -17,17 +17,6 @@ TerrainPort::TerrainPort(){
 
 TerrainPort::~TerrainPort(){}
 
-TerrainPort* TerrainPort::getInstance(){
-    if(!instance){
-        constructMutex.lock();
-        if(!instance){
-            instance = new TerrainPort();
-        }
-        constructMutex.unlock();
-    }
-    return instance;
-}
-
 void TerrainPort::addSockToEP(int sock){
     cout << "Added GenPlayer " << sock << endl;
     struct epoll_event ev;
