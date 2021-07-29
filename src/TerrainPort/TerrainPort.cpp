@@ -28,6 +28,19 @@ TerrainPort* TerrainPort::getInstance(){
     return instance;
 }
 
+void TerrainPort::addSockToEP(int sock){
+    cout << "Added GenPlayer " << sock << endl;
+    struct epoll_event ev;
+    ev.events = EPOLLIN | EPOLLPRI | EPOLLERR | EPOLLHUP;
+    ev.data.fd = sock;
+    int res = epoll_ctl(epfd, EPOLL_CTL_ADD, sock, &ev);
+
+    if(res < 0){
+        cout << "epoll_ctl ERROR in TerrainPort::addSockToEP\n";
+        cout << "Response " << res << " when adding sock = " << sock << endl;
+    }
+}
+
 // Should run for entirety of program lifetime, so memory cleanup isn't really important
 void TerrainPort::run(){
     while(!quit){
@@ -37,7 +50,7 @@ void TerrainPort::run(){
 
         // Read & handle incoming packets
         read();
-
+        processClusters();
     }
 }
 
@@ -69,7 +82,53 @@ void TerrainPort::read(){
 }
 
 void TerrainPort::processClusters(){
-    
+    int pIndex = 0;
+
+    for(auto it = sendingQueue.begin(); it != sendingQueue.end();){
+        if(!trySendCluster(*it, pIndex))
+            return;
+        it = sendingQueue.erase(it);
+    }
+
+    vector<Cluster> mustSend = clusters.getReadyClusters();
+    // Function exits once mustSend is empty
+
+    bool flag = true;
+    int index = 0;
+    while(flag){
+        if(index >= mustSend.size())
+            return;
+        if(!trySendCluster(mustSend[index], pIndex)){
+            flag = false;
+        }
+        else{
+            index++;
+        }
+    }
+
+    for(; index < mustSend.size(); index++){
+        sendingQueue.push_back(mustSend[index]);
+    }
+}
+
+bool TerrainPort::trySendCluster(Cluster a, int &i){
+    for(; i<numGenPlayers; i++){
+        if(players[i].onStandby()){
+            players[i].setCluster(a);
+            return true;
+        }
+    }
+
+    // If not, create a new GenPlayer if possible
+    if(numGenPlayers < maxGenPlayers){
+        int sock = players[numGenPlayers].activate();
+        addSockToEP(sock);
+
+        players[numGenPlayers].setCluster(a);
+        numGenPlayers++;
+        return true;
+    }
+    return false;
 }
 
 

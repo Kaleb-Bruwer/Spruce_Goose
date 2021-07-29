@@ -27,6 +27,9 @@ public:
         return outstanding == 0;
     };
 
+    //Opens connection to server, returns socket handle
+    int activate();
+
     void setCluster(Cluster c);
 
     bool addChunk(ChunkCoord coord, SynchedArea* dest);

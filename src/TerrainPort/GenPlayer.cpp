@@ -4,6 +4,10 @@
 #include "../JobTickets/GeneratorToWorld/ChunkFromGenerator.h"
 #include "../World/SynchedArea.h"
 
+int GenPlayer::activate(){
+    connection.openConnection((std::string)"127.0.0.1", 10000);
+    return connection.sock;
+}
 
 void GenPlayer::setCluster(Cluster c){
     activeCluster  = c;

@@ -23,6 +23,7 @@ private:
     int epfd;
 
     // This is an arbitrary value, just change it if needed
+    int numGenPlayers = 0;
     static const int maxGenPlayers = 32;
     struct epoll_event events[maxGenPlayers];
 
@@ -36,6 +37,8 @@ private:
 
     void read();
     void processClusters();
+    // checkedIndex used to only iterate over players once instead of repeating it for every cluster
+    bool trySendCluster(Cluster a, int &checkedIndex);
 
     // Singleton-related
     inline static TerrainPort* instance = 0;
@@ -44,6 +47,7 @@ private:
     // Clusters
     int renderDistance = 4;
     ClusterGroup clusters;
+    vector<Cluster> sendingQueue;
     GenPlayer players[maxGenPlayers];
     map<int,int> playersBySockets;
 
@@ -54,6 +58,7 @@ private:
     ~TerrainPort();
 
     bool handleJobTickets();
+    void addSockToEP(int sock);
 
     // Assumes that chunks will only be requested once
     void getChunk(ChunkCoord coord, SynchedArea* returnAddr);
