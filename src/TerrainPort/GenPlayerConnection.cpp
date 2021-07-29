@@ -52,6 +52,13 @@ void GenPlayerConnection::sendMessage(PacketWriter &p){
 
     char* start = p.getBuffer();
     int length = p.getIndex();
+
+    cout << "GenPlayer sending message:\n";
+    for(int i=0; i<length; i++){
+        cout << (int)(unsigned char)start[i] << " ";
+    }
+    cout << endl;
+
     write(sock, start, length);
 }
 
@@ -176,23 +183,30 @@ void GenPlayerConnection::handshake(string username){
 }
 
 void GenPlayerConnection::sendTeleport(ChunkCoord cCoord){
-    Coordinate<int> coord;
-    coord.x = cCoord.x *16 + 8;
-    coord.y = 100;
-    coord.z = cCoord.z *16 + 8;
+    if(hasSpawned){
+        Coordinate<int> coord;
+        coord.x = cCoord.x *16 + 8;
+        coord.y = 100;
+        coord.z = cCoord.z *16 + 8;
 
-    string msg;
-    msg = "/tp " + to_string(coord.x) + " " + to_string(coord.y) + " " + to_string(coord.z);
+        string msg;
+        msg = "/tp " + to_string(coord.x) + " " + to_string(coord.y) + " " + to_string(coord.z);
 
-    string jsonMessage = "{text:\""+ msg +"\"}";
+        string jsonMessage = "{text:\""+ msg +"\"}";
 
-    PacketWriter writer;
-    writer.writePacketID(0x01);
-    writer << jsonMessage;
+        PacketWriter writer;
+        writer.writePacketID(0x01);
+        writer << (string)"Hello";
 
-    writer.addMsgLen();
+        writer.addMsgLen();
 
-    // sendMessage(writer);
+        cout << "GenPlayerConnection sending tp " << writer.getIndex() << endl;
+        sendMessage(writer);
+    }
+    else{
+        mustTP = true;
+        pendingTP = cCoord;
+    }
 }
 
 
@@ -200,4 +214,8 @@ void GenPlayerConnection::returnSpawnInPos(){
     GenConWriter writer;
     writer.writePosAndLook(pos, yaw, pitch, onGround);
     hasSpawned = true;
+    if(mustTP){
+        sendTeleport(pendingTP);
+        mustTP = false;
+    }
 }

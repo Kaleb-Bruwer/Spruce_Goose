@@ -26,6 +26,9 @@ private:
     float pitch;
     bool onGround;
 
+    bool mustTP;
+    ChunkCoord pendingTP;
+
     friend class GenPlayer;
 
 public:
