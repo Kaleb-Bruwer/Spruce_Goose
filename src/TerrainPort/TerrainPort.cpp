@@ -35,18 +35,39 @@ void TerrainPort::run(){
         if(!handleJobTickets())
             this_thread::sleep_for(sleepLen);
 
-        // Read incoming packets
-        //timeout is in ms
-        const int timeout = 50;
-        int numToRead = epoll_wait(epfd, &(events[0]), maxGenPlayers, timeout);
-
-        for(int i=0; i<numToRead; i++){
-            int sock = events[i].data.fd;
-            int playerIndex = playersBySockets[sock];
-        }
+        // Read & handle incoming packets
+        read();
 
     }
 }
+
+void TerrainPort::read(){
+    //timeout is in ms
+    const int timeout = 50;
+    int numToRead = epoll_wait(epfd, &(events[0]), maxGenPlayers, timeout);
+
+    for(int i=0; i<numToRead; i++){
+        int sock = events[i].data.fd;
+        int playerIndex = playersBySockets[sock];
+
+        vector<Chunk*> b = players[playerIndex].readMessage();
+
+        for(Chunk* chunk : b){
+            struct TimestampedChunk chunkT;
+            chunkT.chunk = chunk;
+            chunkT.time = chrono::high_resolution_clock::now();
+            ChunkCoord coord = chunk->getChunkCoord();
+
+            if(buffer.find(coord) != buffer.end()){
+                Chunk* oldChunk = buffer[coord].chunk;
+                if(oldChunk)
+                    delete oldChunk;
+            }
+            buffer[coord] = chunkT;
+        }
+    }
+}
+
 
 bool TerrainPort::handleJobTickets(){
     bool flag = true;

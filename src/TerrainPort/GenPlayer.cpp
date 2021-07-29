@@ -8,18 +8,6 @@
 void GenPlayer::setCluster(Cluster c){
     activeCluster  = c;
 
-    // Must check that cluster isn't already in buffer, since server won't
-    // resend such chunks
-    for(auto it = c.values.begin(); it != c.values.end();){
-        Chunk* chunk = uncollected.getVal(it->coord);
-        if(chunk){
-            sendChunk(chunk, it->dest);
-            it = c.values.erase(it);
-        }
-        else
-            it++;
-    }
-
     // Calculate new outstanding values
     outstanding = c.values.size();
 
@@ -63,7 +51,7 @@ void GenPlayer::readMessage(){
             activeCluster.remove(coord);
         }
         else{
-            uncollected.setVal(coord, newChunks[i]);
+            uncollected.push_back(newChunks[i]);
 
         }
 

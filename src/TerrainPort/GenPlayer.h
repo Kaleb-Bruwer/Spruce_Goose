@@ -20,10 +20,6 @@ private:
     // CONNECTION INFO
     GenPlayerConnection connection;
 
-    // BUFFER
-    ChunkMap<Chunk*> uncollected;
-
-
     void sendChunk(Chunk* c, SynchedArea* s);
 
 public:
@@ -35,6 +31,8 @@ public:
 
     bool addChunk(ChunkCoord coord, SynchedArea* dest);
 
-    void readMessage();
+    // Reads data from connection and handles it
+    // Returns chunks that it doesn't have a destination for
+    vector<Chunk*> readMessage();
 
 };

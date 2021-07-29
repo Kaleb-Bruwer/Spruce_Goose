@@ -34,6 +34,8 @@ private:
     const chrono::milliseconds sleepLen{10};
     void run(); //main loop for this class
 
+    void read();
+
     // Singleton-related
     inline static TerrainPort* instance = 0;
     inline static mutex constructMutex;
