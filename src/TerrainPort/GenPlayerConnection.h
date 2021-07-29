@@ -7,6 +7,7 @@
 
 #include "../Protocol/PacketWriter.h"
 #include "../Datastructures/Coordinate/Coordinate.h"
+#include "../Datastructures/Coordinate/ChunkCoord.h"
 
 
 class GenPlayer;
@@ -37,6 +38,7 @@ public:
     void closeConnection();
 
     void handshake();
+    void sendTeleport(ChunkCoord coord);
 
     bool getIsOpen(){return isOpen;};
     bool getHasSpawned(){return hasSpawned;};

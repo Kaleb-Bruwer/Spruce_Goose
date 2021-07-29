@@ -176,6 +176,24 @@ void GenPlayerConnection::handshake(){
 
 }
 
+void GenPlayerConnection::sendTeleport(ChunkCoord cCoord){
+    Coordinate<int> coord;
+    coord.x = cCoord.x *16 + 8;
+    coord.y = 100;
+    coord.z = cCoord.z *16 + 8;
+
+    string msg;
+    msg = "/tp " + to_string(coord.x) + " " + to_string(coord.y) + " " + to_string(coord.z);
+
+    string jsonMessage = "{text:\""+ msg +"\"}";
+
+    PacketWriter writer;
+    writer.writePacketID(0x01);
+    writer << jsonMessage;
+    sendMessage(writer);
+}
+
+
 void GenPlayerConnection::returnSpawnInPos(){
     GenConWriter writer;
     writer.writePosAndLook(pos, yaw, pitch, onGround);
