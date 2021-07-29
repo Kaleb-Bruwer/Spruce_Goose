@@ -28,7 +28,7 @@ public:
     };
 
     //Opens connection to server, returns socket handle
-    int activate();
+    int activate(std::string username);
 
     void setCluster(Cluster c);
 

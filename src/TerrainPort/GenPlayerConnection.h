@@ -34,10 +34,10 @@ public:
 
     void returnSpawnInPos();
 
-    void openConnection(std::string addr, int port);
+    void openConnection(std::string addr, int port, std::string username);
     void closeConnection();
 
-    void handshake();
+    void handshake(string username);
     void sendTeleport(ChunkCoord coord);
 
     bool getIsOpen(){return isOpen;};

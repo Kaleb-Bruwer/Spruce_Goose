@@ -60,6 +60,7 @@ void TerrainPort::read(){
             chunkT.chunk = chunk;
             chunkT.time = chrono::high_resolution_clock::now();
             ChunkCoord coord = chunk->getChunkCoord();
+            cout << "Received chunk" << coord << endl;
 
             if(buffer.find(coord) != buffer.end()){
                 Chunk* oldChunk = buffer[coord].chunk;
@@ -111,7 +112,8 @@ bool TerrainPort::trySendCluster(Cluster a, int &i){
 
     // If not, create a new GenPlayer if possible
     if(numGenPlayers < maxGenPlayers){
-        int sock = players[numGenPlayers].activate();
+        string username = "bot" + to_string(numGenPlayers);
+        int sock = players[numGenPlayers].activate(username);
         addSockToEP(sock);
 
         players[numGenPlayers].setCluster(a);

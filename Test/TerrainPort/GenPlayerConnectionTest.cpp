@@ -10,7 +10,7 @@
 
 TEST(GenPlayerConnection, connect){
     GenPlayerConnection connection;
-    connection.openConnection((std::string)"127.0.0.1", 10000);
+    connection.openConnection((std::string)"127.0.0.1", 10000, "bot0");
     ASSERT_TRUE(connection.getIsOpen()) << "Couldn't open connection";
 
 

@@ -4,8 +4,10 @@
 #include "../JobTickets/GeneratorToWorld/ChunkFromGenerator.h"
 #include "../World/SynchedArea.h"
 
-int GenPlayer::activate(){
-    connection.openConnection((std::string)"127.0.0.1", 10000);
+using namespace std;
+
+int GenPlayer::activate(string username){
+    connection.openConnection((std::string)"127.0.0.1", 10000, username);
     return connection.sock;
 }
 

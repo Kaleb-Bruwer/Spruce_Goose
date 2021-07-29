@@ -82,7 +82,6 @@ void MapChunkBulkReader::readAll(int end, vector<Chunk*> &chunks){
         Chunk* chunk = new Chunk(uncompressed, index, metaStructs[i].coord,
             metaStructs[i].bitmask, metaStructs[i].addBitmask);
         chunks.push_back(chunk);
-        delete chunk; //temporary line
     }
 
 

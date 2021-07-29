@@ -8,7 +8,7 @@
 
 using namespace std;
 
-void GenPlayerConnection::openConnection(string address, int port){
+void GenPlayerConnection::openConnection(string address, int port, string username){
     if(sock >= 0){
         close(sock);
         sock = -1;
@@ -36,7 +36,7 @@ void GenPlayerConnection::openConnection(string address, int port){
 
     isOpen = true;
 
-    handshake();
+    handshake(username);
 }
 
 
@@ -165,10 +165,10 @@ vector<Chunk*> GenPlayerConnection::readMessage(){
     return result;
 }
 
-void GenPlayerConnection::handshake(){
+void GenPlayerConnection::handshake(string username){
     GenConWriter writer;
     writer.writeHandshake();
-    writer.writeLoginStart("Bot1234");
+    writer.writeLoginStart(username);
 
     connState = 2;
     sendMessage(writer);
@@ -189,7 +189,10 @@ void GenPlayerConnection::sendTeleport(ChunkCoord cCoord){
     PacketWriter writer;
     writer.writePacketID(0x01);
     writer << jsonMessage;
-    sendMessage(writer);
+
+    writer.addMsgLen();
+
+    // sendMessage(writer);
 }
 
 
