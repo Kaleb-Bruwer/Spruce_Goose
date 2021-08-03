@@ -130,6 +130,12 @@ vector<Chunk*> GenPlayerConnection::readMessage(){
             break;
         }
 
+        case 0x02:{ //Chat, needed for debugging
+            string msg = p.readString();
+            // cout << "FROM world-gen: " << msg << endl;
+            break;
+        }
+
         case 0x05:{ //Spawn position ('home' spawn)
 
             p.readInt(); //x
@@ -192,11 +198,12 @@ void GenPlayerConnection::sendTeleport(ChunkCoord cCoord){
         string msg;
         msg = "/tp " + to_string(coord.x) + " " + to_string(coord.y) + " " + to_string(coord.z);
 
-        string jsonMessage = "{text:\""+ msg +"\"}";
+        // string jsonMessage = "{text:\""+ msg +"\"}";
 
         PacketWriter writer;
         writer.writePacketID(0x01);
-        writer << (string)"Hello";
+        // writer << (string)"/help";
+        writer << msg;
 
         writer.addMsgLen();
 

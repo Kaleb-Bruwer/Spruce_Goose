@@ -53,6 +53,7 @@ void TerrainPort::read(){
         int sock = events[i].data.fd;
         int playerIndex = playersBySockets[sock];
 
+        // Chunks that must be added to buffer
         vector<Chunk*> b = players[playerIndex].readMessage();
 
         for(Chunk* chunk : b){
@@ -60,7 +61,6 @@ void TerrainPort::read(){
             chunkT.chunk = chunk;
             chunkT.time = chrono::high_resolution_clock::now();
             ChunkCoord coord = chunk->getChunkCoord();
-            cout << "Received chunk" << coord << endl;
 
             if(buffer.find(coord) != buffer.end()){
                 Chunk* oldChunk = buffer[coord].chunk;
@@ -154,9 +154,10 @@ void TerrainPort::getChunk(ChunkCoord coord, SynchedArea* returnAddr){
     }
 
     //TODO: If already in a request, just set returnAddr
-    for(GenPlayer &p : players){
-        if(p.addChunk(coord, returnAddr))
+    for(int i=0; i<numGenPlayers; i++){
+        if(players[i].addChunk(coord, returnAddr)){
             return;
+        }
     }
 
 

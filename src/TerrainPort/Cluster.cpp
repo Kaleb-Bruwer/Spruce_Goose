@@ -14,6 +14,7 @@ bool Cluster::fitsHere(ChunkCoord c){
 }
 
 void Cluster::add(ChunkCoord c, SynchedArea* dest){
+    // cout << "Adding " << c << " to cluster\n";
     ClusterVal val;
     val.coord = c;
     val.dest = dest;
@@ -86,5 +87,5 @@ bool Cluster::canSend(){
 
     const float minCutoff = 0.7;
 
-    return ((double) values.size()) / fullSize >= minCutoff; 
+    return ((double) values.size()) / fullSize >= minCutoff;
 }

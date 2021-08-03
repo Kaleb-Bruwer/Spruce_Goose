@@ -26,10 +26,7 @@ bool GenPlayer::addChunk(ChunkCoord coord, SynchedArea* dest){
     if(!activeCluster.fitsHere(coord))
         return false;
 
-    ClusterVal val;
-    val.coord = coord;
-    val.dest = dest;
-    activeCluster.values.push_back(val);
+    activeCluster.add(coord, dest);
     return true;
 }
 
@@ -45,14 +42,17 @@ vector<Chunk*> GenPlayer::readMessage(){
 
     // Note that none of the chunks are deleted here, they're all passed on
     vector<Chunk*> newChunks = connection.readMessage();
+    outstanding -= newChunks.size();
     for(int i=0; i< newChunks.size(); i++){
         ChunkCoord coord = newChunks[i]->getChunkCoord();
         SynchedArea* dest = activeCluster.getDest(coord);
         if(dest){
+            cout << "Sending " << coord << " to dest\n";
             sendChunk(newChunks[i], dest);
             activeCluster.remove(coord);
         }
         else{
+            cout << "Adding " << coord << " to buffer\n";
             buffer.push_back(newChunks[i]);
 
         }

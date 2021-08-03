@@ -37,6 +37,7 @@ public:
     inline static int renderDistance;
 
     // Used to quickly exlude far coordinates, includes renderDistance buffer
+    // Doesn't seem to be used anymore
     ChunkCoord lowBound;
     ChunkCoord highBound;
 
