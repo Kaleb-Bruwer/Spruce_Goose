@@ -166,6 +166,7 @@ void TerrainPort::getChunk(ChunkCoord coord, SynchedArea* returnAddr){
 }
 
 void TerrainPort::sendChunk(Chunk* c, SynchedArea* dest){
+    cout << "Sending " << c->getChunkCoord() << " to dest\n";
     ChunkFromGenerator* job = new ChunkFromGenerator();
     job->chunk = c;
     dest->pushJob(job);

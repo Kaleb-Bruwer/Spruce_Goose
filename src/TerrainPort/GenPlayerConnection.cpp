@@ -53,12 +53,6 @@ void GenPlayerConnection::sendMessage(PacketWriter &p){
     char* start = p.getBuffer();
     int length = p.getIndex();
 
-    cout << "GenPlayer sending message:\n";
-    for(int i=0; i<length; i++){
-        cout << (int)(unsigned char)start[i] << " ";
-    }
-    cout << endl;
-
     write(sock, start, length);
 }
 
@@ -101,13 +95,6 @@ vector<Chunk*> GenPlayerConnection::readMessage(){
         }
 
         switch(packetID){
-        // case 0x3F:{
-        //     string channel = p.readString();
-        //     short int arrLen = p.readShort();
-        //     p.skip(arrLen);
-        //     cout << "PLUGIN CHANNEL " << channel << endl;
-        //     break;
-        // }
         case 0:{
             int keepAliveVal = p.readInt();
 
@@ -195,19 +182,14 @@ void GenPlayerConnection::sendTeleport(ChunkCoord cCoord){
         coord.y = 100;
         coord.z = cCoord.z *16 + 8;
 
-        string msg;
-        msg = "/tp " + to_string(coord.x) + " " + to_string(coord.y) + " " + to_string(coord.z);
-
-        // string jsonMessage = "{text:\""+ msg +"\"}";
-
         PacketWriter writer;
         writer.writePacketID(0x01);
-        // writer << (string)"/help";
+        string msg = "/tp " + to_string(coord.x) + " " + to_string(coord.y) + " " + to_string(coord.z);
         writer << msg;
 
         writer.addMsgLen();
 
-        cout << "GenPlayerConnection sending tp " << writer.getIndex() << endl;
+        // cout << "GenPlayerConnection sending tp " << writer.getIndex() << endl;
         sendMessage(writer);
     }
     else{

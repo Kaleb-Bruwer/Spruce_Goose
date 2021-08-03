@@ -32,6 +32,7 @@ bool GenPlayer::addChunk(ChunkCoord coord, SynchedArea* dest){
 
 
 void GenPlayer::sendChunk(Chunk* c, SynchedArea* dest){
+    cout << "Sending " << c->getChunkCoord() << " to dest\n";
     ChunkFromGenerator* job = new ChunkFromGenerator();
     job->chunk = c;
     dest->pushJob(job);
@@ -47,12 +48,10 @@ vector<Chunk*> GenPlayer::readMessage(){
         ChunkCoord coord = newChunks[i]->getChunkCoord();
         SynchedArea* dest = activeCluster.getDest(coord);
         if(dest){
-            cout << "Sending " << coord << " to dest\n";
             sendChunk(newChunks[i], dest);
             activeCluster.remove(coord);
         }
         else{
-            cout << "Adding " << coord << " to buffer\n";
             buffer.push_back(newChunks[i]);
 
         }
