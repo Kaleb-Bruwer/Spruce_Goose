@@ -32,7 +32,6 @@ bool GenPlayer::addChunk(ChunkCoord coord, SynchedArea* dest){
 
 
 void GenPlayer::sendChunk(Chunk* c, SynchedArea* dest){
-    cout << "Sending " << c->getChunkCoord() << " to dest\n";
     ChunkFromGenerator* job = new ChunkFromGenerator();
     job->chunk = c;
     dest->pushJob(job);
