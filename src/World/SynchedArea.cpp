@@ -174,7 +174,7 @@ void SynchedArea::loadChunk(JobTicket* j){
     }
 }
 
-void SynchedArea::receiveChunk(JobTicket* j){\
+void SynchedArea::receiveChunk(JobTicket* j){
     ChunkFromGenerator* job = (ChunkFromGenerator*) j;
 
     ChunkCoord coord = job->chunk->getChunkCoord();

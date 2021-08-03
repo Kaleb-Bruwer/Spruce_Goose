@@ -122,6 +122,9 @@ Chunk::Chunk(char* data, int &index, ChunkCoord pos, short bitmask, short addBit
     }
 
     index += 256;
+
+    // I forgot this ONE LINE and wasted days figuring it out
+    activateChangeLog();
 }
 
 
