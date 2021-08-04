@@ -29,6 +29,8 @@ bool GenPlayer::addChunk(ChunkCoord coord, SynchedArea* dest){
     if(!activeCluster.fitsHere(coord))
         return false;
 
+    cout << "GenPlayer::addChunk " << coord << " center=" << activeCluster.center << endl;
+
     activeCluster.add(coord, dest);
     return true;
 }

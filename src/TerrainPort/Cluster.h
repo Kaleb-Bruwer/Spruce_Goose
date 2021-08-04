@@ -46,11 +46,9 @@ public:
 
 
     bool fitsHere(ChunkCoord c){
-        if(values.size() == 0)
-            return true;
         // Calculate min distance to any coordinate within bounds
         // return true the moment something close enough is found
-        int distance = min(abs(center.x - c.x), abs(center.z - c.z));
+        int distance = max(abs(center.x - c.x), abs(center.z - c.z));
         return(distance <= renderDistance);
     };
 
