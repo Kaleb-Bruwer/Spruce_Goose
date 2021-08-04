@@ -20,10 +20,12 @@ void GenPlayer::setCluster(Cluster c){
 
     // Apply to connection
     connection.sendTeleport(c.center);
+    clusterAge = chrono::high_resolution_clock::now();
 
 }
 
 bool GenPlayer::addChunk(ChunkCoord coord, SynchedArea* dest){
+    // Does not do center-shifts
     if(!activeCluster.fitsHere(coord))
         return false;
 
