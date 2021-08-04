@@ -18,7 +18,6 @@ TerrainPort::TerrainPort(){
 TerrainPort::~TerrainPort(){}
 
 void TerrainPort::addSockToEP(int sock){
-    cout << "Added GenPlayer " << sock << endl;
     struct epoll_event ev;
     ev.events = EPOLLIN | EPOLLPRI | EPOLLERR | EPOLLHUP;
     ev.data.fd = sock;
@@ -113,8 +112,10 @@ bool TerrainPort::trySendCluster(Cluster a, int &i){
     // If not, create a new GenPlayer if possible
     if(numGenPlayers < maxGenPlayers){
         string username = "bot" + to_string(numGenPlayers);
+        cout << "Adding GenPlayer " << username << endl;
         int sock = players[numGenPlayers].activate(username);
         addSockToEP(sock);
+        playersBySockets[sock] = numGenPlayers;
 
         players[numGenPlayers].setCluster(a);
         numGenPlayers++;

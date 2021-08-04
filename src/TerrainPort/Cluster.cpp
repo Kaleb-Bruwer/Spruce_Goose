@@ -85,7 +85,6 @@ bool Cluster::add(ChunkCoord c, SynchedArea* dest){
             // Need to move center first
             ChunkCoord mov = getNeededCenterMov(c);
             center += mov;
-            cout << "Moving center by " << mov << " to " << center << endl;
             // Upate breathingRoom
             if(mov.x > 0){
                 breathingRoom.posX = 0;
