@@ -8,8 +8,6 @@ void ClusterGroup::addChunk(ChunkCoord coord, SynchedArea* dest){
     // In future: do more efficient search than checking EVERY bounding box
     // Some kind of tree, maybe
     for(int i=0; i<clusters.size(); i++){
-        if(!clusters[i].inBoundingBox(coord))
-            continue;
         if(clusters[i].fitsHere(coord))
             validClusters.push_back(i);
     }

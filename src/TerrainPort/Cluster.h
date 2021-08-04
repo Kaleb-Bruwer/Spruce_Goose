@@ -36,20 +36,14 @@ public:
     // Set in TerrainPort's constructor
     inline static int renderDistance;
 
-    // Used to quickly exlude far coordinates, includes renderDistance buffer
-    // Doesn't seem to be used anymore
-    ChunkCoord lowBound;
-    ChunkCoord highBound;
 
-    bool inBoundingBox(ChunkCoord c){
-        if(c.x >= lowBound.x && c.x <= highBound.x &&
-                c.z >= lowBound.z && c.z <= highBound.z){
-            return true;
-        }
-        return false;
+    bool fitsHere(ChunkCoord c){
+        // Calculate min distance to any coordinate within bounds
+        // return true the moment something close enough is found
+        int distance = min(abs(center.x - c.x), abs(center.z - c.z));
+        return(distance <= renderDistance);
     };
 
-    bool fitsHere(ChunkCoord c);
     void add(ChunkCoord c, SynchedArea* dest);
     SynchedArea* getDest(ChunkCoord c);
     void remove(ChunkCoord c);

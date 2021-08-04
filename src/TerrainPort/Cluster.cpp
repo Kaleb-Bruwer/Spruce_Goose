@@ -5,14 +5,6 @@
 
 using namespace std;
 
-bool Cluster::fitsHere(ChunkCoord c){
-    // Calculate min distance to any coordinate within bounds
-    // return true the moment something close enough is found
-
-    int distance = min(abs(center.x - c.x), abs(center.z - c.z));
-    return(distance <= renderDistance);
-}
-
 void Cluster::add(ChunkCoord c, SynchedArea* dest){
     // cout << "Adding " << c << " to cluster\n";
     ClusterVal val;
@@ -25,27 +17,9 @@ void Cluster::add(ChunkCoord c, SynchedArea* dest){
     }
 
     values.push_back(val);
-
-    // Update bounding box
-    if(c.x + renderDistance > highBound.x)
-        highBound.x = c.x + renderDistance;
-    else if(c.x - renderDistance < lowBound.x)
-        lowBound.x = c.x - renderDistance;
-
-
-    if(c.z + renderDistance > highBound.z)
-        highBound.z = c.z + renderDistance;
-    else if(c.z - renderDistance < lowBound.z)
-        lowBound.z = c.z - renderDistance;
 }
 
 void Cluster::merge(Cluster &rhs){
-    lowBound.x = min(lowBound.x, rhs.lowBound.x);
-    lowBound.z = min(lowBound.z, rhs.lowBound.z);
-
-    highBound.x = max(highBound.x, rhs.highBound.x);
-    highBound.z = max(highBound.z, rhs.highBound.z);
-
     for(ClusterVal a : rhs.values){
         values.push_back(a);
     }
@@ -53,7 +27,7 @@ void Cluster::merge(Cluster &rhs){
 }
 
 SynchedArea* Cluster::getDest(ChunkCoord coord){
-    if(!inBoundingBox(coord))
+    if(!fitsHere(coord))
         return 0;
 
     for(ClusterVal &c : values){

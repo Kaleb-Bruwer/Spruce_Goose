@@ -19,6 +19,9 @@ struct TimestampedChunk{
     Chunk* chunk;
 };
 
+// Received from TerrainInterface::getInstance
+// TO switch terrain provider, see said function
+
 class TerrainPort : public TerrainInterface{
 private:
     int epfd;
