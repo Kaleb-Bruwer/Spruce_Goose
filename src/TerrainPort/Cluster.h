@@ -71,4 +71,8 @@ public:
     bool isOld();
     // Cluster is ready to be sent (combination of age and % filled)
     bool canSend();
+
+    int numChunks(){
+        return values.size();
+    }
 };

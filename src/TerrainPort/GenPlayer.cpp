@@ -15,7 +15,8 @@ void GenPlayer::setCluster(Cluster c){
     activeCluster  = c;
 
     // Calculate new outstanding values
-    outstanding = c.values.size();
+    outstanding = Cluster::renderDistance * 2 + 1;
+    outstanding *= outstanding;
 
     // Apply to connection
     connection.sendTeleport(c.center);
@@ -43,6 +44,10 @@ vector<Chunk*> GenPlayer::readMessage(){
     // Note that none of the chunks are deleted here, they're all passed on
     vector<Chunk*> newChunks = connection.readMessage();
     outstanding -= newChunks.size();
+
+    if(newChunks.size() > 0)
+        cout << "outstanding(" << this << "): " << outstanding << endl;
+
     for(int i=0; i< newChunks.size(); i++){
         ChunkCoord coord = newChunks[i]->getChunkCoord();
         SynchedArea* dest = activeCluster.getDest(coord);

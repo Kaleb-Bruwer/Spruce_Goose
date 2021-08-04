@@ -104,6 +104,7 @@ void TerrainPort::processClusters(){
 bool TerrainPort::trySendCluster(Cluster a, int &i){
     for(; i<numGenPlayers; i++){
         if(players[i].onStandby()){
+            cout << "Reassigning player " << i << endl;
             players[i].setCluster(a);
             return true;
         }
@@ -112,7 +113,6 @@ bool TerrainPort::trySendCluster(Cluster a, int &i){
     // If not, create a new GenPlayer if possible
     if(numGenPlayers < maxGenPlayers){
         string username = "bot" + to_string(numGenPlayers);
-        cout << "Adding GenPlayer " << username << endl;
         int sock = players[numGenPlayers].activate(username);
         addSockToEP(sock);
         playersBySockets[sock] = numGenPlayers;

@@ -24,7 +24,7 @@ private:
 
 public:
     bool onStandby(){
-        return outstanding == 0;
+        return (activeCluster.numChunks() == 0) ||(outstanding == 0);
     };
 
     //Opens connection to server, returns socket handle
