@@ -53,6 +53,12 @@ bool ChunkCoord::operator!=(const ChunkCoord &rhs) const{
         && this->z == rhs.z);
 }
 
+ChunkCoord& ChunkCoord::operator+=(const ChunkCoord &rhs){
+    x += rhs.x;
+    z += rhs.z;
+    return *this;
+}
+
 void ChunkCoord::movNegX(){
     x--;
 }

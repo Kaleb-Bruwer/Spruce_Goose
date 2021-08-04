@@ -22,10 +22,12 @@ public:
     bool operator>(const ChunkCoord& rhs) const;
     bool operator==(const ChunkCoord& rhs) const;
     bool operator!=(const ChunkCoord& rhs) const;
+    ChunkCoord& operator+=(const ChunkCoord &rhs);
 
     friend ostream& operator<< (ostream &out, const ChunkCoord &rhs){
         out << "(" << rhs.x << ", " << rhs.z << ")";
     };
+
 
     void movNegX();
     void movPosX();

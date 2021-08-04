@@ -30,21 +30,37 @@ protected:
     vector<ClusterVal> values;
     static const int oldAge = 100; //ms a chunk must wait until it is guarunteed to be sent
 
-    friend class GenPlayer;
+    struct{
+        short int negX = -1;
+        short int posX = -1;
+        short int negZ = -1;
+        short int posZ = -1;
+    } breathingRoom;
 
+    ChunkCoord getNeededCenterMov(ChunkCoord c);
+
+    friend class GenPlayer;
 public:
     // Set in TerrainPort's constructor
     inline static int renderDistance;
 
 
     bool fitsHere(ChunkCoord c){
+        if(values.size() == 0)
+            return true;
         // Calculate min distance to any coordinate within bounds
         // return true the moment something close enough is found
         int distance = min(abs(center.x - c.x), abs(center.z - c.z));
         return(distance <= renderDistance);
     };
 
-    void add(ChunkCoord c, SynchedArea* dest);
+
+    //Returns true if center can be moved in order to fit given coord
+    // 1: fits without stretch
+    // 2: fits, but must move center
+    int fitsIfStretch(ChunkCoord c);
+
+    bool add(ChunkCoord c, SynchedArea* dest);
     SynchedArea* getDest(ChunkCoord c);
     void remove(ChunkCoord c);
 
