@@ -15,6 +15,7 @@ enum JobTicketType{
 
     // WorldToGenerator
     GENERATECHUNKREQUEST,
+    GENCHUNKREQ2,
 
     // WorldToProtocol
     BLOCKUPDATETOPLAYER,
