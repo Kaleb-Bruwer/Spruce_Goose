@@ -18,5 +18,7 @@ public:
     Coordinate<int> playerPos;
 
     vector<ChunkCoord> chunks;
+
+    // Used by TerrainInterface as return address for chunks
     SynchedArea* origin = 0;
 };

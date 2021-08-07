@@ -55,6 +55,8 @@
 #include "../JobTickets/WorldToWorld/SendCompressedChunks.h"
 #include "../JobTickets/WorldToWorld/ChunksFromTArea.h"
 
+#include "../JobTickets/WorldToGenerator/GenChunkReq2.h"
+
 using namespace std;
 
 ThreadArea::ThreadArea(bool start){
@@ -321,7 +323,6 @@ ThreadArea* ThreadArea::claimChunk(ChunkCoord coord){
     ThreadArea* owner = synchedArea->claimChunk(coord, this);
     if(owner == this){
         claims.setVal(coord, true);
-        loadChunk(coord);
     }
     return owner;
 }
@@ -330,6 +331,14 @@ void ThreadArea::loadChunk(ChunkCoord coord){
     LoadChunk* job = new LoadChunk(coord, this);
     synchedArea->pushJob(job);
 }
+
+void ThreadArea::loadChunk(vector<ChunkCoord> c, Coordinate<int> playerPos){
+    GenChunkReq2* job = new GenChunkReq2();
+    job->chunks = c;
+    job->playerPos = playerPos;
+
+}
+
 
 void ThreadArea::releaseChunk(ChunkCoord c){
     //Only call this function when all players already released the chunk
@@ -467,6 +476,7 @@ void ThreadArea::addPlayer(JobTicket* j){
 
 
     vector<ChunkCoord> neededChunks = player->getNeededChunks();
+    vector<ChunkCoord> toLoad;
 
     vector<ThreadArea*> externals; //Other ThreadAreas from which player needs chunks
 
@@ -475,7 +485,10 @@ void ThreadArea::addPlayer(JobTicket* j){
         if(temp == 0){
             ThreadArea* owner = claimChunk(c);
 
-            if(owner != this && owner != 0){
+            if(owner == this){
+                toLoad.push_back(c);
+            }
+            else if(owner != 0){
                 auto it = find(externals.begin(), externals.end(), owner);
                 if(it == externals.end()){
                     externals.push_back(owner);
@@ -483,6 +496,12 @@ void ThreadArea::addPlayer(JobTicket* j){
             }
         }
     }
+    Coordinate<int> pos;
+    pos.x = player->position.x;
+    pos.y = player->position.y;
+    pos.z = player->position.z;
+
+    loadChunk(toLoad, pos);
 
     //This functor also sends player the entities within chunks
     AddChunksToPlayerF funct(player, &entities);
@@ -573,6 +592,7 @@ void ThreadArea::receivePlayerPos(JobTicket* j){
             }
 
             vector<ChunkCoord> toLoad = player->getNeededChunks();
+            vector<ChunkCoord> toClaim;
             for(ChunkCoord c : toLoad){
                 Chunk* chunk = chunks.getVal(c);
                 if(chunk){
@@ -585,10 +605,28 @@ void ThreadArea::receivePlayerPos(JobTicket* j){
                 }
                 else if(claims.getVal(c) == false){
                     //if chunk needs to be claimed
-                    ThreadArea* t = claimChunk(c);
+                    toClaim.push_back(c);
+                    // ThreadArea* t = claimChunk(c);
                     //In future, use t to add player as external player
                 }
             }
+
+            // Claim and load needed chunks
+            for(int i=0; i<toClaim.size();){
+                ThreadArea* t = claimChunk(toClaim[i]);
+                if(t != this)
+                    // chunk belongs to another ThreadArea, so do not load
+                    toClaim.erase(toClaim.begin() + i);
+                else
+                    i++;
+            }
+
+            Coordinate<int> pos;
+            pos.x = player->position.x;
+            pos.y = player->position.y;
+            pos.z = player->position.z;
+
+            loadChunk(toClaim, pos);
 
         }//if
     }
