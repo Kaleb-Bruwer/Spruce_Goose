@@ -11,7 +11,6 @@
 
 #include "../JobTickets/Redirect.h"
 #include "../JobTickets/LoadChunk.h"
-#include "../JobTickets/WorldToWorld/Redirect2.h"
 #include "../JobTickets/WorldToWorld/ExpandSynchedArea.h"
 #include "../JobTickets/WorldToWorld/ChunkToThreadArea.h"
 #include "../JobTickets/WorldToWorld/SendCompressedChunks.h"
@@ -230,7 +229,7 @@ void SynchedArea::loadChunk2(JobTicket* j){
         childJob->origin = job->origin;
         childJob->playerPos = job->playerPos;
 
-        Redirect2* rJ = new Redirect2(childJob, SYNCHEDAREA);
+        Redirect* rJ = new Redirect(childJob, SYNCHEDAREA);
 
         rJ->rCoord = toRedirect[0].getRegion();
         world->pushJob(rJ);
