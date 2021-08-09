@@ -11,6 +11,7 @@
 
 #include "../JobTickets/Redirect.h"
 #include "../JobTickets/LoadChunk.h"
+#include "../JobTickets/WorldToWorld/Redirect2.h"
 #include "../JobTickets/WorldToWorld/ExpandSynchedArea.h"
 #include "../JobTickets/WorldToWorld/ChunkToThreadArea.h"
 #include "../JobTickets/WorldToWorld/SendCompressedChunks.h"
@@ -19,6 +20,7 @@
 #include "../JobTickets/WorldToWorld/UnclaimRegion.h"
 
 #include "../JobTickets/WorldToGenerator/GenerateChunkRequest.h"
+#include "../JobTickets/WorldToGenerator/GenChunkReq2.h"
 
 #include "../JobTickets/GeneratorToWorld/ChunkFromGenerator.h"
 
@@ -63,6 +65,9 @@ void SynchedArea::handleJobTickets(){
         switch(job->getType()){
         case LOADCHUNK:
             loadChunk(job);
+            break;
+        case GENCHUNKREQ2:
+            loadChunk2(job);
             break;
 
         case CHUNKFROMGENERATOR:
@@ -171,6 +176,64 @@ void SynchedArea::loadChunk(JobTicket* j){
         job2->chunkPos = job->chunkPos;
         job2->origin = this;
         terrainInterface->pushJob(job2);
+    }
+}
+
+void SynchedArea::loadChunk2(JobTicket* j){
+    if(mergeTarget){
+        mergeTarget->loadChunk2(j);
+        return;
+    }
+    GenChunkReq2* job = (GenChunkReq2*)j;
+
+    vector<ChunkCoord> toRedirect;
+    vector<ChunkCoord> ungenerated;
+
+    m.lock();
+    for(int i=0; i<job->chunks.size(); i++){
+        RegionCoord rCoord = job->chunks[i].getRegion();
+        if(!available.getVal(rCoord)){
+            // Chunk must be redirected, will be sent to World
+            toRedirect.push_back(job->chunks[i]);
+        }
+        else{
+            Region* region = regions.getVal(rCoord);
+            if(!region){
+                region = new Region(rCoord);
+                regions.setVal(rCoord, region);
+            }
+
+            Chunk* c = region->getChunk(job->chunks[i]);
+
+            if(c){
+                //Chunk already exists, just send it through
+                ChunkToThreadArea* job2 = new ChunkToThreadArea();
+                job2->chunk = c;
+                job->origin->pushJob(job2);
+            }
+            else{
+                ungenerated.push_back(job->chunks[i]);
+            }
+        }
+    }
+    m.unlock();
+    if(ungenerated.size() > 0){
+        job->chunks = ungenerated;
+        job->origin = this;
+        terrainInterface->pushJob(job);
+    }
+    if(toRedirect.size() > 0){
+        // I honestly don't know if this code here ever actually runs
+
+        GenChunkReq2* childJob = new GenChunkReq2();
+        childJob->chunks = toRedirect;
+        childJob->origin = job->origin;
+        childJob->playerPos = job->playerPos;
+
+        Redirect2* rJ = new Redirect2(childJob, SYNCHEDAREA);
+
+        rJ->rCoord = toRedirect[0].getRegion();
+        world->pushJob(rJ);
     }
 }
 

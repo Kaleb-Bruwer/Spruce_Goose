@@ -48,6 +48,7 @@ enum JobTicketType{
     JOINWORLD,
     LOADCHUNK,
     REDIRECT,
+    REDIRECT2,
     SENDCHUNKS,
     SENDPACKET
 };

@@ -63,7 +63,8 @@ private:
     void handleJobTickets();
 
     void handleRedirect(JobTicket* job);
-    void loadChunk(JobTicket* job);
+    void loadChunk(JobTicket* job); //Takes LoadChunk packet
+    void loadChunk2(JobTicket* job); //takes GenChunkReq2 packet (newer version)
     void receiveChunk(JobTicket* job); //From Generator
     void receiveChunksTArea(JobTicket* job);
     void unclaimRegion(JobTicket* job);
