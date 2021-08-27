@@ -66,18 +66,25 @@ protected:
         Slot sExpect;
         Slot hExpect;
         // If hover is empty, pick up half of slot with hover getting +1 on odds
-        if(inventory2.hover.isEmpty()){
+
+        if(h.isEmpty()){
             int items = ceil( ((float)s.itemCount) / 2);
             hExpect = s;
+            sExpect = s;
+
             hExpect.itemCount = items;
             sExpect.itemCount -= items;
+
             if(sExpect.itemCount == 0){
                 sExpect = Slot();
             }
         }
-        else if(s.itemID == h.itemID){
-            if(s.itemCount < s.maxStackSize()){
+        else if(s.isEmpty() || (s.itemID == h.itemID)){
+            if(s.isEmpty() || s.itemCount < s.maxStackSize()){
                 sExpect = s;
+                sExpect.itemID = h.itemID;
+                sExpect.itemDamage = h.itemDamage;
+
                 sExpect.itemCount++;
                 hExpect = h;
                 hExpect.itemCount--;
@@ -94,8 +101,8 @@ protected:
             hExpect = s;
         }
 
-        ASSERT_TRUE(inventory2.hover == hExpect) << "Incorrect item";
-        ASSERT_TRUE(inventory2.slots[slot] == sExpect) << "Incorrect item";
+        ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
+        ASSERT_TRUE(inventory2.slots[slot] == sExpect) << "slot: " << inventory2.slots[slot] << ", expected: " << sExpect;
     }
 };
 
@@ -171,4 +178,65 @@ TEST_F(Inventory2Test, testMode0Btn0T9){
 
 TEST_F(Inventory2Test, testMode0Btn0T10){
     testMode0Btn0(getDirt(), getStone());
+}
+
+// Single item
+TEST_F(Inventory2Test, testMode0Btn1T1){
+    testMode0Btn1(getStone(), Slot());
+}
+
+TEST_F(Inventory2Test, testMode0Btn1T2){
+    testMode0Btn1(Slot(), getStone());
+}
+
+// multiple items
+TEST_F(Inventory2Test, testMode0Btn1T3){
+    testMode0Btn1(getStone(12), Slot());
+}
+
+TEST_F(Inventory2Test, testMode0Btn1T4){
+    testMode0Btn1(getStone(11), Slot());
+}
+
+// Place single item
+TEST_F(Inventory2Test, testMode0Btn1T5){
+    testMode0Btn1(Slot(), getStone(12));
+}
+
+TEST_F(Inventory2Test, testMode0Btn1T6){
+    testMode0Btn1(Slot(), getStone(11));
+}
+
+// mixed item types
+TEST_F(Inventory2Test, testMode0Btn1T7){
+    testMode0Btn1(getDirt(), getStone(12));
+}
+
+TEST_F(Inventory2Test, testMode0Btn1T8){
+    testMode0Btn1(getDirt(15), getStone(12));
+}
+
+TEST_F(Inventory2Test, testMode0Btn1T9){
+    testMode0Btn1(getDirt(64), getStone(12));
+}
+
+// same item both sides
+TEST_F(Inventory2Test, testMode0Btn1T10){
+    testMode0Btn1(getStone(), getStone(12));
+}
+
+TEST_F(Inventory2Test, testMode0Btn1T11){
+    testMode0Btn1(getStone(15), getStone(12));
+}
+
+TEST_F(Inventory2Test, testMode0Btn1T12){
+    testMode0Btn1(getDirt(64), getStone(12));
+}
+
+TEST_F(Inventory2Test, testMode0Btn1T13){
+    testMode0Btn1(getDirt(64), getStone());
+}
+
+TEST_F(Inventory2Test, testMode0Btn1T14){
+    testMode0Btn1(getDirt(30), getStone(64));
 }
