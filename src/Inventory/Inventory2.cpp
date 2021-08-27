@@ -225,7 +225,6 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
             else{
                 if(i == 0)
                     return;
-                cout << "Put down hover\n";
                 noShiftHoverLeft();
             }
         }
