@@ -334,6 +334,8 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
                     slots[s] = hover;
                     hover.makeEmpty();
                 }
+                if(hover.isEmpty())
+                    hover.makeEmpty();
 
                 dragData.dragSlots.clear();
                 dragData.baseCount.clear();
