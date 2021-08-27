@@ -786,3 +786,145 @@ TEST_F(Inventory2Test, testMode5T4){
 
     delete job;
 }
+
+// simple right mouse drag
+TEST_F(Inventory2Test, testMode5T5){
+    //Set up inventory
+    inventory2.hover = getStone(64);
+
+    // Start left drag
+    ClickWindowJob* job = initJob(5);
+    job->button = 4;
+    inventory2.clickWindow(job, 0, altered, false);
+
+    // Add items to left drag
+    job->slotNum = 9;
+    job->button = 5;
+    inventory2.clickWindow(job, 0, altered, false);
+
+    job->slotNum = 10;
+    job->button = 5;
+    inventory2.clickWindow(job, 0, altered, false);
+
+    // end drag
+    job->slotNum = 10;
+    job->button = 6;
+    inventory2.clickWindow(job, 0, altered, false);
+
+    Slot hExpect = getStone(62);
+    Slot sExpect1 = getStone(1);
+
+    // Assertions
+    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
+    ASSERT_TRUE(inventory2.slots[9] == sExpect1) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect1;
+    ASSERT_TRUE(inventory2.slots[10] == sExpect1) << "slot10: " << inventory2.slots[10] << ", expected: " << sExpect1;
+
+    delete job;
+}
+
+// simple mouse drag (5 slots)
+TEST_F(Inventory2Test, testMode5T6){
+    //Set up inventory
+    inventory2.hover = getStone(64);
+
+    // Start left drag
+    ClickWindowJob* job = initJob(5);
+    job->button = 4;
+    inventory2.clickWindow(job, 0, altered, false);
+
+    // Add items to left drag
+    for(int i=9; i<14; i++){
+        job->slotNum = i;
+        job->button = 5;
+        inventory2.clickWindow(job, 0, altered, false);
+    }
+
+    // end drag
+    job->slotNum = 10;
+    job->button = 6;
+    inventory2.clickWindow(job, 0, altered, false);
+
+    Slot hExpect = getStone(59);
+    Slot sExpect1 = getStone(1);
+
+    // Assertions
+    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
+    for(int i=9; i<14; i++)
+        ASSERT_TRUE(inventory2.slots[i] == sExpect1) << "slot: " << inventory2.slots[i] << ", expected: " << sExpect1;
+
+    delete job;
+}
+
+// right mouse drag with too few items
+TEST_F(Inventory2Test, testMode5T7){
+    //Set up inventory
+    inventory2.hover = getStone(4);
+
+    // Start left drag
+    ClickWindowJob* job = initJob(5);
+    job->button = 4;
+    inventory2.clickWindow(job, 0, altered, false);
+
+    // Add items to left drag
+    for(int i=9; i<14; i++){
+        job->slotNum = i;
+        job->button = 5;
+        inventory2.clickWindow(job, 0, altered, false);
+    }
+
+    // end drag
+    job->slotNum = 10;
+    job->button = 6;
+    inventory2.clickWindow(job, 0, altered, false);
+
+    Slot hExpect = Slot();
+    Slot sExpect1 = getStone(1);
+    Slot sExpect2 = Slot();
+
+    // Assertions
+    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
+    for(int i=9; i<13; i++)
+        ASSERT_TRUE(inventory2.slots[i] == sExpect1) << "slot: " << inventory2.slots[i] << ", expected: " << sExpect1;
+    ASSERT_TRUE(inventory2.slots[13] == sExpect2) << "slot13: " << inventory2.slots[13] << ", expected: " << sExpect2;
+
+    delete job;
+}
+
+// simple mouse drag (5 slots)
+TEST_F(Inventory2Test, testMode5T8){
+    //Set up inventory
+    inventory2.hover = getStone(64);
+    inventory2.slots[10] = getDirt();
+
+    // Start left drag
+    ClickWindowJob* job = initJob(5);
+    job->button = 4;
+    inventory2.clickWindow(job, 0, altered, false);
+
+    // Add items to left drag
+    for(int i=9; i<14; i++){
+        job->slotNum = i;
+        job->button = 5;
+        inventory2.clickWindow(job, 0, altered, false);
+    }
+
+    // end drag
+    job->slotNum = 10;
+    job->button = 6;
+    inventory2.clickWindow(job, 0, altered, false);
+
+    Slot hExpect = getStone(60);
+    Slot sExpect1 = getStone();
+    Slot sExpect2 = getDirt();
+
+    // Assertions
+    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
+    for(int i=9; i<14; i++){
+        if(i != 10)
+            ASSERT_TRUE(inventory2.slots[i] == sExpect1) << "slot: " << inventory2.slots[i] << ", expected: " << sExpect1;
+        else
+            ASSERT_TRUE(inventory2.slots[10] == sExpect2) << "slot10: " << inventory2.slots[10] << ", expected: " << sExpect2;
+    }
+
+    delete job;
+}
