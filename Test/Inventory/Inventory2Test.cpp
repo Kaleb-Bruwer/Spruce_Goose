@@ -463,7 +463,7 @@ TEST_F(Inventory2Test, testMode1T9){
     }
 }
 
-// Hotbar to inventory that has a full stack
+// Hotbar to inventory, must split between two near-full stacks
 TEST_F(Inventory2Test, testMode1T10){
     // Set up inventory
     inventory2.slots[36] = getStone(4);
