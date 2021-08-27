@@ -21,7 +21,7 @@ void GenConWriter::writePosAndLook(Coordinate<double> pos, float yaw, float pitc
 
     baseThis << pos.x;
     baseThis << pos.y;
-    baseThis << pos.y + 1.8; //head pos
+    baseThis << pos.y + 1.62; //head pos
     baseThis << pos.z;
 
     baseThis << yaw;

@@ -1,6 +1,7 @@
 #include "TerrainPort.h"
 
 #include "../JobTickets/WorldToGenerator/GenerateChunkRequest.h"
+#include "../JobTickets/WorldToGenerator/GenChunkReq2.h"
 #include "../JobTickets/GeneratorToWorld/ChunkFromGenerator.h"
 #include "../World/SynchedArea.h"
 
@@ -9,6 +10,7 @@ using namespace std;
 
 TerrainPort::TerrainPort(){
     Cluster::renderDistance = 4;
+    GenPlayer::renderDistance = 4;
 
     epfd = epoll_create(maxGenPlayers);
 
@@ -39,7 +41,7 @@ void TerrainPort::run(){
 
         // Read & handle incoming packets
         read();
-        processClusters();
+        handleQueue();
     }
 }
 
@@ -56,74 +58,29 @@ void TerrainPort::read(){
         vector<Chunk*> b = players[playerIndex].readMessage();
 
         for(Chunk* chunk : b){
-            struct TimestampedChunk chunkT;
-            chunkT.chunk = chunk;
-            chunkT.time = chrono::high_resolution_clock::now();
             ChunkCoord coord = chunk->getChunkCoord();
-
             if(buffer.find(coord) != buffer.end()){
-                Chunk* oldChunk = buffer[coord].chunk;
-                if(oldChunk)
-                    delete oldChunk;
+                delete chunk;
             }
-            buffer[coord] = chunkT;
+            else{
+                struct TimestampedChunk chunkT;
+                chunkT.chunk = chunk;
+                chunkT.time = chrono::high_resolution_clock::now();
+
+                buffer[coord] = chunkT;
+            }
         }
     }
 }
 
-void TerrainPort::processClusters(){
-    int pIndex = 0;
-
-    for(auto it = sendingQueue.begin(); it != sendingQueue.end();){
-        if(!trySendCluster(*it, pIndex))
+void TerrainPort::handleQueue(){
+    for(int i=0; i<inRequests.size();){
+        if(tryGetChunks(inRequests[i]))
+            inRequests.erase(inRequests.begin() + i);
+        else
             return;
-        it = sendingQueue.erase(it);
-    }
-
-    vector<Cluster> mustSend = clusters.getReadyClusters();
-    // Function exits once mustSend is empty
-
-    bool flag = true;
-    int index = 0;
-    while(flag){
-        if(index >= mustSend.size())
-            return;
-        if(!trySendCluster(mustSend[index], pIndex)){
-            flag = false;
-        }
-        else{
-            index++;
-        }
-    }
-
-    for(; index < mustSend.size(); index++){
-        sendingQueue.push_back(mustSend[index]);
     }
 }
-
-bool TerrainPort::trySendCluster(Cluster a, int &i){
-    for(; i<numGenPlayers; i++){
-        if(players[i].onStandby()){
-            cout << "Reassigning player " << i << endl;
-            players[i].setCluster(a);
-            return true;
-        }
-    }
-
-    // If not, create a new GenPlayer if possible
-    if(numGenPlayers < maxGenPlayers){
-        string username = "bot" + to_string(numGenPlayers);
-        int sock = players[numGenPlayers].activate(username);
-        addSockToEP(sock);
-        playersBySockets[sock] = numGenPlayers;
-
-        players[numGenPlayers].setCluster(a);
-        numGenPlayers++;
-        return true;
-    }
-    return false;
-}
-
 
 bool TerrainPort::handleJobTickets(){
     bool flag = true;
@@ -136,35 +93,87 @@ bool TerrainPort::handleJobTickets(){
         else
             foundJob = true;
 
-        if(job->getType() == GENERATECHUNKREQUEST){
-            GenerateChunkRequest* jobCast = (GenerateChunkRequest*) job;
-            getChunk(jobCast->chunkPos, jobCast->origin);
+        JobTicketType jobType = job->getType();
+
+        switch(jobType){
+        case GENERATECHUNKREQUEST:
+            cout << "GENERATECHUNKREQUEST no longer supported in TerrainPort\n";
+            break;
+
+        case GENCHUNKREQ2:
+            job->pickup();
+            inRequests.push_back((GenChunkReq2*)job);
+            break;
         }
+
         job->drop();
     }
 }
 
-void TerrainPort::getChunk(ChunkCoord coord, SynchedArea* returnAddr){
-    // Check buffer
-    auto it = buffer.find(coord);
-    if(it != buffer.end()){
-        // Is in the buffer
-        sendChunk(it->second.chunk, returnAddr);
-        buffer.erase(it);
-        return;
+bool TerrainPort::tryGetChunks(GenChunkReq2* job){
+    // Check buffer for any needed chunks
+    for(int i=0; i < job->chunks.size();){
+        auto it = buffer.find(job->chunks[i]);
+
+        if(it != buffer.end()){
+            Chunk* c = it->second.chunk;
+            sendChunk(c, job->origin);
+            job->chunks.erase(job->chunks.begin() + i);
+        }
+        else{
+            i++;
+        }
+    }
+    if(job->chunks.size() == 0){
+        job->drop();
+        return true;
     }
 
-    //TODO: If already in a request, just set returnAddr
+    if(!findCompatiblePlayer(job))
+        if(!findOpenPlayer(job)){
+            return false;
+        }
+    return true;
+}
+
+bool TerrainPort::findCompatiblePlayer(GenChunkReq2* job){
+    Coordinate<int> pos = job->playerPos;
     for(int i=0; i<numGenPlayers; i++){
-        if(players[i].addChunk(coord, returnAddr)){
-            return;
+        // Check for busy players that overlap
+        if(!players[i].onStandby() && players[i].canFitNewCenter(pos)){
+            players[i].shiftJob(job);
+            cout << "Found compatible player\n";
+            return true;
+        }
+    }
+    return false;
+}
+
+bool TerrainPort::findOpenPlayer(GenChunkReq2* job){
+    for(int i=0; i<numGenPlayers; i++){
+        if(players[i].onStandby()){
+            players[i].setJob(job);
+            cout << "Found standby player\n";
+            return true;
         }
     }
 
+    if(numGenPlayers < maxGenPlayers){
+        string name = "bot" + to_string(numGenPlayers);
 
-    // else, add to cluster
-    clusters.addChunk(coord, returnAddr);
+        int sock = players[numGenPlayers].activate(name);
+        addSockToEP(sock);
+        playersBySockets[sock] = numGenPlayers;
+
+        players[numGenPlayers].setJob(job);
+
+        numGenPlayers++;
+        cout << "Added new player\n";
+        return true;
+    }
+    return false;
 }
+
 
 void TerrainPort::sendChunk(Chunk* c, SynchedArea* dest){
     ChunkFromGenerator* job = new ChunkFromGenerator();

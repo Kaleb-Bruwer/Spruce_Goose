@@ -54,7 +54,6 @@ private:
     //called from this on this
     void releaseChunk(ChunkCoord c);
     ThreadArea* claimChunk(ChunkCoord c);
-    void loadChunk(ChunkCoord c);
     void loadChunk(vector<ChunkCoord> c, Coordinate<int> playerPos);
 
     void handleJobTickets();

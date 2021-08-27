@@ -56,7 +56,26 @@ void GenPlayerConnection::sendMessage(PacketWriter &p){
     write(sock, start, length);
 }
 
+void GenPlayerConnection::checkDelayedPlayerLook(){
+    if(pendingLookUpdate &&
+            lookUpdateTime < chrono::high_resolution_clock::now()){
+        pendingLookUpdate = false;
+
+        cout << "Sending delayed player look\n";
+
+        GenConWriter writer;
+        Coordinate<double> tpPos = pos;
+        writer.writePosAndLook(tpPos, 4, 4, false);
+
+        sendMessage(writer);
+
+        cout << "tpPos: " << tpPos << endl;
+    }
+}
+
+
 vector<Chunk*> GenPlayerConnection::readMessage(){
+    checkDelayedPlayerLook();
     vector<Chunk*> result;
 
     const int bufferSize = 8192;
@@ -131,16 +150,51 @@ vector<Chunk*> GenPlayerConnection::readMessage(){
             break;
         }
         case 0x08:{ //Player position and look
-            pos.x = p.readDouble();
-            pos.y = p.readDouble();
-            pos.z = p.readDouble();
+            Coordinate<double> sPos;
+            sPos.x = p.readDouble();
+            sPos.y = p.readDouble();
+            sPos.z = p.readDouble();
             yaw = p.readFloat();
             pitch = p.readFloat();
+
+            cout << "Received pos: " << sPos << " (" << yaw << ", " << pitch << ")\n";
             onGround = p.readBool();
 
-            if(!hasSpawned)
+            if(!hasSpawned){
+                pos = sPos;
                 returnSpawnInPos();
+            }
+            else{
+                // Respond on position after a teleport
+                if(pos != sPos){
+                    pos = sPos;
+                    GenConWriter writer;
+                    writer.writePosAndLook(pos, yaw, pitch, onGround);
+                    sendMessage(writer);
+
+                    cout << "Sent server new position\n";
+                }
+            }
             break;
+        }
+        case 0x21:{ //Chunk data
+            // This part isn't done
+            ChunkCoord coord;
+            coord.x = p.readInt();
+            coord.z = p.readInt();
+
+            cout << "0x21'd " << coord << endl;
+
+            bool groundUp = p.readBool();
+            short bitmap = p.readShort();
+            short addBitmap = p.readShort();
+
+            int compSize = p.readInt();
+            char* compData = new char[compSize];
+            p.readSegment(compSize, compData);
+
+            break;
+
         }
         case 0x26:{
             MapChunkBulkReader reader(p);
@@ -157,8 +211,13 @@ vector<Chunk*> GenPlayerConnection::readMessage(){
             p.readFloat(); //walking speed
             break;
         }
+
         default:
+            // cout << "Received packet " << hex <<  packetID;
+            // cout << dec;
+            // cout << " of len " << len << endl;
             p.skip(len - packetIDV.getNBytes());
+            break;
         }
 
     }
@@ -175,28 +234,33 @@ void GenPlayerConnection::handshake(string username){
 
 }
 
-void GenPlayerConnection::sendTeleport(ChunkCoord cCoord){
+void GenPlayerConnection::sendTeleport(Coordinate<int> coord){
     if(hasSpawned){
-        Coordinate<int> coord;
-        coord.x = cCoord.x *16 + 8;
-        coord.y = 100;
-        coord.z = cCoord.z *16 + 8;
-
-        PacketWriter writer;
+        GenConWriter writer;
+        writer.writePosAndLook(pos, yaw, 90, onGround);
         writer.writePacketID(0x01);
         string msg = "/tp " + to_string(coord.x) + " " + to_string(coord.y) + " " + to_string(coord.z);
         writer << msg;
 
         writer.addMsgLen();
 
+        Coordinate<double> posD(coord.x, coord.y, coord.z);
+        // writer.writePosAndLook(posD, 0.1, 45.5, onGround);
+
         // cout << "GenPlayerConnection sending tp " << writer.getIndex() << endl;
         sendMessage(writer);
+
+        // Prep for delayed look change
+        pendingLookUpdate = true;
+        lookUpdateTime = chrono::high_resolution_clock::now() + chrono::milliseconds(150);
+
     }
     else{
         mustTP = true;
-        pendingTP = cCoord;
+        pendingTP = coord;
     }
 }
+
 
 
 void GenPlayerConnection::returnSpawnInPos(){

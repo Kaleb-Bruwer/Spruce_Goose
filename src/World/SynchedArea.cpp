@@ -208,7 +208,7 @@ void SynchedArea::loadChunk2(JobTicket* j){
                 //Chunk already exists, just send it through
                 ChunkToThreadArea* job2 = new ChunkToThreadArea();
                 job2->chunk = c;
-                job->origin->pushJob(job2);
+                job->tArea->pushJob(job2);
             }
             else{
                 ungenerated.push_back(job->chunks[i]);
@@ -227,6 +227,7 @@ void SynchedArea::loadChunk2(JobTicket* j){
         GenChunkReq2* childJob = new GenChunkReq2();
         childJob->chunks = toRedirect;
         childJob->origin = job->origin;
+        childJob->tArea = job->tArea;
         childJob->playerPos = job->playerPos;
 
         Redirect* rJ = new Redirect(childJob, SYNCHEDAREA);

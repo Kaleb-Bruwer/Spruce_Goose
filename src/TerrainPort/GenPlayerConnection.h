@@ -4,6 +4,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <chrono>
 
 #include "../Protocol/PacketWriter.h"
 #include "../Datastructures/Coordinate/Coordinate.h"
@@ -15,6 +16,9 @@ class Chunk;
 
 class GenPlayerConnection{
 private:
+    bool pendingLookUpdate = false;
+    chrono::high_resolution_clock::time_point lookUpdateTime;
+
     bool isOpen = false;
     int sock = -1;
     struct sockaddr_in serv_addr;
@@ -27,9 +31,11 @@ private:
     bool onGround;
 
     bool mustTP;
-    ChunkCoord pendingTP;
+    Coordinate<int> pendingTP;
 
     friend class GenPlayer;
+
+    void checkDelayedPlayerLook();
 
 public:
     void sendMessage(PacketWriter &p);
@@ -41,7 +47,7 @@ public:
     void closeConnection();
 
     void handshake(string username);
-    void sendTeleport(ChunkCoord coord);
+    void sendTeleport(Coordinate<int> coord);
 
     bool getIsOpen(){return isOpen;};
     bool getHasSpawned(){return hasSpawned;};

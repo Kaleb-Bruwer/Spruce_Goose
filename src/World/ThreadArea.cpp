@@ -326,17 +326,12 @@ ThreadArea* ThreadArea::claimChunk(ChunkCoord coord){
     }
     return owner;
 }
-
-void ThreadArea::loadChunk(ChunkCoord coord){
-    LoadChunk* job = new LoadChunk(coord, this);
-    synchedArea->pushJob(job);
-}
-
 void ThreadArea::loadChunk(vector<ChunkCoord> c, Coordinate<int> playerPos){
     GenChunkReq2* job = new GenChunkReq2();
     job->chunks = c;
     job->playerPos = playerPos;
-
+    job->tArea = this;
+    synchedArea->pushJob(job);
 }
 
 
@@ -1054,7 +1049,15 @@ void ThreadArea::receiveChunkClaim(JobTicket* j){
     }
 
     if(job->owner == this){
-        loadChunk(job->coord);
+        Coordinate<int> dummyPos;
+        dummyPos.x = job->coord.x * 16;
+        dummyPos.y = 100;
+        dummyPos.z = job->coord.z * 16;
+
+        vector<ChunkCoord> coordinates(1);
+        coordinates[0] = job->coord;
+
+        loadChunk(coordinates, dummyPos);
     }
 }
 

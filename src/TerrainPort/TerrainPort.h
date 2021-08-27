@@ -7,12 +7,14 @@
 #include "../Generator/TerrainInterface.h"
 #include "../Datastructures/BlockingQueue.h"
 #include "../JobTickets/JobTicket.h"
+#include "../JobTickets/WorldToGenerator/GenChunkReq2.h"
 #include "Cluster.h"
 #include "ClusterGroup.h"
 #include "GenPlayer.h"
 
 class Chunk;
 class SynchedArea;
+class JobTicket;
 
 struct TimestampedChunk{
     chrono::high_resolution_clock::time_point time;
@@ -27,11 +29,13 @@ private:
     int epfd;
 
     // This is an arbitrary value, just change it if needed
-    int numGenPlayers = 0;
     static const int maxGenPlayers = 32;
     struct epoll_event events[maxGenPlayers];
 
     BlockingQueue<JobTicket*> inQueue;
+
+    // Requests that are simply waiting upon GenPlayers
+    vector<GenChunkReq2*> inRequests;
 
     // Multithreading-related
     thread* myThread = 0;
@@ -40,14 +44,10 @@ private:
     void run(); //main loop for this class
 
     void read();
-    void processClusters();
-    // checkedIndex used to only iterate over players once instead of repeating it for every cluster
-    bool trySendCluster(Cluster a, int &checkedIndex);
 
     // Clusters
     int renderDistance = 4;
-    ClusterGroup clusters;
-    vector<Cluster> sendingQueue;
+    int numGenPlayers = 0;
     GenPlayer players[maxGenPlayers];
     map<int,int> playersBySockets;
 
@@ -58,11 +58,20 @@ private:
     ~TerrainPort();
 
     bool handleJobTickets();
+    void handleQueue();
     void addSockToEP(int sock);
 
     // Assumes that chunks will only be requested once
     void getChunk(ChunkCoord coord, SynchedArea* returnAddr);
+
+    // getChunks adds to buffer if not handled, tryGetChunks simply returns false
+    bool tryGetChunks(GenChunkReq2* job);
+
     void sendChunk(Chunk* c, SynchedArea* dest);
+
+    bool findCompatiblePlayer(GenChunkReq2* job);
+    bool findOpenPlayer(GenChunkReq2* job);
+
 
     friend class TerrainInterface;
 

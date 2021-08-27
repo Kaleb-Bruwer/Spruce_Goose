@@ -200,6 +200,9 @@ SET (SRCS
     ./src/JobTickets/WorldToProtocol/SendThreadArea.h
     ./src/JobTickets/WorldToProtocol/EntityMove.h
 
+    ./src/JobTickets/WorldToGenerator/GenChunkReq2.h
+    ./src/JobTickets/WorldToGenerator/GenChunkReq2.cpp
+
     ./src/JobTickets/ProtocolToWorld/SendPlayerPosToWorld.h
     ./src/JobTickets/ProtocolToWorld/ChatToWorld.h
     ./src/JobTickets/ProtocolToWorld/ClientSlotChange.h
