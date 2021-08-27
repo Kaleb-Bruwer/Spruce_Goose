@@ -106,6 +106,10 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
                 hover.itemDamage = slots[i].itemDamage;
                 hover.itemCount = take;
                 slots[i].itemCount -= take;
+
+                if(slots[i].isEmpty())
+                    slots[i].makeEmpty();
+
                 altered.add(i, slots[i]);
                 break;
             }
