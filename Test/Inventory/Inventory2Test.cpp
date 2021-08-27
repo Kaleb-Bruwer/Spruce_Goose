@@ -2,6 +2,17 @@
 
 #include "../../src/Inventory/Inventory2.h"
 
-TEST(Inventory, test1){
+class Inventory2Test : public ::testing::Test{
+protected:
+    virtual void SetUp(){
+
+    };
+
+    virtual void TearDown(){
+
+    };
+};
+
+TEST_F(Inventory2Test, test1){
     ASSERT_TRUE(true);
 }
