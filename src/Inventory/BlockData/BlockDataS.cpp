@@ -16,7 +16,7 @@ int BlockDataS<nSlots>::tryInsertHalfSlot(Slot& dest, Slot& origin, int stackSiz
     if(!origin.typeMatch(&dest))
         return 0;
 
-    int canTake = stackSize = dest.itemCount;
+    int canTake = stackSize - dest.itemCount;
     if(canTake <= 0)
         return 0;
 
