@@ -606,3 +606,43 @@ TEST_F(Inventory2Test, testMode2T4){
 
     delete job;
 }
+
+// middle click in survival
+TEST_F(Inventory2Test, testMode3T1){
+    //Set up inventory
+    inventory2.slots[9] = getStone();
+
+    ClickWindowJob* job = initJob(3);
+    job->button = 2;
+
+    Slot hExpect = Slot();
+    Slot sExpect1 = getStone();
+
+    inventory2.clickWindow(job, 0, altered, false);
+
+    // Assertions
+    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
+    ASSERT_TRUE(inventory2.slots[9] == sExpect1) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect1;
+
+    delete job;
+}
+
+// middle click in creative
+TEST_F(Inventory2Test, testMode3T2){
+    //Set up inventory
+    inventory2.slots[9] = getStone();
+
+    ClickWindowJob* job = initJob(3);
+    job->button = 2;
+
+    Slot hExpect = getStone(64);
+    Slot sExpect1 = getStone();
+
+    inventory2.clickWindow(job, 0, altered, true);
+
+    // Assertions
+    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
+    ASSERT_TRUE(inventory2.slots[9] == sExpect1) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect1;
+
+    delete job;
+}

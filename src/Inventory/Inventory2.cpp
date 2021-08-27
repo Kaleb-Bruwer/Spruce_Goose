@@ -271,6 +271,12 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
         slots[i] = temp;
         break;
     }
+    case 3: //creative mode only, duplicate a stack
+        if(creative && hover.isEmpty() && job->button == 2){
+            hover = slots[i];
+            hover.itemCount = hover.maxStackSize();
+        }
+        break;
     case 5: //mouse drags
         switch(job->button){
             case 0: //start left drag
