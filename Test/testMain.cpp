@@ -1,7 +1,8 @@
 #include <gtest/gtest.h>
 
-#include "./TerrainPort/GenPlayerConnectionTest.cpp"
+#include "./Inventory/Inventory2Test.cpp"
 #include "./Protocol/PacketReaderTest.cpp"
+
 
 int main(int argc, char **argv){
     testing::InitGoogleTest(&argc, argv);
