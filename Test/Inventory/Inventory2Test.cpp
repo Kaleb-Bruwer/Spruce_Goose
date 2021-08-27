@@ -514,3 +514,95 @@ TEST_F(Inventory2Test, testMode1T10){
 
     delete job;
 }
+
+// MODE 2: numeric keys
+
+// move item away
+TEST_F(Inventory2Test, testMode2T1){
+    //Set up inventory
+    inventory2.slots[37] = getStone();
+
+    ClickWindowJob* job = initJob(2, 37);
+    job->button = 4;
+
+    Slot hExpect = Slot();
+    Slot sExpect1 = Slot();
+    Slot sExpect2 = getStone();
+
+    inventory2.clickWindow(job, 0, altered, false);
+
+    // Assertions
+    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
+    ASSERT_TRUE(inventory2.slots[37] == sExpect1) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect1;
+    ASSERT_TRUE(inventory2.slots[40] == sExpect2) << "slot40: " << inventory2.slots[40] << ", expected: " << sExpect2;
+
+    delete job;
+}
+
+// move item in
+TEST_F(Inventory2Test, testMode2T2){
+    //Set up inventory
+    inventory2.slots[37] = getStone();
+
+    ClickWindowJob* job = initJob(2, 40);
+    job->button = 1;
+
+    Slot hExpect = Slot();
+    Slot sExpect1 = Slot();
+    Slot sExpect2 = getStone();
+
+    inventory2.clickWindow(job, 0, altered, false);
+
+    // Assertions
+    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
+    ASSERT_TRUE(inventory2.slots[37] == sExpect1) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect1;
+    ASSERT_TRUE(inventory2.slots[40] == sExpect2) << "slot40: " << inventory2.slots[40] << ", expected: " << sExpect2;
+
+    delete job;
+}
+
+// swap hotbar items
+TEST_F(Inventory2Test, testMode2T3){
+    //Set up inventory
+    inventory2.slots[37] = getStone();
+    inventory2.slots[40] = getDirt();
+
+    ClickWindowJob* job = initJob(2, 40);
+    job->button = 1;
+
+    Slot hExpect = Slot();
+    Slot sExpect1 = getDirt();
+    Slot sExpect2 = getStone();
+
+    inventory2.clickWindow(job, 0, altered, false);
+
+    // Assertions
+    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
+    ASSERT_TRUE(inventory2.slots[37] == sExpect1) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect1;
+    ASSERT_TRUE(inventory2.slots[40] == sExpect2) << "slot40: " << inventory2.slots[40] << ", expected: " << sExpect2;
+
+    delete job;
+}
+
+// swap from main inventory
+TEST_F(Inventory2Test, testMode2T4){
+    //Set up inventory
+    inventory2.slots[10] = getStone();
+    inventory2.slots[40] = getDirt();
+
+    ClickWindowJob* job = initJob(2, 10);
+    job->button = 4;
+
+    Slot hExpect = Slot();
+    Slot sExpect1 = getDirt();
+    Slot sExpect2 = getStone();
+
+    inventory2.clickWindow(job, 0, altered, false);
+
+    // Assertions
+    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
+    ASSERT_TRUE(inventory2.slots[10] == sExpect1) << "slot10: " << inventory2.slots[10] << ", expected: " << sExpect1;
+    ASSERT_TRUE(inventory2.slots[40] == sExpect2) << "slot40: " << inventory2.slots[40] << ", expected: " << sExpect2;
+
+    delete job;
+}
