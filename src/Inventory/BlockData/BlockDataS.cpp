@@ -72,7 +72,15 @@ int BlockDataS<nSlots>::mov(Slot& origin, int start, int end, AlteredSlots &alte
     int startCount = origin.itemCount;
 
     movHalf(origin, start, end, altered);
-    movEmpty(origin, start, end, altered);
+
+    if(origin.isEmpty())
+        origin.makeEmpty();
+    else{
+        movEmpty(origin, start, end, altered);
+        if(origin.isEmpty())
+            origin.makeEmpty();
+    }
+
 
     return startCount - origin.itemCount;
 }
