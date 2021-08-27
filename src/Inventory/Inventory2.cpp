@@ -192,8 +192,8 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
             //The result from crafting is inserted differently from the inputs
             int slotOrder[36];
             int index = 0;
-            for(int i=44; i>=9; i--){
-                slotOrder[index++] = i;
+            for(int j=44; j>=9; j--){
+                slotOrder[index++] = j;
             }
             mov(slots[0], 44, 9, altered);
             // mov((slotOrder[0]), 36, slots[0], 0);
@@ -258,6 +258,19 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
     case 1: //shift click
         shiftClick();
         break;
+    case 2:{ //number key
+        if(!hover.isEmpty() || i == 0)
+            break;
+
+        if(job->button < 0 || job->button > 8)
+            break; //invalid request
+
+        int targetSlot = job->button + 36;
+        Slot temp = slots[targetSlot];
+        slots[targetSlot] = slots[i];
+        slots[i] = temp;
+        break;
+    }
     case 5: //mouse drags
         switch(job->button){
             case 0: //start left drag
