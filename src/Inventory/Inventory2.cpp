@@ -164,6 +164,9 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
         }
         else if(slots[i].itemID != hover.itemID
                 || slots[i].itemDamage != hover.itemDamage){
+            Slot temp = slots[i];
+            slots[i] = hover;
+            hover = temp;
             return;
         }
 
