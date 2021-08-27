@@ -52,6 +52,9 @@ protected:
 
         ASSERT_TRUE(inventory2.hover == s) << "Incorrect item";
         ASSERT_TRUE(inventory2.slots[slot] == h) << "Incorrect item";
+
+        delete job;
+
     }
 
     void testMode0Btn1(Slot s, Slot h, int slot = 9){
@@ -104,6 +107,8 @@ protected:
 
         ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
         ASSERT_TRUE(inventory2.slots[slot] == sExpect) << "slot: " << inventory2.slots[slot] << ", expected: " << sExpect;
+
+        delete job;
     }
 
 };
@@ -151,6 +156,8 @@ TEST_F(Inventory2Test, testMode0Btn0T7){
 
     ASSERT_TRUE(inventory2.hover == h) << "Incorrect item";
     ASSERT_TRUE(inventory2.slots[slot] == s) << "Incorrect item";
+
+    delete job;
 }
 
 TEST_F(Inventory2Test, testMode0Btn0T8){
@@ -168,6 +175,8 @@ TEST_F(Inventory2Test, testMode0Btn0T8){
 
     ASSERT_TRUE(inventory2.hover == s) << "hover: " << inventory2.hover;
     ASSERT_TRUE(inventory2.slots[slot] == h) << "slot: " << inventory2.slots[slot];
+
+    delete job;
 }
 
 
@@ -264,6 +273,7 @@ TEST_F(Inventory2Test, testMode1T1){
     ASSERT_TRUE(inventory2.slots[9] == sExpect1) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect1;
     ASSERT_TRUE(inventory2.slots[36] == sExpect2) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect2;
 
+    delete job;
 }
 
 // hotbar to empty inventory
@@ -285,6 +295,8 @@ TEST_F(Inventory2Test, testMode1T2){
     ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
     ASSERT_TRUE(inventory2.slots[36] == sExpect1) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect1;
     ASSERT_TRUE(inventory2.slots[9] == sExpect2) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect2;
+
+    delete job;
 }
 
 // Hotbar to inventory with dirt in 1st slot
@@ -309,6 +321,8 @@ TEST_F(Inventory2Test, testMode1T3){
     ASSERT_TRUE(inventory2.slots[36] == sExpect1) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect1;
     ASSERT_TRUE(inventory2.slots[9] == sExpect2) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect2;
     ASSERT_TRUE(inventory2.slots[10] == sExpect3) << "slot10: " << inventory2.slots[10] << ", expected: " << sExpect3;
+
+    delete job;
 }
 
 // Hotbar to inventory that has a partial stack
@@ -333,6 +347,8 @@ TEST_F(Inventory2Test, testMode1T4){
     ASSERT_TRUE(inventory2.slots[36] == sExpect1) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect1;
     ASSERT_TRUE(inventory2.slots[9] == sExpect2) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect2;
     ASSERT_TRUE(inventory2.slots[14] == sExpect3) << "slot14: " << inventory2.slots[14] << ", expected: " << sExpect3;
+
+    delete job;
 }
 
 // Hotbar to inventory that has a full stack
@@ -357,6 +373,8 @@ TEST_F(Inventory2Test, testMode1T5){
     ASSERT_TRUE(inventory2.slots[36] == sExpect1) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect1;
     ASSERT_TRUE(inventory2.slots[9] == sExpect2) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect2;
     ASSERT_TRUE(inventory2.slots[14] == sExpect3) << "slot14: " << inventory2.slots[14] << ", expected: " << sExpect3;
+
+    delete job;
 }
 
 // Hotbar to inventory that has a full stack
@@ -382,6 +400,8 @@ TEST_F(Inventory2Test, testMode1T6){
     ASSERT_TRUE(inventory2.slots[36] == sExpect1) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect1;
     ASSERT_TRUE(inventory2.slots[12] == sExpect2) << "slot12: " << inventory2.slots[12] << ", expected: " << sExpect2;
     ASSERT_TRUE(inventory2.slots[14] == sExpect3) << "slot14: " << inventory2.slots[14] << ", expected: " << sExpect3;
+
+    delete job;
 }
 
 // Hotbar to inventory that has an almost-full stack
@@ -407,6 +427,8 @@ TEST_F(Inventory2Test, testMode1T7){
     ASSERT_TRUE(inventory2.slots[36] == sExpect1) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect1;
     ASSERT_TRUE(inventory2.slots[12] == sExpect2) << "slot12: " << inventory2.slots[12] << ", expected: " << sExpect2;
     ASSERT_TRUE(inventory2.slots[14] == sExpect3) << "slot14: " << inventory2.slots[14] << ", expected: " << sExpect3;
+
+    delete job;
 }
 
 TEST_F(Inventory2Test, testMode1T8){
@@ -434,6 +456,8 @@ TEST_F(Inventory2Test, testMode1T8){
     for(int i=9; i<36; i++){
         ASSERT_TRUE(inventory2.slots[i] == sExpect2) << "slot: " << inventory2.slots[i] << ", expected: " << sExpect2;
     }
+
+    delete job;
 }
 
 TEST_F(Inventory2Test, testMode1T9){
@@ -461,6 +485,8 @@ TEST_F(Inventory2Test, testMode1T9){
     for(int i=36; i<45; i++){
         ASSERT_TRUE(inventory2.slots[i] == sExpect2) << "slot: " << inventory2.slots[i] << ", expected: " << sExpect2;
     }
+
+    delete job;
 }
 
 // Hotbar to inventory, must split between two near-full stacks
@@ -485,4 +511,6 @@ TEST_F(Inventory2Test, testMode1T10){
     ASSERT_TRUE(inventory2.slots[36] == sExpect1) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect1;
     ASSERT_TRUE(inventory2.slots[9] == sExpect2) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect2;
     ASSERT_TRUE(inventory2.slots[14] == sExpect3) << "slot14: " << inventory2.slots[14] << ", expected: " << sExpect3;
+
+    delete job;
 }
