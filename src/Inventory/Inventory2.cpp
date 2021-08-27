@@ -277,6 +277,13 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
             hover.itemCount = hover.maxStackSize();
         }
         break;
+    case 4:
+        if(job->button == 0){
+            // TODO: Drop one item
+        }
+        else if(job->button == 1){
+            // TODO: Drop stack
+        }
     case 5: //mouse drags
         switch(job->button){
             case 0: //start left drag
@@ -284,40 +291,40 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
                 dragData.dragTotal = hover.itemCount;
                 break;
 
-                case 1: //add slot to left drag
-                // First check some conditions
-                if(dragData.dragMode == LEFT){
-                    if(!slots[i].isEmpty() && !slots[i].typeMatch(hover))
-                        break;
+            case 1: //add slot to left drag
+            // First check some conditions
+            if(dragData.dragMode == LEFT){
+                if(!slots[i].isEmpty() && !slots[i].typeMatch(hover))
+                    break;
 
-                    dragData.dragSlots.push_back(i);
-                    dragData.baseCount.push_back(slots[i].itemCount);
+                dragData.dragSlots.push_back(i);
+                dragData.baseCount.push_back(slots[i].itemCount);
 
-                    // Conditions where no action is required
-                    int numSlotsInDrag = dragData.dragSlots.size();
-                    if(numSlotsInDrag <= 1 || numSlotsInDrag > dragData.dragTotal)
-                        break;
+                // Conditions where no action is required
+                int numSlotsInDrag = dragData.dragSlots.size();
+                if(numSlotsInDrag <= 1 || numSlotsInDrag > dragData.dragTotal)
+                    break;
 
-                    // Split from scrach every time
-                    // numToAdd: num added to each slot in dragSlots
-                    int numToAdd = floor((float)dragData.dragTotal/numSlotsInDrag);
-                    int remainder = dragData.dragTotal - numToAdd * numSlotsInDrag;
+                // Split from scrach every time
+                // numToAdd: num added to each slot in dragSlots
+                int numToAdd = floor((float)dragData.dragTotal/numSlotsInDrag);
+                int remainder = dragData.dragTotal - numToAdd * numSlotsInDrag;
 
-                    int maxStack = hover.maxStackSize();
+                int maxStack = hover.maxStackSize();
 
-                    for(int i=0; i<dragData.dragSlots.size(); i++){
-                        int s = dragData.dragSlots[i];
-                        slots[s] = hover; // sets the type
-                        slots[s].itemCount = dragData.baseCount[i] + numToAdd;
-                        if(slots[s].itemCount > maxStack){
-                            remainder += slots[s].itemCount - maxStack;
-                            slots[s].itemCount = maxStack;
-                        }
-                        altered.add(s, slots[s]);
+                for(int i=0; i<dragData.dragSlots.size(); i++){
+                    int s = dragData.dragSlots[i];
+                    slots[s] = hover; // sets the type
+                    slots[s].itemCount = dragData.baseCount[i] + numToAdd;
+                    if(slots[s].itemCount > maxStack){
+                        remainder += slots[s].itemCount - maxStack;
+                        slots[s].itemCount = maxStack;
                     }
-                    hover.itemCount = remainder;
+                    altered.add(s, slots[s]);
                 }
-                break;
+                hover.itemCount = remainder;
+            }
+            break;
 
             case 2: //end left drag
                 dragData.dragMode = NONE;
