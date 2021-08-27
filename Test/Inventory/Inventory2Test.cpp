@@ -15,49 +15,49 @@ protected:
 
     };
 
-    ClickWindowJob* initJob(){
+    ClickWindowJob* initJob(int slotNum = 9){
         ClickWindowJob* result = new ClickWindowJob();
 
         result->windowID = 0;
-        result->slotNum = 9;
+        result->slotNum = slotNum;
 
         return result;
     };
 
-    Slot getStone(){
+    Slot getStone(int count = 1){
         Slot result;
         result.itemID = 1;
-        result.itemCount = 1;
+        result.itemCount = count;
         return result;
     };
+
+    void testMode0Btn0(Slot s, Slot h, int slot = 9){
+        ClickWindowJob* job = initJob(slot);
+        job->mode = 0;
+        job->button = 0;
+
+        inventory2.slots[slot] = s;
+        inventory2.hover = h;
+
+        inventory2.clickWindow(job, 0, altered, false);
+
+        ASSERT_TRUE(inventory2.hover == s) << "Incorrect item";
+        ASSERT_TRUE(inventory2.slots[slot] == h) << "Incorrect item";
+    }
 };
 
-TEST_F(Inventory2Test, simplePickup){
-    ClickWindowJob* job = initJob();
-    job->mode = 0;
-    job->button = 0;
-
-    inventory2.slots[9] = getStone();
-
-    inventory2.clickWindow(job, 0, altered, false);
-
-
-
-    ASSERT_TRUE(inventory2.hover == getStone()) << "Incorrect item";
-    ASSERT_TRUE(inventory2.slots[9] == Slot()) << "Incorrect item";
+TEST_F(Inventory2Test, testMode0Btn0T1){
+    testMode0Btn0(getStone(), Slot());
 }
 
-TEST_F(Inventory2Test, simplePutdown){
-    ClickWindowJob* job = initJob();
-    job->mode = 0;
-    job->button = 0;
+TEST_F(Inventory2Test, testMode0Btn0T2){
+    testMode0Btn0(Slot(), getStone());
+}
 
-    inventory2.hover = getStone();
+TEST_F(Inventory2Test, testMode0Btn0T3){
+    testMode0Btn0(getStone(5), Slot());
+}
 
-    inventory2.clickWindow(job, 0, altered, false);
-
-
-
-    ASSERT_TRUE(inventory2.hover == Slot()) << "Incorrect item";
-    ASSERT_TRUE(inventory2.slots[9] == getStone()) << "Incorrect item";
+TEST_F(Inventory2Test, testMode0Btn0T4){
+    testMode0Btn0(Slot(), getStone(5));
 }
