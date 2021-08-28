@@ -221,10 +221,6 @@ vector<Slot> Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, Alter
         altered.add(i, slots[i]);
     };
 
-    cout << "CLICK ";
-    cout << (int) job->mode << ", " << (int)job->button << ": ";
-    cout << (int)job->slotNum << " h:" << hover << endl;
-
     switch(job->mode){
     case 0: //"normal" clicks
         if(i < 0){
