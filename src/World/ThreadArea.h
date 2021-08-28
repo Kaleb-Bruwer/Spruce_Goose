@@ -78,6 +78,8 @@ private:
     Coordinate<int> getTargetBlock(PlayerEntity* p);
     Coordinate<int> getTargetBlock(Coordinate<double> head, int pitch, int yaw);
 
+    void dropSlot(Slot s, Coordinate<double> pos);
+
     //Gives players who need to be informed of any change
     //at the given position
     //has explicit instanciations for int and double

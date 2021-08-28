@@ -839,6 +839,18 @@ Coordinate<int> ThreadArea::getTargetBlock(Coordinate<double> head, int pitch, i
 
 }
 
+void ThreadArea::dropSlot(Slot slot, Coordinate<double> pos){
+    if(slot.isEmpty())
+        return;
+
+    Item* item = new Item(slot);
+    item->setPos(pos);
+
+    newItemToPlayers(item);
+    entities.addEntity(item);
+}
+
+
 void ThreadArea::startDigging(PlayerEntity* player, Coordinate<int> pos){
     //Meant for survival mode
 
@@ -931,15 +943,12 @@ void ThreadArea::handlePlayerDigging(JobTicket* j){
         Slot slot = player->inventory.getHeldItem();
         if(slot.isEmpty())
             return;
-        Item* item = new Item(slot);
 
-        item->setPos(player->position);
-        item->position.y += 1;
+        Coordinate<double> dropPos = player->position;
+        dropPos.y += 1;
+        dropSlot(slot, dropPos);
+
         player->inventory.clearSlot(player->inventory.inventory.cursor);
-        // player->inventory.setSlot(player->inventory.inventory.cursor, 0);
-
-        newItemToPlayers(item);
-        entities.addEntity(item);
 
         //respond to player
         SendWindowItem* inventoryJob = new SendWindowItem();
@@ -954,18 +963,19 @@ void ThreadArea::handlePlayerDigging(JobTicket* j){
         Slot slot = player->inventory.getHeldItem();
         if(slot.isEmpty())
             return;
-        Item* item = new Item(slot);
 
-        item->setPos(player->position);
-        item->position.y += 1;
-        item->count = 1;
-        slot.itemCount--;
-        if(slot.itemCount == 0)
-            player->inventory.clearSlot(player->inventory.inventory.cursor);
-            // player->inventory.setSlot(player->inventory.inventory.cursor, 0);
+        Coordinate<double> dropPos = player->position;
+        dropPos.y += 1;
 
-        newItemToPlayers(item);
-        entities.addEntity(item);
+        int itemCount = slot.itemCount;
+        slot.itemCount = 1;
+        dropSlot(slot, dropPos);
+        slot.itemCount = itemCount - 1;
+
+        if(slot.isEmpty())
+            slot.makeEmpty();
+
+        player->inventory.setSlot(player->inventory.inventory.cursor, slot);
 
         //respond to player
         SendWindowItem* inventoryJob = new SendWindowItem();
