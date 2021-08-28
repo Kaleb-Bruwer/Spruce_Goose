@@ -43,7 +43,7 @@ public:
     BlockData* clone();
 
     //Inventory parameter not used, only there for polymorphism
-    void clickWindow(ClickWindowJob*, Inventory2* inv, AlteredSlots &altered, bool creative);
+    vector<Slot> clickWindow(ClickWindowJob*, Inventory2* inv, AlteredSlots &altered, bool creative);
 
     int tryPickup(Item* item, AlteredSlots& altered);
 

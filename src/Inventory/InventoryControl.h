@@ -17,7 +17,7 @@ public:
     AlteredSlots alteredSlots;
     Inventory2 inventory;
 
-    void clickWindow(ClickWindowJob* job, bool creative);
+    vector<Slot> clickWindow(ClickWindowJob* job, bool creative);
 
     //only sends if neccesary
     void sendWindowUpdate();

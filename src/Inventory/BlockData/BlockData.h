@@ -34,7 +34,7 @@ public:
     virtual BlockData* clone() = 0;
 
     //Returns vector of altered slots, which is tracked by InventoryControl
-    virtual void clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative) = 0;
+    virtual vector<Slot> clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative) = 0;
 };
 
 #endif

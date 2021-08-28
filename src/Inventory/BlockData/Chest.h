@@ -13,7 +13,7 @@ public:
     int getWindowID(){return 0;};
     BlockData* clone();
 
-    void clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative);
+    vector<Slot> clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative);
 
 };
 

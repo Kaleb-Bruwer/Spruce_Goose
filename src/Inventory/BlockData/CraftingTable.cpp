@@ -70,7 +70,8 @@ void CraftingTable::checkCrafting(AlteredSlots &altered){
 }
 
 // void CraftingTable::clickWindow(ClickWindowJob* job, Inventory* inv, bool creative){
-void CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative){
+vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative){
+    vector<Slot> dropped;
 
     int clicked = job->slotNum;
 
@@ -79,7 +80,7 @@ void CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlo
 
         if(job->shift){
             if(job->button == 3)
-                return;
+                return dropped;
 
             if(clicked == 0){
                 //Crafting output
@@ -119,7 +120,7 @@ void CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlo
             if(!hover->isEmpty()){
                 //Placing something in crafting bench
                 if(clicked == 0)
-                    return; //Can't place anything in product frame
+                    return dropped; //Can't place anything in product frame
 
                 if(job->button == 0){
                     if(origin.isEmpty()){
@@ -174,7 +175,7 @@ void CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlo
                 if(clicked == 0){
                     //Crafting result
                     if(job->button == 3)
-                        return;
+                        return dropped;
 
                     craft(false, altered);
                     *hover = origin;
@@ -220,4 +221,6 @@ void CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlo
         //This might cause an offset screwup
         inv->clickWindow(job, inv, altered, creative);
     }
+
+    return dropped;
 }

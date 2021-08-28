@@ -10,12 +10,13 @@
 
 using namespace std;
 
-void InventoryControl::clickWindow(ClickWindowJob* job, bool creative){
+vector<Slot> InventoryControl::clickWindow(ClickWindowJob* job, bool creative){
+    vector<Slot> dropped;
     if(activeBlock){
-        activeBlock->clickWindow(job, &inventory, alteredSlots, creative);
+        dropped = activeBlock->clickWindow(job, &inventory, alteredSlots, creative);
     }
     else{
-        inventory.clickWindow(job, &inventory, alteredSlots, creative);
+        dropped = inventory.clickWindow(job, &inventory, alteredSlots, creative);
     }
 
     ConfirmTransaction* job2 = new ConfirmTransaction();
@@ -24,6 +25,7 @@ void InventoryControl::clickWindow(ClickWindowJob* job, bool creative){
 
     conn->pushJobToPlayer(job2);
 
+    return dropped;
 }
 
 

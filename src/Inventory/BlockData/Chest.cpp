@@ -13,10 +13,12 @@ BlockData* Chest::clone(){
     return result;
 }
 
-void Chest::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative){
+vector<Slot> Chest::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative){
     // 0 to 26 is the chest
     // 27 to 53 is the main inventory
     // 54 to 62 is the hotbar
+
+    vector<Slot> dropped;
 
     Slot& origin = slots[0]; //meaningless value, references just have to be initialized
     bool inChest = false;
@@ -32,7 +34,7 @@ void Chest::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &alte
 
     if(job->shift){
         if(job->button == 3)
-            return;
+            return dropped;
 
         //if inChest, move to inventory
         //If !inChest, move to chest
@@ -86,7 +88,7 @@ void Chest::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &alte
             else{
                 int take = ceil((double) origin.itemCount / 2);
                 if(take == 0)
-                    return;
+                    return dropped;
                 hover = origin;
                 hover.itemCount = take;
                 origin.itemCount -= take;
@@ -101,5 +103,5 @@ void Chest::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &alte
         }
     }
 
-    return;
+    return dropped;
 }

@@ -18,7 +18,7 @@ public:
     BlockData* clone();
 
     // void clickWindow(ClickWindowJob* job, Inventory* inv, bool creative);
-    void clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative);
+    vector<Slot> clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative);
 };
 
 #endif

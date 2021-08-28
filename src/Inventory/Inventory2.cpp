@@ -76,7 +76,9 @@ void Inventory2::checkCrafting(AlteredSlots &altered){
 }
 
 
-void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative){
+vector<Slot> Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative){
+    vector<Slot> dropped;
+
     int i = job->slotNum;
 
     auto noShiftNoHover = [&](){
@@ -238,7 +240,7 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
             }
             else{
                 if(i == 0)
-                    return;
+                    return dropped;
                 noShiftHoverLeft();
             }
         }
@@ -250,7 +252,7 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
             }
             else{
                 if(i == 0)
-                    return;
+                    return dropped;
                 noShiftHoverRight();
             }
         }
@@ -258,7 +260,7 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
             //undefined
             //Don't throw an error, this can be client-triggered
             cout << "Invalid button in Inventory2::clickWindow\n";
-            return;
+            return dropped;
         }
         break;
 
@@ -424,7 +426,7 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
     if(i >= 1 && i <= 4){
         checkCrafting(altered);
     }
-    return;
+    return dropped;
 }
 
 
