@@ -41,8 +41,8 @@ public:
         inventory.slots[i] = s;
     };
 
-    Slot* getHeldItem(){
-        return &inventory.slots[inventory.cursor];
+    Slot getHeldItem(){
+        return inventory.slots[inventory.cursor];
     };
 
     short getHeldItemID(){

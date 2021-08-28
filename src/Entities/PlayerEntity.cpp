@@ -141,11 +141,11 @@ void PlayerEntity::sendToPlayer(PlayerEntity* p){
     job->pos = position;
     job->pitch = pitch;
     job->yaw = yaw;
-    Slot* item = inventory.getHeldItem();
-    if(!item)
+    Slot item = inventory.getHeldItem();
+    if(item.isEmpty())
         job->item = 0;
     else
-        job->item = item->itemID;
+        job->item = item.itemID;
 
     p->pushJobToProtocol(job);
 }

@@ -35,10 +35,10 @@ public:
     2 : hand
     */
     int isBestTool(int tool);
-    double getBreakSpeed(Slot* tool);
+    double getBreakSpeed(Slot tool);
     double getStrength();
 
-    Slot getDrop(Slot* tool);
+    Slot getDrop(Slot tool);
 };
 
 #endif

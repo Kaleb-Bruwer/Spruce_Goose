@@ -851,7 +851,7 @@ void ThreadArea::startDigging(PlayerEntity* player, Coordinate<int> pos){
     if(block.id == 0)
         return;
 
-    Slot* tool = player->inventory.getHeldItem();
+    Slot tool = player->inventory.getHeldItem();
     //breakSpeed is fraction of block broke per tick
     float breakSpeed = block.getBreakSpeed(tool);
 
@@ -928,10 +928,10 @@ void ThreadArea::handlePlayerDigging(JobTicket* j){
 
     case 3: //Drop item stack
     {
-        Slot* slot = player->inventory.getHeldItem();
-        if(!slot)
+        Slot slot = player->inventory.getHeldItem();
+        if(slot.isEmpty())
             return;
-        Item* item = new Item(*slot);
+        Item* item = new Item(slot);
 
         item->setPos(player->position);
         item->position.y += 1;
@@ -951,16 +951,16 @@ void ThreadArea::handlePlayerDigging(JobTicket* j){
     }
     case 4: //Drop item
     {
-        Slot* slot = player->inventory.getHeldItem();
-        if(!slot)
+        Slot slot = player->inventory.getHeldItem();
+        if(slot.isEmpty())
             return;
-        Item* item = new Item(*slot);
+        Item* item = new Item(slot);
 
         item->setPos(player->position);
         item->position.y += 1;
         item->count = 1;
-        slot->itemCount--;
-        if(slot->itemCount == 0)
+        slot.itemCount--;
+        if(slot.itemCount == 0)
             player->inventory.clearSlot(player->inventory.inventory.cursor);
             // player->inventory.setSlot(player->inventory.inventory.cursor, 0);
 
@@ -969,7 +969,7 @@ void ThreadArea::handlePlayerDigging(JobTicket* j){
 
         //respond to player
         SendWindowItem* inventoryJob = new SendWindowItem();
-        Slot tempSlot = *player->inventory.getHeldItem();
+        Slot tempSlot = player->inventory.getHeldItem();
         inventoryJob->addSlot(player->inventory.inventory.cursor, tempSlot);
         player->connection->pushJobToPlayer(inventoryJob);
 
@@ -985,11 +985,11 @@ void ThreadArea::handleplayerBlock(JobTicket* j, PlayerEntity* player){
     PlayerBlockPlace* job = (PlayerBlockPlace*)j;
 
     // Check if player is holding a placeable block
-    Slot* s = player->inventory.getHeldItem();
-    if(!s)
+    Slot s = player->inventory.getHeldItem();
+    if(s.isEmpty())
         return;
 
-    Block block(*s);
+    Block block(s);
     if(block.id == 0)
         return;
 

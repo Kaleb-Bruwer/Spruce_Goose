@@ -124,14 +124,14 @@ int Block::isBestTool(int tool){
     return (bool) validTools;
 }
 
-double Block::getBreakSpeed(Slot* tool){
+double Block::getBreakSpeed(Slot tool){
     double result;
 
     short toolID;
-    if(!tool)
+    if(tool.isEmpty())
         toolID = 0;
     else
-        toolID = tool->itemID;
+        toolID = tool.itemID;
 
     int bestTool = isBestTool(toolID);
 
@@ -342,8 +342,8 @@ Slot Block::defaultDrop(){
     return result;
 }
 
-Slot Block::getDrop(Slot* tool){
-    int bestTool = isBestTool(tool->itemID);
+Slot Block::getDrop(Slot tool){
+    int bestTool = isBestTool(tool.itemID);
 
     if(bestTool == 0){
         //Drop nothing, completely wrong tool
