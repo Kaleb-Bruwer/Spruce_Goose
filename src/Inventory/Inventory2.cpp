@@ -225,6 +225,11 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
 
     switch(job->mode){
     case 0: //"normal" clicks
+        if(i < 0){
+            //TODO: Drop item(s)
+            break;
+        }
+
         if(job->button == 0){
             //Left click
 
@@ -282,12 +287,15 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
         }
         break;
     case 4:
+        if(i < 0 || i >45)
+            break;
         if(job->button == 0){
-            // TODO: Drop one item
+            //TODO: Drop one item
         }
         else if(job->button == 1){
-            // TODO: Drop stack
+            //TODO: Drop stack
         }
+        break;
     case 5: //mouse drags
         switch(job->button){
             case 0: //start left drag

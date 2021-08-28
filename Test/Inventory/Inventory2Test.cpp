@@ -952,6 +952,5 @@ TEST_F(Inventory2Test, testMode6T1){
         ASSERT_TRUE(inventory2.slots[i] == sExpect1) << "slot: " << inventory2.slots[i] << ", expected: " << sExpect1;
     }
 
-
     delete job;
 }
