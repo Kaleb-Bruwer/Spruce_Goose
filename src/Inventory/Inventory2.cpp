@@ -223,7 +223,7 @@ vector<Slot> Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, Alter
 
     switch(job->mode){
     case 0: //"normal" clicks
-        if(i < 0){
+        if(i < 0){ //spec says -999, but making it <0 should be harmless
             if(hover.isEmpty())
                 break;
             if(job->button == 0){
@@ -243,6 +243,8 @@ vector<Slot> Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, Alter
             }
             break;
         }
+        if(i >= 45) //invalid
+            break;
 
         if(job->button == 0){
             //Left click
@@ -277,6 +279,8 @@ vector<Slot> Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, Alter
         break;
 
     case 1: //shift click
+        if(i < 0 || i >44) //invalid
+            break;
         shiftClick();
         break;
     case 2:{ //number key
@@ -285,6 +289,9 @@ vector<Slot> Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, Alter
 
         if(job->button < 0 || job->button > 8)
             break; //invalid request
+
+        if(i < 0 || i > 44) //invalid
+            break;
 
         int targetSlot = job->button + 36;
         Slot temp = slots[targetSlot];
@@ -295,13 +302,16 @@ vector<Slot> Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, Alter
         break;
     }
     case 3: //creative mode only, duplicate a stack
+        if(i < 0 || i > 44) //invalid
+            break;
         if(creative && hover.isEmpty() && job->button == 2){
             hover = slots[i];
             hover.itemCount = hover.maxStackSize();
         }
         break;
     case 4:
-        if(i < 0 || i >45)
+        // Buttons 0 & 1 with i = 999 are in protocol, but as no-op
+        if(i < 0 || i > 44) //invalid
             break;
         if(job->button == 0){
             //Drop one
@@ -330,6 +340,8 @@ vector<Slot> Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, Alter
 
             case 1: //add slot to left drag
             // First check some conditions
+            if(i <0 || i > 44) //invalid
+                break;
             if(dragData.dragMode == LEFT){
                 if(!slots[i].isEmpty() && !slots[i].typeMatch(hover))
                     break;
@@ -385,6 +397,8 @@ vector<Slot> Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, Alter
             break;
 
             case 5: //add slot to right drag
+            if(i <0 || i > 44) //invalid
+                break;
             if(dragData.dragMode == RIGHT){
                 if(!slots[i].isEmpty() && !slots[i].typeMatch(hover))
                     break;
@@ -414,14 +428,14 @@ vector<Slot> Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, Alter
         }
         break;
     case 6: { //double click
-        cout << "DOUBLE CICK\n";
+        if(i <0 || i > 44) //invalid
+            break;
 
         int stackLimit = hover.maxStackSize();
         // Inside inventory, not armour and not crafting result
         if((i >= 1 && i < 45) && !(i >= 5 && i < 9)){
             if(hover.isEmpty())
                 break;
-            cout << "Passed requirements\n";
             // Fill from incomplete stacks
             for(int j=9; j < 45; j++){
                 if(slots[j].typeMatch(hover) && slots[j].itemCount < stackLimit){
