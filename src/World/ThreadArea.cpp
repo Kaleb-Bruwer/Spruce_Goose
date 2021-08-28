@@ -279,7 +279,15 @@ void ThreadArea::clickWindowHandler(JobTicket* j, PlayerEntity* player){
     bool creative = false;
     if(player->connection->gamemode == 1)
         creative = true;
-    player->inventory.clickWindow(job, creative);
+    vector<Slot> dropped = player->inventory.clickWindow(job, creative);
+
+    if(dropped.size() > 0){
+        Coordinate<double> dropPos = player->position;
+        dropPos.y += 1;
+        for(Slot s : dropped){
+            dropSlot(s, dropPos);
+        }
+    }
 }
 
 void ThreadArea::closeWindowHandler(JobTicket* j, PlayerEntity* player){

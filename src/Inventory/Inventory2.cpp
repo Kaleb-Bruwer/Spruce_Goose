@@ -224,7 +224,23 @@ vector<Slot> Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, Alter
     switch(job->mode){
     case 0: //"normal" clicks
         if(i < 0){
-            //TODO: Drop item(s)
+            if(hover.isEmpty())
+                break;
+            if(job->button == 0){
+                //Drop all in hover
+                dropped.push_back(hover);
+                hover.makeEmpty();
+            }
+            else if(job->button == 1){
+                //Drop one from hover
+                Slot drop = hover;
+                drop.itemCount = 1;
+                hover.itemCount--;
+                if(hover.isEmpty())
+                    hover.makeEmpty();
+
+                dropped.push_back(drop);
+            }
             break;
         }
 
@@ -288,10 +304,21 @@ vector<Slot> Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, Alter
         if(i < 0 || i >45)
             break;
         if(job->button == 0){
-            //TODO: Drop one item
+            //Drop one
+            Slot drop = slots[i];
+            drop.itemCount = 1;
+            slots[i].itemCount--;
+            if(slots[i].isEmpty())
+                slots[i].makeEmpty();
+
+            dropped.push_back(drop);
+            altered.add(i, slots[i]);
         }
         else if(job->button == 1){
-            //TODO: Drop stack
+            //Drop stack
+            dropped.push_back(slots[i]);
+            slots[i].makeEmpty();
+            altered.add(i, slots[i]);
         }
         break;
     case 5: //mouse drags
