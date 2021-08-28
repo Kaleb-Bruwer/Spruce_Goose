@@ -216,10 +216,12 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
 
             checkCrafting(altered);
         }
+        altered.add(i, slots[i]);
     };
 
-    // cout << (int) job->mode << ", " << (int)job->button << ": ";
-    // cout << (int)job->slotNum << "h:" << hover << endl;
+    cout << "CLICK ";
+    cout << (int) job->mode << ", " << (int)job->button << ": ";
+    cout << (int)job->slotNum << " h:" << hover << endl;
 
     switch(job->mode){
     case 0: //"normal" clicks
@@ -269,6 +271,8 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
         Slot temp = slots[targetSlot];
         slots[targetSlot] = slots[i];
         slots[i] = temp;
+        altered.add(targetSlot, slots[targetSlot]);
+        altered.add(i, slots[i]);
         break;
     }
     case 3: //creative mode only, duplicate a stack
@@ -345,7 +349,7 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
             case 4: //start right drag
                 dragData.dragMode = RIGHT;
                 dragData.dragTotal = hover.itemCount;
-                break;
+            break;
 
             case 5: //add slot to right drag
             if(dragData.dragMode == RIGHT){
@@ -373,8 +377,39 @@ void Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots 
             case 6: //end right drag
 
                 dragData.dragMode = NONE;
-                break;
+            break;
         }
+        break;
+    case 6: { //double click
+        cout << "DOUBLE CICK\n";
+
+        int stackLimit = hover.maxStackSize();
+        // Inside inventory, not armour and not crafting result
+        if((i >= 1 && i < 45) && !(i >= 5 && i < 9)){
+            if(hover.isEmpty())
+                break;
+            cout << "Passed requirements\n";
+            // Fill from incomplete stacks
+            for(int j=9; j < 45; j++){
+                if(slots[j].typeMatch(hover) && slots[j].itemCount < stackLimit){
+                    tryInsertHalfSlot(hover, slots[j], stackLimit);
+                    altered.add(j, slots[j]);
+                    if(hover.itemCount == stackLimit)
+                        break;
+                }
+            }
+            // Fill from full stacks
+            for(int j=9; j < 45; j++){
+                if(slots[j].typeMatch(hover)){
+                    tryInsertHalfSlot(hover, slots[j], stackLimit);
+                    altered.add(j, slots[j]);
+                    if(hover.itemCount == stackLimit)
+                        break;
+                }
+            }
+        }
+        break;
+    }
 
     }
 

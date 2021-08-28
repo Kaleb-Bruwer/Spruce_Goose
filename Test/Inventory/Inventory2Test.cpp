@@ -928,3 +928,30 @@ TEST_F(Inventory2Test, testMode5T8){
 
     delete job;
 }
+
+// Normal double click (incl. preceding single-click)
+TEST_F(Inventory2Test, testMode6T1){
+    //Set up inventory
+    inventory2.hover = Slot();
+    for(int i=9; i<19; i++)
+        inventory2.slots[i] = getStone();
+
+    // left click
+    ClickWindowJob* job = initJob(0, 9);
+    job->button = 0;
+    inventory2.clickWindow(job, 0, altered, false);
+
+    job->mode = 6;
+    inventory2.clickWindow(job, 0, altered, false);
+
+    Slot hExpect = getStone(10);
+    Slot sExpect1 = Slot();
+
+    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
+    for(int i=0; i<45; i++){
+        ASSERT_TRUE(inventory2.slots[i] == sExpect1) << "slot: " << inventory2.slots[i] << ", expected: " << sExpect1;
+    }
+
+
+    delete job;
+}

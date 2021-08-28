@@ -24,6 +24,7 @@ public:
     // };
 
     void add(int index, Slot s){
+        // cout << "Altered " << index << endl;
         index += offset;
         altered[index] = s;
     }
