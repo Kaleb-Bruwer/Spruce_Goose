@@ -14,15 +14,6 @@ public:
     map<int, Slot> altered;
     int offset = 0;
 
-    // void add(AlteredSlot a){
-    //     a.index += offset;
-    //
-    //     altered[a.index] = a.slot;
-    //
-    //     // if(find(altered.begin(), altered.end(), a) == altered.end())
-    //     //     altered.push_back(a);
-    // };
-
     void add(int index, Slot s){
         // cout << "Altered " << index << endl;
         index += offset;
