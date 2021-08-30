@@ -76,6 +76,7 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
     int clicked = job->slotNum;
 
     if(clicked < 10){
+        // Action involves crafting window
         Slot& origin = slots[clicked];
 
         if(job->shift){
@@ -86,26 +87,14 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
                 //Crafting output
                 craft(true, altered);
 
-                int slotOrder[36];
-                int index = 0;
-                for(int i=44; i>=9; i--){
-                    slotOrder[index++] = i;
-                }
                 // altered.setOffset(0); Offset is redundant, it happens to be 0
                 inv->mov(origin, 44, 9, altered);
-                // invMov(inv, &(slotOrder[0]), 36, origin, 1);
                 altered.add(0, slots[0]);
                 checkCrafting(altered);
             }
             else{
                 //Crafting frame
-                int slotOrder[36];
-                int index = 0;
-                for(int i=10; i<45; i++){
-                    slotOrder[index++] = i;
-                }
                 inv->mov(origin, 10, 45, altered);
-                // invMov(inv, &(slotOrder[0]), 36, origin, 1);
                 altered.add(clicked, slots[clicked]);
                 checkCrafting(altered);
             }
@@ -115,9 +104,9 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
 
             //Making hover a reference here might cause problems with
             //assignment operator
-            Slot* hover = &(inv->hover);
+            Slot& hover = inv->hover;
 
-            if(!hover->isEmpty()){
+            if(!hover.isEmpty()){
                 //Placing something in crafting bench
                 if(clicked == 0)
                     return dropped; //Can't place anything in product frame
@@ -126,7 +115,7 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
                     if(origin.isEmpty()){
                         //Put down in empty slot
                         origin = hover;
-                        hover->makeEmpty();
+                        hover.makeEmpty();
                         checkCrafting(altered);
                         altered.add(clicked, slots[clicked]);
                     }
@@ -134,11 +123,11 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
                         //Attempt to put down in non-empty slot
                         if(origin.typeMatch(hover)){
                             int canMove = origin.maxStackSize() - origin.itemCount;
-                            canMove = min(canMove, (int) hover->itemCount);
+                            canMove = min(canMove, (int) hover.itemCount);
                             origin.itemCount += canMove;
-                            hover->itemCount -= canMove;
-                            if(hover->isEmpty())
-                                hover->makeEmpty();
+                            hover.itemCount -= canMove;
+                            if(hover.isEmpty())
+                                hover.makeEmpty();
                             checkCrafting(altered);
                             altered.add(clicked, slots[clicked]);
                         }
@@ -146,11 +135,11 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
                 }
                 else if(job->button == 1){
                     if(origin.isEmpty()){
-                        origin = *hover;
+                        origin = hover;
                         origin.itemCount = 1;
-                        hover->itemCount--;
-                        if(hover->isEmpty()){
-                            hover->makeEmpty();
+                        hover.itemCount--;
+                        if(hover.isEmpty()){
+                            hover.makeEmpty();
                         }
                         checkCrafting(altered);
                         altered.add(clicked, slots[clicked]);
@@ -159,9 +148,9 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
                         if(origin.typeMatch(hover)){
                             if(origin.itemCount < origin.maxStackSize()){
                                 origin.itemCount++;
-                                hover->itemCount--;
-                                if(hover->isEmpty()){
-                                    hover->makeEmpty();
+                                hover.itemCount--;
+                                if(hover.isEmpty()){
+                                    hover.makeEmpty();
                                 }
                                 checkCrafting(altered);
                                 altered.add(clicked, slots[clicked]);
@@ -178,7 +167,7 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
                         return dropped;
 
                     craft(false, altered);
-                    *hover = origin;
+                    hover = origin;
                     origin.makeEmpty();
                     checkCrafting(altered);
                 }
@@ -186,15 +175,15 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
                     //Crafting frame
                     switch(job->button){
                     case 0:
-                        *hover = origin;
+                        hover = origin;
                         origin.makeEmpty();
                         altered.add(clicked, slots[clicked]);
                         break;
                     case 1:
                     {
                         int take = ceil((double) origin.itemCount/2);
-                        *hover = origin;
-                        hover->itemCount= take;
+                        hover = origin;
+                        hover.itemCount= take;
                         origin.itemCount -= take;
                         if(origin.isEmpty())
                             origin.makeEmpty();
@@ -203,8 +192,8 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
                     }
                     case 3:
                         if(creative && !origin.isEmpty()){
-                            *hover = origin;
-                            hover->itemCount = hover->maxStackSize();
+                            hover = origin;
+                            hover.itemCount = hover.maxStackSize();
                             altered.add(clicked, slots[clicked]);
                         }
                     }
@@ -214,12 +203,12 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
     }
     else{
         //Clicked in inventory
-        //Simply call Inventory::clickInventory, since this case is exactly the
+        //Simply call Inventory2::clickInventory, since this case is exactly the
         //same as that
         //In future versions of MC this changes
 
-        //This might cause an offset screwup
-        inv->clickWindow(job, inv, altered, creative);
+        job->slotNum--;
+        return inv->clickWindow(job, inv, altered, creative);
     }
 
     return dropped;
