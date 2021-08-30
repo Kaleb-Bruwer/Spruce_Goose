@@ -46,6 +46,8 @@ public:
     };
 
     short getHeldItemID(){
+        if(inventory.slots[inventory.cursor].isEmpty())
+            return 0;
         return inventory.slots[inventory.cursor].itemID;
     };
 
