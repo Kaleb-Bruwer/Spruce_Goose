@@ -19,6 +19,8 @@ public:
     int getWindowID(){return 1;};
     BlockData* clone();
 
+    vector<Slot> close(InventoryControl*, AlteredSlots&, Inventory2*);
+
     // void clickWindow(ClickWindowJob* job, Inventory* inv, bool creative);
     vector<Slot> clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative);
 };

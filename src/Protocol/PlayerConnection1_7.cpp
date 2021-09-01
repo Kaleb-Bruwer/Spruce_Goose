@@ -577,6 +577,7 @@ void PlayerConnection1_7::readCloseWindow(PacketReader &p){
     CloseWindowJob* job = new CloseWindowJob();
 
     job->windowID = p.readChar();
+    cout << "Packet CLOSEWINDOW, windowID= " << (int)(unsigned char)job->windowID << endl;
 
     pushJobToServer(job);
 }

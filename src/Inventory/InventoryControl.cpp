@@ -75,20 +75,18 @@ void InventoryControl::openBlock(BlockData* b){
 
 
 vector<Slot> InventoryControl::closeBlock(bool byPlayer){
+    cout << "InventoryControl::closeBlock " << byPlayer << endl;
     vector<Slot> dropped;
     if(!activeBlock){
         //inventory
         dropped = inventory.close(this, alteredSlots, &inventory);
         sendWindowUpdate();
         return dropped;
-    }
-
-    // In old Inventory, I sent an OpenCloseWindow job if !byPlayer
-
-    if(byPlayer){
+    } // In old Inventory, I sent an OpenCloseWindow job if !byPlayer
+    else if(byPlayer){
         //In the other case, this gets called from BlockData's destructor
-    //So it isn't explicitly closed since it's already getting deleted
-    //and currently using the vector it keeps Inventories in
+        //So it isn't explicitly closed since it's already getting deleted
+        //and currently using the vector it keeps Inventories in
         dropped = activeBlock->close(this, alteredSlots, &inventory);
     }
     activeBlock = 0;

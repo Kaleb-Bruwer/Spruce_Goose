@@ -69,6 +69,14 @@ void CraftingTable::checkCrafting(AlteredSlots &altered){
     altered.add(0, slots[0]);
 }
 
+vector<Slot> CraftingTable::close(InventoryControl* invCon, AlteredSlots& altered, Inventory2* inv){
+    BlockData::close(invCon, altered, inv);
+
+    cout << "CraftingTable::close\n";
+    return vector<Slot>();
+}
+
+
 // void CraftingTable::clickWindow(ClickWindowJob* job, Inventory* inv, bool creative){
 vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative){
     vector<Slot> dropped;
