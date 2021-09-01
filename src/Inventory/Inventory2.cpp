@@ -486,6 +486,17 @@ int Inventory2::tryPickup(Item* item, AlteredSlots &altered){
     return initialCount - origin.itemCount;
 }
 
+void Inventory2::moveIn(Slot& origin, AlteredSlots& altered){
+    movHalf(origin, 36, 44, altered);
+    movHalf(origin, 9, 35, altered);
+    movEmpty(origin, 36, 44, altered);
+    movEmpty(origin, 9, 35, altered);
+
+    if(origin.isEmpty())
+        origin.makeEmpty();
+}
+
+
 vector<Slot> Inventory2::close(InventoryControl* invCon, AlteredSlots& altered, Inventory2* inv){
     vector<Slot> dropped;
 
@@ -494,29 +505,20 @@ vector<Slot> Inventory2::close(InventoryControl* invCon, AlteredSlots& altered, 
         if(slots[i].itemCount <= 0)
             continue;
 
-        movHalf(slots[i], 36, 44, altered);
-        movHalf(slots[i], 9, 35, altered);
-        movEmpty(slots[i], 36, 44, altered);
-        movEmpty(slots[i], 9, 35, altered);
+        moveIn(slots[i], altered);
 
-        if(slots[i].isEmpty()){
+        if(!slots[i].isEmpty()){
             dropped.push_back(slots[i]);
-            slots[i].makeEmpty();
         }
     }
 
     if(hover.itemCount <= 0)
         return dropped;
 
-    cout << "Clearing " << hover << " from Inventory\n";
-    movHalf(hover, 36, 44, altered);
-    movHalf(hover, 9, 35, altered);
-    movEmpty(hover, 36, 44, altered);
-    movEmpty(hover, 9, 35, altered);
+    moveIn(hover, altered);
 
-    if(hover.isEmpty()){
+    if(!hover.isEmpty()){
         dropped.push_back(hover);
-        hover.makeEmpty();
     }
 
     return dropped;

@@ -51,5 +51,6 @@ public:
     //most parameters not used, only there for polymorphism
     vector<Slot> close(InventoryControl*, AlteredSlots&, Inventory2*);
 
+    void moveIn(Slot& origin, AlteredSlots&);
 
 };
