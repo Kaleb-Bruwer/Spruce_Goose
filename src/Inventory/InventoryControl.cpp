@@ -48,9 +48,14 @@ void InventoryControl::openBlock(BlockData* b){
     if(activeBlock)
         closeBlock();
 
-    activeBlock = b;
-    b->open(this);
-    windowID = b->getWindowID();
+
+    if(b->getSharable())
+        activeBlock = b;
+    else
+        activeBlock = b->clone();
+
+    activeBlock->open(this);
+    windowID = activeBlock->getWindowID();
 
     OpenCloseWindow* job = new OpenCloseWindow();
     job->open = true;
@@ -88,6 +93,9 @@ vector<Slot> InventoryControl::closeBlock(bool byPlayer){
         //and currently using the vector it keeps Inventories in
         dropped = activeBlock->close(this, alteredSlots, &inventory);
     }
+    if(!activeBlock->getSharable())
+        delete activeBlock;
+        
     activeBlock = 0;
     windowID = -1;
 
