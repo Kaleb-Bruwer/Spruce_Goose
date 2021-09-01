@@ -48,7 +48,7 @@ void InventoryControl::openBlock(BlockData* b){
     if(activeBlock)
         closeBlock();
 
-
+    // Non-sharable blocks like crafting tables get their own copy for each player
     if(b->getSharable())
         activeBlock = b;
     else
@@ -92,10 +92,11 @@ vector<Slot> InventoryControl::closeBlock(bool byPlayer){
         //So it isn't explicitly closed since it's already getting deleted
         //and currently using the vector it keeps Inventories in
         dropped = activeBlock->close(this, alteredSlots, &inventory);
+        sendWindowUpdate();
     }
     if(!activeBlock->getSharable())
         delete activeBlock;
-        
+
     activeBlock = 0;
     windowID = -1;
 

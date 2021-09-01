@@ -73,7 +73,16 @@ vector<Slot> CraftingTable::close(InventoryControl* invCon, AlteredSlots& altere
     BlockData::close(invCon, altered, inv);
     // TODO: clear crafting frame
 
-    return vector<Slot>();
+    vector<Slot> dropped;
+    for(int i=1; i<10; i++){
+        inv->moveIn(slots[i], altered);
+        if(!slots[i].isEmpty()){
+            dropped.push_back(slots[i]);
+            slots[i].makeEmpty();
+        }
+    }
+
+    return dropped;
 }
 
 
