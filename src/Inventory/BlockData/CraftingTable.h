@@ -16,6 +16,9 @@ protected:
 
     void mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots & altered);
 public:
+    CraftingTable() : BlockDataS<10>(false){};
+
+
     int getWindowID(){return 1;};
     BlockData* clone();
 

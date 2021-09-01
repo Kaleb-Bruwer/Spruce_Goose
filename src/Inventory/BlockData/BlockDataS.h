@@ -10,6 +10,8 @@ class Inventory;
 
 template <int nSlots>
 class BlockDataS : public BlockData{
+protected:
+    BlockDataS(bool s) : BlockData(s){};
 public:
 // Protected wouldn't be accessible over different sized BlockDataS,
 // for example chest would not be able to use Inventory2

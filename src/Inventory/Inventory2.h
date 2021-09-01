@@ -34,6 +34,8 @@ protected:
     void checkCrafting(AlteredSlots &altered);
 
 public:
+    Inventory2() : BlockDataS<45>(true){};
+
     static const int numSlots = 45;
     Slot hover;
     short cursor = 36; //range: [36,44] held item

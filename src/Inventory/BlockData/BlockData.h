@@ -20,11 +20,22 @@ private:
 
     //This vector doesn't get, and shouldn't be, cloned
     vector<InventoryControl*> inventories;
+
+    // Specifies if two players will see the same items in a block
+    // for example a chest is true while a crafting table is false
+    bool sharable;
 protected:
+    BlockData(bool s){
+        sharable = s;
+    };
 public:
 
     //Destructor ensures that BlockData is safely disconnected from inventories
     virtual ~BlockData();
+
+    bool getSharable(){
+        return sharable;
+    }
 
     //Called from Inventory
     void open(InventoryControl*);

@@ -10,6 +10,8 @@ class Inventory2;
 //This class represents the contents of a single chest
 class Chest : public BlockDataS<27>{
 public:
+    Chest() : BlockDataS<27>(true){};
+
     int getWindowID(){return 0;};
     BlockData* clone();
 
