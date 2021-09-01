@@ -71,8 +71,8 @@ void CraftingTable::checkCrafting(AlteredSlots &altered){
 
 vector<Slot> CraftingTable::close(InventoryControl* invCon, AlteredSlots& altered, Inventory2* inv){
     BlockData::close(invCon, altered, inv);
+    // TODO: clear crafting frame
 
-    cout << "CraftingTable::close\n";
     return vector<Slot>();
 }
 

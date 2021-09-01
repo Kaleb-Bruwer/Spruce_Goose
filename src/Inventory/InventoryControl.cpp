@@ -75,7 +75,6 @@ void InventoryControl::openBlock(BlockData* b){
 
 
 vector<Slot> InventoryControl::closeBlock(bool byPlayer){
-    cout << "InventoryControl::closeBlock " << byPlayer << endl;
     vector<Slot> dropped;
     if(!activeBlock){
         //inventory
