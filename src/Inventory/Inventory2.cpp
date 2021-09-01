@@ -310,7 +310,7 @@ vector<Slot> Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, Alter
         }
         break;
     case 4:
-        // Buttons 0 & 1 with i = 999 are in protocol, but as no-op
+        // Buttons 0 & 1 with i = -999 are in protocol, but as no-op
         if(i < 0 || i > 44) //invalid
             break;
         if(job->button == 0){

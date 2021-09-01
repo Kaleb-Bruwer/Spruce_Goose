@@ -25,7 +25,6 @@ struct DragData{
 // the inventory system
 class Inventory2 : public BlockDataS<45>{
 protected:
-    DragData dragData;
 
     //0: only craft 1 unit. 1:craft maximum possible
     void craft(bool max, AlteredSlots &altered);
@@ -38,6 +37,8 @@ public:
     static const int numSlots = 45;
     Slot hover;
     short cursor = 36; //range: [36,44] held item
+
+    DragData dragData;
 
     int getWindowID(){return 0;};
     BlockData* clone();

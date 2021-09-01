@@ -80,6 +80,12 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
         return dropped; //invalid request
     }
 
+    if(job->mode == 5){
+        // inventory or not, these need to be handled in the same place
+        mouseDrag(job, inv, altered);
+        return dropped;
+    }
+
     if(clicked < 10){
         // Action involves crafting window
         Slot& origin = slots[clicked];
@@ -87,7 +93,7 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
         switch(job->mode){
         case 0:
             //normal click
-            if(i == 0){
+            if(clicked == 0){
                 // crafting output
                 // TODO: crafting
             }
@@ -104,7 +110,7 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
             if(job->button != 0 && job->button != 1) //invalid request
                 return dropped;
 
-            if(i==0){
+            if(clicked==0){
                 // TODO: crafting
             }
             else{
@@ -119,12 +125,45 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
             break;
         case 2:
             //number keys
+            if(job->button < 0 || job->button > 8)
+                return dropped; //invalid request
+
+            if(clicked != 0){
+                Slot& target = inv->slots[37 + job->button];
+                Slot temp = target;
+                target = origin;
+                origin = temp;
+            }
+            else{
+                // crafting product (TODO)
+            }
+            break;
+        case 3:
+            //middle click
+            if(creative && hover.isEmpty() && job->button == 2){
+                hover = slots[clicked];
+                hover.itemCount = hover.maxStackSize();
+            }
             break;
         case 4:
-            //middle click
-            break;
-        case 5:
-            //mouse drags
+        // Buttons 0 & 1 with i = -999 are in protocol, but as no-op
+            if(job->button == 0){
+                //Drop one
+                Slot drop = slots[clicked];
+                drop.itemCount = 1;
+                slots[clicked].itemCount--;
+                if(slots[clicked].isEmpty())
+                    slots[clicked].makeEmpty();
+
+                dropped.push_back(drop);
+                altered.add(clicked, slots[clicked]);
+            }
+            else if(job->button == 1){
+                //Drop stack
+                dropped.push_back(slots[clicked]);
+                slots[clicked].makeEmpty();
+                altered.add(clicked, slots[clicked]);
+            }
             break;
         case 6:
             //double click
@@ -144,4 +183,108 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
     }
 
     return dropped;
+}
+
+
+void CraftingTable::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered){
+    // use DragData in inventory, since this info must be player specific
+    // putting it in CraftingTable would make it shared between players
+    int i = job->slotNum;
+    if(i < 0 || i > 45)
+        return;
+
+    switch(job->button){
+        case 0: //start left drag
+            inv->dragData.dragMode = LEFT;
+            inv->dragData.dragTotal = inv->hover.itemCount;
+            break;
+
+        case 1: //add slot to left drag
+        // First check some conditions
+        if(i <0 || i > 44) //invalid
+            break;
+        if(inv->dragData.dragMode == LEFT){
+            if(!slots[i].isEmpty() && !slots[i].typeMatch(inv->hover))
+                break;
+
+            inv->dragData.dragSlots.push_back(i);
+            inv->dragData.baseCount.push_back(slots[i].itemCount);
+
+            // Conditions where no action is required
+            int numSlotsInDrag = inv->dragData.dragSlots.size();
+            if(numSlotsInDrag <= 1 || numSlotsInDrag > inv->dragData.dragTotal)
+                break;
+
+            // Split from scrach every time
+            // numToAdd: num added to each slot in dragSlots
+            int numToAdd = floor((float)inv->dragData.dragTotal/numSlotsInDrag);
+            int remainder = inv->dragData.dragTotal - numToAdd * numSlotsInDrag;
+
+            int maxStack = inv->hover.maxStackSize();
+
+            for(int i=0; i<inv->dragData.dragSlots.size(); i++){
+                int s = inv->dragData.dragSlots[i];
+                slots[s] = inv->hover; // sets the type
+                slots[s].itemCount = inv->dragData.baseCount[i] + numToAdd;
+                if(slots[s].itemCount > maxStack){
+                    remainder += slots[s].itemCount - maxStack;
+                    slots[s].itemCount = maxStack;
+                }
+                altered.add(s, slots[s]);
+            }
+            inv->hover.itemCount = remainder;
+        }
+        break;
+
+        case 2: //end left drag
+            inv->dragData.dragMode = NONE;
+
+            if(inv->dragData.dragSlots.size() == 1){
+                int s = inv->dragData.dragSlots[0];
+                slots[s] = inv->hover;
+                inv->hover.makeEmpty();
+            }
+            if(inv->hover.isEmpty())
+                inv->hover.makeEmpty();
+
+            inv->dragData.dragSlots.clear();
+            inv->dragData.baseCount.clear();
+            break;
+
+
+        case 4: //start right drag
+            inv->dragData.dragMode = RIGHT;
+            inv->dragData.dragTotal = inv->hover.itemCount;
+        break;
+
+        case 5: //add slot to right drag
+        if(i <0 || i > 44) //invalid
+            break;
+        if(inv->dragData.dragMode == RIGHT){
+            if(!slots[i].isEmpty() && !slots[i].typeMatch(inv->hover))
+                break;
+
+            // Conditions where no action is required
+            if(inv->hover.itemCount == 0)
+                break;
+
+            // Add one item to new slot (if possible)
+            int maxStack = inv->hover.maxStackSize();
+            if(slots[i].itemCount < maxStack){
+                slots[i].itemID = inv->hover.itemID;
+                slots[i].itemDamage = inv->hover.itemDamage;
+                slots[i].itemCount++;
+                inv->hover.itemCount--;
+                if(inv->hover.itemCount == 0)
+                    inv->hover.makeEmpty();
+            }
+            altered.add(i, slots[i]);
+        }
+        break;
+
+        case 6: //end right drag
+
+            inv->dragData.dragMode = NONE;
+        break;
+    }
 }

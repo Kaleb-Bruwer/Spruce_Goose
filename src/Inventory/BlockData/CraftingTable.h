@@ -13,6 +13,8 @@ protected:
     //uses inv for addAlteredSlot
     void craft(bool max, AlteredSlots &altered);
     void checkCrafting(AlteredSlots &altered);
+
+    void mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots & altered);
 public:
     int getWindowID(){return 1;};
     BlockData* clone();
