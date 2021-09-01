@@ -6,6 +6,7 @@
 using namespace std;
 
 BlockData::~BlockData(){
+    // Notifies all players that have block open that it has been closed
     for(auto it = inventories.begin(); it != inventories.end(); it++){
         //false means not closed by player
         (*it)->closeBlock(false);
@@ -16,11 +17,11 @@ void BlockData::open(InventoryControl* inv){
     inventories.push_back(inv);
 }
 
-void BlockData::close(InventoryControl* inv){
+vector<Slot> BlockData::close(InventoryControl* invCont, AlteredSlots& altered, Inventory2* inv){
     for(auto it = inventories.begin(); it != inventories.end(); it++){
-        if(*it == inv){
+        if(*it == invCont){
             inventories.erase(it);
-            return;
+            return vector<Slot>();
         }
     }
 }

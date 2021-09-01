@@ -486,39 +486,38 @@ int Inventory2::tryPickup(Item* item, AlteredSlots &altered){
     return initialCount - origin.itemCount;
 }
 
-void Inventory2::close(AlteredSlots& a){
+vector<Slot> Inventory2::close(InventoryControl* invCon, AlteredSlots& altered, Inventory2* inv){
+    vector<Slot> dropped;
+
     // Flush crafting frame and hover
     for(int i=1; i<5; i++){
         if(slots[i].itemCount <= 0)
             continue;
 
-        cout << "Clearing " << slots[i] << " from Inventory\n";
-        movHalf(slots[i], 36, 44, a);
-        movHalf(slots[i], 9, 35, a);
-        movEmpty(slots[i], 36, 44, a);
-        movEmpty(slots[i], 9, 35, a);
+        movHalf(slots[i], 36, 44, altered);
+        movHalf(slots[i], 9, 35, altered);
+        movEmpty(slots[i], 36, 44, altered);
+        movEmpty(slots[i], 9, 35, altered);
 
         if(slots[i].isEmpty()){
+            dropped.push_back(slots[i]);
             slots[i].makeEmpty();
         }
-
-        cout << "Leaving: " << slots[i] << endl;
     }
 
     if(hover.itemCount <= 0)
-        return;
+        return dropped;
 
     cout << "Clearing " << hover << " from Inventory\n";
-    movHalf(hover, 36, 44, a);
-    movHalf(hover, 9, 35, a);
-    movEmpty(hover, 36, 44, a);
-    movEmpty(hover, 9, 35, a);
+    movHalf(hover, 36, 44, altered);
+    movHalf(hover, 9, 35, altered);
+    movEmpty(hover, 36, 44, altered);
+    movEmpty(hover, 9, 35, altered);
 
     if(hover.isEmpty()){
+        dropped.push_back(hover);
         hover.makeEmpty();
     }
 
-    cout << "Leaving: " << hover << endl;
-
-
+    return dropped;
 }

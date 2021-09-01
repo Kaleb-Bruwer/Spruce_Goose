@@ -23,7 +23,7 @@ public:
     void sendWindowUpdate();
 
     void openBlock(BlockData* b);
-    void closeBlock(bool byPlayer = true);
+    vector<Slot> closeBlock(bool byPlayer = true);
 
 
     void create(PlayerConnection* c){

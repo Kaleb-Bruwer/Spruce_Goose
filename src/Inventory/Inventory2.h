@@ -48,6 +48,8 @@ public:
 
     int tryPickup(Item* item, AlteredSlots& altered);
 
-    void close(AlteredSlots& altered);
+    //most parameters not used, only there for polymorphism
+    vector<Slot> close(InventoryControl*, AlteredSlots&, Inventory2*);
+
 
 };

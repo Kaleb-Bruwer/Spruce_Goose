@@ -74,12 +74,13 @@ void InventoryControl::openBlock(BlockData* b){
 
 
 
-void InventoryControl::closeBlock(bool byPlayer){
+vector<Slot> InventoryControl::closeBlock(bool byPlayer){
+    vector<Slot> dropped;
     if(!activeBlock){
         //inventory
-        inventory.close(alteredSlots);
+        dropped = inventory.close(this, alteredSlots, &inventory);
         sendWindowUpdate();
-        return;
+        return dropped;
     }
 
     // In old Inventory, I sent an OpenCloseWindow job if !byPlayer
@@ -88,9 +89,10 @@ void InventoryControl::closeBlock(bool byPlayer){
         //In the other case, this gets called from BlockData's destructor
     //So it isn't explicitly closed since it's already getting deleted
     //and currently using the vector it keeps Inventories in
-        activeBlock->close(this);
+        dropped = activeBlock->close(this, alteredSlots, &inventory);
     }
     activeBlock = 0;
     windowID = -1;
 
+    return dropped;
 }

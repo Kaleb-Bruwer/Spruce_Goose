@@ -293,7 +293,15 @@ void ThreadArea::clickWindowHandler(JobTicket* j, PlayerEntity* player){
 void ThreadArea::closeWindowHandler(JobTicket* j, PlayerEntity* player){
     CloseWindowJob* job = (CloseWindowJob*) j;
     if(job->windowID == 0){
-        player->inventory.closeBlock();
+        vector<Slot> dropped = player->inventory.closeBlock();
+
+        if(dropped.size() > 0){
+            Coordinate<double> dropPos = player->position;
+            dropPos.y += 1;
+            for(Slot s : dropped){
+                dropSlot(s, dropPos);
+            }
+        }
     }
 }
 

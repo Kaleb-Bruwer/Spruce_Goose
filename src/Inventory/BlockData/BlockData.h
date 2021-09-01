@@ -28,7 +28,7 @@ public:
 
     //Called from Inventory
     void open(InventoryControl*);
-    void close(InventoryControl*);
+    virtual vector<Slot> close(InventoryControl*, AlteredSlots&, Inventory2*);
 
     virtual int getWindowID() = 0;
     virtual BlockData* clone() = 0;
