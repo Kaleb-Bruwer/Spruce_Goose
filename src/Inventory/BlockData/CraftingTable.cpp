@@ -146,7 +146,7 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
                 return dropped; //invalid request
 
             if(clicked != 0){
-                Slot& target = inv->slots[37 + job->button];
+                Slot& target = inv->slots[36 + job->button];
                 Slot temp = target;
                 target = origin;
                 origin = temp;
