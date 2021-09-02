@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "./Inventory/Inventory2Test.cpp"
+#include "./Inventory/CraftingTableTest.cpp"
 #include "./Protocol/PacketReaderTest.cpp"
 
 
