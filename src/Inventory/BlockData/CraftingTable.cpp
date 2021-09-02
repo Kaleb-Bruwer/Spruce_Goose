@@ -222,11 +222,17 @@ void CraftingTable::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots
         if(i <0 || i > 44) //invalid
             break;
         if(inv->dragData.dragMode == LEFT){
-            if(!slots[i].isEmpty() && !slots[i].typeMatch(inv->hover))
+            Slot clickedSlot;
+            if(i < 10)
+                clickedSlot = slots[i];
+            else
+                clickedSlot = inv->slots[i-1];
+
+            if(!clickedSlot.isEmpty() && !clickedSlot.typeMatch(inv->hover))
                 break;
 
             inv->dragData.dragSlots.push_back(i);
-            inv->dragData.baseCount.push_back(slots[i].itemCount);
+            inv->dragData.baseCount.push_back(clickedSlot.itemCount);
 
             // Conditions where no action is required
             int numSlotsInDrag = inv->dragData.dragSlots.size();
@@ -242,13 +248,20 @@ void CraftingTable::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots
 
             for(int i=0; i<inv->dragData.dragSlots.size(); i++){
                 int s = inv->dragData.dragSlots[i];
-                slots[s] = inv->hover; // sets the type
-                slots[s].itemCount = inv->dragData.baseCount[i] + numToAdd;
-                if(slots[s].itemCount > maxStack){
-                    remainder += slots[s].itemCount - maxStack;
-                    slots[s].itemCount = maxStack;
+
+                Slot* slot;
+                if(s < 10)
+                    slot = &slots[s];
+                else
+                    slot = &inv->slots[s-1];
+
+                *slot = inv->hover; // sets the type
+                slot->itemCount = inv->dragData.baseCount[i] + numToAdd;
+                if(slot->itemCount > maxStack){
+                    remainder += slot->itemCount - maxStack;
+                    slots->itemCount = maxStack;
                 }
-                altered.add(s, slots[s]);
+                altered.add(s, *slot);
             }
             inv->hover.itemCount = remainder;
         }
@@ -259,7 +272,11 @@ void CraftingTable::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots
 
             if(inv->dragData.dragSlots.size() == 1){
                 int s = inv->dragData.dragSlots[0];
-                slots[s] = inv->hover;
+                if(s < 10)
+                    slots[s] = inv->hover;
+                else
+                    inv->slots[s-1] = inv->hover;
+
                 inv->hover.makeEmpty();
             }
             if(inv->hover.isEmpty())
@@ -279,7 +296,13 @@ void CraftingTable::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots
         if(i <0 || i > 44) //invalid
             break;
         if(inv->dragData.dragMode == RIGHT){
-            if(!slots[i].isEmpty() && !slots[i].typeMatch(inv->hover))
+            Slot *slot;
+            if(i < 10)
+                slot = &slots[i];
+            else
+                slot = &inv->slots[i-1];
+
+            if(!slot->isEmpty() && !slots->typeMatch(inv->hover))
                 break;
 
             // Conditions where no action is required
@@ -288,15 +311,15 @@ void CraftingTable::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots
 
             // Add one item to new slot (if possible)
             int maxStack = inv->hover.maxStackSize();
-            if(slots[i].itemCount < maxStack){
-                slots[i].itemID = inv->hover.itemID;
-                slots[i].itemDamage = inv->hover.itemDamage;
-                slots[i].itemCount++;
+            if(slot->itemCount < maxStack){
+                slot->itemID = inv->hover.itemID;
+                slot->itemDamage = inv->hover.itemDamage;
+                slot->itemCount++;
                 inv->hover.itemCount--;
                 if(inv->hover.itemCount == 0)
                     inv->hover.makeEmpty();
             }
-            altered.add(i, slots[i]);
+            altered.add(i, *slot);
         }
         break;
 
