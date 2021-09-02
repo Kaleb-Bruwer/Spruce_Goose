@@ -700,9 +700,9 @@ TEST_F(CraftingTableTest, testMode5T2){
 
     // Assertions
     ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(craftingTable.slots[9] == sExpect1) << "slot: " << craftingTable.slots[9] << ", expected: " << sExpect1;
-    for(int i=9; i<11; i++)
-        ASSERT_TRUE(inventory2.slots[i] == sExpect1) << "slot: " << inventory2.slots[i] << ", expected: " << sExpect1;
+    ASSERT_TRUE(craftingTable.slots[8] == sExpect1) << "slot8: " << craftingTable.slots[8] << ", expected: " << sExpect1;
+    ASSERT_TRUE(craftingTable.slots[9] == sExpect1) << "slot9: " << craftingTable.slots[9] << ", expected: " << sExpect1;
+    ASSERT_TRUE(inventory2.slots[9] == sExpect1) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect1;
 
     delete job;
 }
@@ -736,10 +736,10 @@ TEST_F(CraftingTableTest, testMode5T3){
 
     // Assertions
     ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(craftingTable.slots[9] == sExpect1) << "slot: " << craftingTable.slots[9] << ", expected: " << sExpect1;
+    ASSERT_TRUE(craftingTable.slots[8] == sExpect1) << "slot8: " << craftingTable.slots[8] << ", expected: " << sExpect1;
+    ASSERT_TRUE(craftingTable.slots[9] == sExpect1) << "slot9: " << craftingTable.slots[9] << ", expected: " << sExpect1;
     ASSERT_TRUE(inventory2.slots[9] == sExpect2) << "slot: " << inventory2.slots[9] << ", expected: " << sExpect2;
-    for(int i=10; i<12; i++)
-        ASSERT_TRUE(inventory2.slots[i] == sExpect1) << "slot: " << inventory2.slots[i] << ", expected: " << sExpect1;
+    ASSERT_TRUE(inventory2.slots[10] == sExpect1) << "slot10: " << inventory2.slots[10] << ", expected: " << sExpect1;
 
     delete job;
 }
@@ -766,13 +766,13 @@ TEST_F(CraftingTableTest, testMode5T4){
     job->button = 2;
     craftingTable.clickWindow(job, &inventory2, altered, false);
 
-    Slot hExpect = getStone();
+    Slot hExpect = Slot();
     Slot sExpect1 = getStone();
 
     // Assertions
     ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
+    ASSERT_TRUE(craftingTable.slots[8] == sExpect1) << "slot: " << craftingTable.slots[8] << ", expected: " << sExpect1;
     ASSERT_TRUE(craftingTable.slots[9] == sExpect1) << "slot: " << craftingTable.slots[9] << ", expected: " << sExpect1;
-    ASSERT_TRUE(craftingTable.slots[10] == sExpect1) << "slot: " << craftingTable.slots[10] << ", expected: " << sExpect1;
 
     for(int i=9; i<11; i++)
         ASSERT_TRUE(inventory2.slots[i] == sExpect1) << "slot: " << inventory2.slots[i] << ", expected: " << sExpect1;
@@ -848,7 +848,7 @@ TEST_F(CraftingTableTest, testMode5T6){
     for(int i=8; i<10; i++)
         ASSERT_TRUE(craftingTable.slots[i] == sExpect1) << "slot: " << craftingTable.slots[i] << ", expected: " << sExpect1;
 
-    for(int i=9; i<14; i++)
+    for(int i=9; i<12; i++)
         ASSERT_TRUE(inventory2.slots[i] == sExpect1) << "slot: " << inventory2.slots[i] << ", expected: " << sExpect1;
 
     delete job;
