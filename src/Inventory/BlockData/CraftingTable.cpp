@@ -50,8 +50,6 @@ void CraftingTable::craft(bool max, AlteredSlots &altered){
 }
 
 void CraftingTable::checkCrafting(AlteredSlots &altered){
-    Crafting* crafting = Crafting::getInstance();
-
     ShapedRecipe r(3,3);
     r.setSlot(slots[1], 0, 0);
     r.setSlot(slots[2], 0, 1);
@@ -65,7 +63,7 @@ void CraftingTable::checkCrafting(AlteredSlots &altered){
     r.setSlot(slots[8], 2, 1);
     r.setSlot(slots[9], 2, 2);
 
-    slots[0] = crafting->getProduct(&r);
+    slots[0] = Crafting::getInstance()->getProduct(&r);
     altered.add(0, slots[0]);
 }
 
@@ -232,9 +230,6 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
                 slots[clicked].makeEmpty();
                 altered.add(clicked, slots[clicked]);
             }
-            break;
-        case 6:
-            //double click
             break;
         }
     }
