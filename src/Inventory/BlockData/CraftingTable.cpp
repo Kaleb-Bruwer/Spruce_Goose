@@ -102,6 +102,56 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
         mouseDrag(job, inv, altered);
         return dropped;
     }
+    if(job->mode == 6){
+        //double click
+        int i = clicked;
+
+        if(i <= 0 || i > 45) //invalid
+            return dropped;
+
+        int stackLimit = hover.maxStackSize();
+        // Inside inventory, not armour and not crafting result
+
+        if(inv->hover.isEmpty())
+            return dropped;
+        // Fill from incomplete stacks
+        for(int j=1; j < 10; j++){ //crafting frame
+            if(slots[j].typeMatch(inv->hover) && slots[j].itemCount < stackLimit){
+                tryInsertHalfSlot(inv->hover, slots[j], stackLimit);
+                altered.add(j, slots[j]);
+                if(inv->hover.itemCount == stackLimit)
+                    return dropped;
+            }
+        }
+        for(int j=9; j < 45; j++){ //inventory
+            if(inv->slots[j].typeMatch(inv->hover) && inv->slots[j].itemCount < stackLimit){
+                tryInsertHalfSlot(inv->hover, inv->slots[j], stackLimit);
+                altered.add(j, inv->slots[j]);
+                if(inv->hover.itemCount == stackLimit)
+                    return dropped;
+            }
+        }
+
+        // Fill from full stacks
+        for(int j=1; j < 10; j++){ //crafting table
+            if(slots[j].typeMatch(inv->hover)){
+                tryInsertHalfSlot(inv->hover, slots[j], stackLimit);
+                altered.add(j, slots[j]);
+                if(inv->hover.itemCount == stackLimit)
+                    return dropped;
+            }
+        }
+        for(int j=9; j < 45; j++){ //inventory
+            if(inv->slots[j].typeMatch(inv->hover)){
+                tryInsertHalfSlot(inv->hover, inv->slots[j], stackLimit);
+                altered.add(j, inv->slots[j]);
+                if(inv->hover.itemCount == stackLimit)
+                    return dropped;
+            }
+        }
+
+        return dropped;
+    }
 
     if(clicked < 10){
         // Action involves crafting window
