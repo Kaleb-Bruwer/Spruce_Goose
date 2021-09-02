@@ -168,24 +168,25 @@ TEST_F(CraftingTableTest, testMode0Btn0T7){
     delete job;
 }
 
-TEST_F(CraftingTableTest, testMode0Btn0T8){
-    Slot s = getStone();
-    Slot h = Slot();
-    int slot = 0;
-
-    ClickWindowJob* job = initJob(0, slot);
-    job->button = 0;
-
-    craftingTable.slots[slot] = s;
-    inventory2.hover = h;
-
-    craftingTable.clickWindow(job, &inventory2, altered, false);
-
-    ASSERT_TRUE(inventory2.hover == s) << "hover: " << inventory2.hover;
-    ASSERT_TRUE(craftingTable.slots[slot] == h) << "slot: " << inventory2.slots[slot];
-
-    delete job;
-}
+// pick up crafting result
+// TEST_F(CraftingTableTest, testMode0Btn0T8){
+//     Slot s = getStone();
+//     Slot h = Slot();
+//     int slot = 0;
+//
+//     ClickWindowJob* job = initJob(0, slot);
+//     job->button = 0;
+//
+//     craftingTable.slots[slot] = s;
+//     inventory2.hover = h;
+//
+//     craftingTable.clickWindow(job, &inventory2, altered, false);
+//
+//     ASSERT_TRUE(inventory2.hover == s) << "hover: " << inventory2.hover;
+//     ASSERT_TRUE(craftingTable.slots[slot] == h) << "slot: " << inventory2.slots[slot];
+//
+//     delete job;
+// }
 
 
 // items both sides
@@ -369,7 +370,7 @@ TEST_F(CraftingTableTest, testMode1T5){
 
     // Assertions
     ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(craftingTable.slots[1] == sExpect1) << "slot1: " << craftingTable.slots[1] << ", expected: " << sExpect1;
+    ASSERT_TRUE(craftingTable.slots[1] == hExpect) << "slot1: " << craftingTable.slots[1] << ", expected: " << hExpect;
     ASSERT_TRUE(inventory2.slots[9] == sExpect1) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect1;
     ASSERT_TRUE(inventory2.slots[21] == sExpect2) << "slot21: " << inventory2.slots[21] << ", expected: " << sExpect2;
 
@@ -440,7 +441,7 @@ TEST_F(CraftingTableTest, testMode1T10){
     inventory2.slots[16] = getStone(62);
 
     // Create job
-    ClickWindowJob* job = initJob(1, 36);
+    ClickWindowJob* job = initJob(1, 1);
 
     // execute
     craftingTable.clickWindow(job, &inventory2, altered, false);
@@ -496,15 +497,15 @@ TEST_F(CraftingTableTest, testMode2T2){
     job->button = 1;
 
     Slot hExpect = Slot();
-    Slot sExpect1 = Slot();
-    Slot sExpect2 = getStone();
+    Slot sExpect1 = getStone();
+    Slot sExpect2 = Slot();
 
     craftingTable.clickWindow(job, &inventory2, altered, false);
 
     // Assertions
     ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(craftingTable.slots[1] == sExpect1) << "slot36: " << craftingTable.slots[1] << ", expected: " << sExpect1;
-    ASSERT_TRUE(inventory2.slots[37] == sExpect2) << "slot40: " << inventory2.slots[37] << ", expected: " << sExpect2;
+    ASSERT_TRUE(craftingTable.slots[1] == sExpect1) << "slot1: " << craftingTable.slots[1] << ", expected: " << sExpect1;
+    ASSERT_TRUE(inventory2.slots[37] == sExpect2) << "slot37: " << inventory2.slots[37] << ", expected: " << sExpect2;
 
     delete job;
 }
@@ -586,7 +587,7 @@ TEST_F(CraftingTableTest, testMode3T2){
     Slot hExpect = getStone(64);
     Slot sExpect1 = getStone();
 
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    craftingTable.clickWindow(job, &inventory2, altered, true);
 
     // Assertions
     ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
@@ -618,7 +619,7 @@ TEST_F(CraftingTableTest, testMode3T3){
 // middle click in creative
 TEST_F(CraftingTableTest, testMode3T4){
     //Set up inventory
-    inventory2.slots[1] = getStone();
+    craftingTable.slots[1] = getStone();
 
     ClickWindowJob* job = initJob(3, 1);
     job->button = 2;
@@ -626,11 +627,11 @@ TEST_F(CraftingTableTest, testMode3T4){
     Slot hExpect = getStone(64);
     Slot sExpect1 = getStone();
 
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    craftingTable.clickWindow(job, &inventory2, altered, true);
 
     // Assertions
     ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(craftingTable.slots[1] == sExpect1) << "slot9: " << craftingTable.slots[1] << ", expected: " << sExpect1;
+    ASSERT_TRUE(craftingTable.slots[1] == sExpect1) << "slot1: " << craftingTable.slots[1] << ", expected: " << sExpect1;
 
     delete job;
 }

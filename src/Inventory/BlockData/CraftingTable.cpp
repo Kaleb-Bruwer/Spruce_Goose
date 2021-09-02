@@ -159,7 +159,8 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
             //middle click
             if(creative && hover.isEmpty() && job->button == 2){
                 hover = slots[clicked];
-                hover.itemCount = hover.maxStackSize();
+                if(!hover.isEmpty())
+                    hover.itemCount = hover.maxStackSize();
             }
             break;
         case 4:
