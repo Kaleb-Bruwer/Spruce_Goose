@@ -14,7 +14,7 @@ class Recipe{
 protected:
     bool shaped;
 
-    vector<short> partitionID;
+    vector<short> partitionIDs;
 
     short x, y;
 
@@ -26,9 +26,10 @@ protected:
 public:
     Recipe(){};
 
-    short partitionMatch(vector<short>& frame);
+    short partitionMatch(vector<short>& frame); //assume frame is already ordered
 
     bool match(CraftingFrame frame);
+    Slot getProduct(){return product;};
 };
 
 #endif
