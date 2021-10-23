@@ -30,7 +30,7 @@ Tag_Compound::Tag_Compound(char* iterator, int &index, bool hasName) : NBT(hasNa
         unsigned short type = iterator[index]; //1 byte
         index++;
         if(type == 0)
-            break;
+            break; //Tag_End
         addItem(iterator, index, type);
     }
 }
@@ -138,6 +138,8 @@ int Tag_Compound::getTransmitSize(){
     for(auto it=children.begin(); it != children.end(); it++){
         result += (*it)->getTransmitSize();
     }
+
+    result += children.size(); //Type bytes
     return result;
 }
 

@@ -55,7 +55,7 @@ short int NBT::readShort(char* iterator, int &index){
 int NBT::sizeNoData(){
     if(hasName){
         //2 for name size prefix & 1 for TypeID
-        return name.length() + 3;
+        return name.length() + 2;
     }
     else return 0;
 }
