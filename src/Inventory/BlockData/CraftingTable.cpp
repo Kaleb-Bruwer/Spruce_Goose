@@ -6,7 +6,7 @@
 
 #include "../Inventory2.h"
 #include "../Crafting/Crafting.h"
-#include "../Crafting/ShapedRecipe.h"
+#include "../Crafting/CraftingFrame.h"
 
 using namespace std;
 
@@ -50,20 +50,21 @@ void CraftingTable::craft(bool max, AlteredSlots &altered){
 }
 
 void CraftingTable::checkCrafting(AlteredSlots &altered){
-    ShapedRecipe r(3,3);
-    r.setSlot(slots[1], 0, 0);
-    r.setSlot(slots[2], 0, 1);
-    r.setSlot(slots[3], 0, 2);
 
-    r.setSlot(slots[4], 1, 0);
-    r.setSlot(slots[5], 1, 1);
-    r.setSlot(slots[6], 1, 2);
+    CraftingFrame fr(3,3);
+    fr.frame[0][0] = slots[1];
+    fr.frame[0][1] = slots[2];
+    fr.frame[0][2] = slots[3];
 
-    r.setSlot(slots[7], 2, 0);
-    r.setSlot(slots[8], 2, 1);
-    r.setSlot(slots[9], 2, 2);
+    fr.frame[1][0] = slots[4];
+    fr.frame[1][1] = slots[5];
+    fr.frame[1][2] = slots[6];
 
-    slots[0] = Crafting::getInstance()->getProduct(&r);
+    fr.frame[2][0] = slots[7];
+    fr.frame[2][1] = slots[8];
+    fr.frame[2][2] = slots[9];
+
+    slots[0] = Crafting::getInstance()->getProduct(fr);
     altered.add(0, slots[0]);
 }
 

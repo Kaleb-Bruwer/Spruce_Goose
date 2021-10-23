@@ -2,41 +2,33 @@
 #define RECIPE_H
 
 #include <string>
+#include <vector>
 
 #include "../Slot.h"
+#include "CraftingFrame.h"
 
-using namespace std;
 
-//ShapedRecipe is a concrete implementation and the contents of the
-//crafting bench will be represented using it.
-class ShapedRecipe;
-
-//This class represents an unshaped recipe, ShapedRecipe inherits from it
+// Can be either a shaped or unshaped recipe, no inheritance
+// This is done to reduce use of memory-references when searched
 class Recipe{
 protected:
-    //Pair of itemID and num occurences in recipe
-    vector<Slot> contents;
-    Slot product;
+    bool shaped;
 
-    //Index points at opening bracket
-    Slot readSlot(string raw, int &index);
+    vector<short> partitionID;
+
+    short x, y;
+
+    // Each element is a list of accepted Slots (can be multiple due to tags)
+    vector<Slot*> pattern; //if shaped, size = x*y; index = yi * x + xi
+
+    Slot product;
 
 public:
     Recipe(){};
-    Recipe(string raw);
-    void orderContents();
 
-    virtual bool match(ShapedRecipe*) const;
+    short partitionMatch(vector<short>& frame);
 
-    Slot getProduct() const {return product;};
-
-    friend bool operator<(const Recipe &lhs, const Recipe &rhs);
-
-    //string instead of enum since it's directly used of the identifier
-    //in the declareRecipes packet
-    virtual string getType(){return "crafting_shapeless";};
-
-    vector<Slot> getIngredients(){return contents;};
+    bool match(CraftingFrame frame);
 };
 
 #endif

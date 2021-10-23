@@ -52,8 +52,8 @@ SET (SRCS
     ./src/Inventory/Crafting/Crafting.cpp
     ./src/Inventory/Crafting/Recipe.h
     ./src/Inventory/Crafting/Recipe.cpp
-    ./src/Inventory/Crafting/ShapedRecipe.h
-    ./src/Inventory/Crafting/ShapedRecipe.cpp
+    ./src/Inventory/Crafting/CraftingFrame.h
+    ./src/Inventory/Crafting/CraftingFrame.cpp
 
     ./src/Inventory/BlockData/BlockData.h
     ./src/Inventory/BlockData/BlockData.cpp

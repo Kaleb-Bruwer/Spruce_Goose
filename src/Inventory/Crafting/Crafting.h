@@ -6,15 +6,15 @@
 #include <set>
 
 #include "Recipe.h"
+#include "CraftingFrame.h"
 #include "../Slot.h"
 
-using namespace std;
 
 class Crafting{
 private:
 
     //vector<Recipe*> recipes;
-    multiset<Recipe> recipes;
+    // multiset<Recipe> recipes;
 
     inline static Crafting* instance;
     inline static mutex constructMutex;
@@ -26,8 +26,7 @@ private:
 public:
     static Crafting* getInstance();
 
-    vector<Recipe> getAllRecipes();
-    Slot getProduct(ShapedRecipe* c);
+    Slot getProduct(CraftingFrame &frame);
 
 };
 

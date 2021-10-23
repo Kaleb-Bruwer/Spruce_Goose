@@ -4,7 +4,6 @@
 #include <cmath>
 
 #include "Crafting/Crafting.h"
-#include "Crafting/ShapedRecipe.h"
 
 #include "../Entities/Item.h"
 #include "../General/StackSizeTable.h"
@@ -65,13 +64,13 @@ void Inventory2::craft(bool max, AlteredSlots &altered){
 void Inventory2::checkCrafting(AlteredSlots &altered){
     Crafting* crafting = Crafting::getInstance();
 
-    ShapedRecipe r(2,2);
-    r.setSlot(slots[1], 0, 0);
-    r.setSlot(slots[2], 0, 1);
-    r.setSlot(slots[3], 1, 0);
-    r.setSlot(slots[4], 1, 1);
+    CraftingFrame fr(2,2);
+    fr.frame[0][0] = slots[1];
+    fr.frame[0][1] = slots[2];
+    fr.frame[1][0] = slots[3];
+    fr.frame[1][1] = slots[4];
 
-    slots[0] = crafting->getProduct(&r);
+    slots[0] = crafting->getProduct(fr);
     altered.add(0, slots[0]);
 }
 

@@ -3,7 +3,6 @@
 #include "../General/GameSettings.h"
 
 #include "../Inventory/Crafting/Crafting.h"
-#include "../Inventory/Crafting/ShapedRecipe.h"
 
 AdvancedWriter::AdvancedWriter(unsigned int size) :PacketWriter(size){};
 
