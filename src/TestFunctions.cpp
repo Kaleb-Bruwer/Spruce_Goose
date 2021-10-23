@@ -13,35 +13,6 @@
 
 using namespace std;
 
-void nbtBigTest(){
-    //string filename = "bigtest.nbt";
-    string filename = "../Data/DimensionCodec.nbt";
-    ifstream file(filename);
-
-
-    char* array = new char[8000];
-    file.read(array, 8000);
-
-    int index =0;
-    Tag_Compound tc(array+1,index);
-    cout << tc.printableStr() << endl;
-    file.close();
-
-    int size = tc.getTransmitSize();
-    char* array2 = new char[size];
-    int index2 = 0;
-    tc.getTransmittable(array2,index2);
-
-    bool match = true;
-    for(int i=0; i<size; i++){
-        if(array[i] != array2[i]){
-            match = false;
-            break;
-        }
-    }
-    cout << "Match: " << match << endl;
-}
-
 void makeSimpleChunk(){
     Chunk origin(0,0);
 

@@ -3,6 +3,7 @@
 #include "./Inventory/Inventory2Test.cpp"
 #include "./Inventory/CraftingTableTest.cpp"
 #include "./Protocol/PacketReaderTest.cpp"
+#include "./Datastructures/NBTReadTest.cpp"
 
 
 int main(int argc, char **argv){
