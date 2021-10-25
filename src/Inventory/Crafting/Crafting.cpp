@@ -110,6 +110,7 @@ void Crafting::generateShapeless(Tag_List *shapeless){
 
     for(int i=0; i<numRecipes; i++){
         Recipe recipe;
+        recipe.shaped = false;
 
         Tag_Compound* recipeNBT = (Tag_Compound*)shapeless->getValAt(i);
 
@@ -129,6 +130,9 @@ void Crafting::generateShapeless(Tag_List *shapeless){
             recipe.pattern[j] = getValidSlots(craftID);
             recipe.partitionIDs[j] = craftIDToPartitionID[craftID];
         }
+        recipe.sortPartitionIDs();
+        long long key = hashPartitionIDs(recipe.partitionIDs);
+        recipes[key].push_back(recipe);
     }
 }
 
@@ -137,6 +141,7 @@ void Crafting::generateShaped(Tag_List* shaped){
 
     for(int i=0; i<numRecipes; i++){
         Recipe recipe;
+        recipe.shaped = true;
 
         Tag_Compound* recipeNBT = (Tag_Compound*)shaped->getValAt(i);
 
@@ -169,6 +174,10 @@ void Crafting::generateShaped(Tag_List* shaped){
                 recipe.partitionIDs[index] = craftIDToPartitionID[craftID];
             }
         }
+        recipe.sortPartitionIDs();
+        long long key = hashPartitionIDs(recipe.partitionIDs);
+        recipes[key].push_back(recipe);
+
     }
 }
 

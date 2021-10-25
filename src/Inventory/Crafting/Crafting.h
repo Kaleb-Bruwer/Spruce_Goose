@@ -13,6 +13,8 @@
 
 class Tag_List;
 
+// NOTE: hashPartitionIDs() declared and defined in Recipe.h and Recipe.cpp
+
 class Crafting{
 private:
 
@@ -24,6 +26,9 @@ private:
 
     map<Slot, short> SlotToPartitionID;
     unordered_map<short, std::vector<Slot>> tagToSlots;
+
+    // Use hashPartitionIDs() to get key
+    unordered_map<long long, vector<Recipe>> recipes;
 
     inline static Crafting* instance;
     inline static mutex constructMutex;

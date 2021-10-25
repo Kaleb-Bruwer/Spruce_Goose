@@ -4,7 +4,6 @@
 #include <iostream>
 #include "../Datastructures/NBT/Tag_Compound.h"
 
-using namespace std;
 
 class Slot{
 public:

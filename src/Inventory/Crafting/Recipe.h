@@ -14,23 +14,26 @@ class Recipe{
 public:
     bool shaped;
 
-    vector<short> partitionIDs;
+    std::vector<short> partitionIDs;
 
     short x, y;
 
     // Each element is a list of accepted Slots (can be multiple due to tags)
     // For shapeless this is 1d
     // For shaped, it is id pretending to be 2d (index = yi * x + xi)
-    vector<vector<Slot>> pattern;
+    std::vector<std::vector<Slot>> pattern;
 
     Slot product;
 
     Recipe(){};
 
-    short partitionMatch(vector<short>& frame); //assume frame is already ordered
+    void sortPartitionIDs();
+    short partitionMatch(std::vector<short>& frame); //assume frame is already ordered
 
     bool match(CraftingFrame frame);
     Slot getProduct(){return product;};
 };
+
+long long hashPartitionIDs(std::vector<short> &partitionIDs);
 
 #endif
