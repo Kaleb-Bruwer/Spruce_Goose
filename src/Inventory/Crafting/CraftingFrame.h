@@ -10,6 +10,7 @@ public:
     CraftingFrame(short x, short y);
 
     short x, y;
+    // index as frame[y][x]
     std::vector<std::vector<Slot>> frame;
 
     void trim(); //Removes whitespace on all sides
