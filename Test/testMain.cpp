@@ -2,6 +2,7 @@
 
 #include "./Inventory/Inventory2Test.cpp"
 #include "./Inventory/CraftingTableTest.cpp"
+#include "./Inventory/CraftingTest.cpp"
 #include "./Protocol/PacketReaderTest.cpp"
 #include "./Datastructures/NBTReadTest.cpp"
 

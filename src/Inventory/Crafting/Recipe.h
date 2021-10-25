@@ -11,7 +11,7 @@
 // Can be either a shaped or unshaped recipe, no inheritance
 // This is done to reduce use of memory-references when searched
 class Recipe{
-protected:
+public:
     bool shaped;
 
     vector<short> partitionIDs;
@@ -19,11 +19,12 @@ protected:
     short x, y;
 
     // Each element is a list of accepted Slots (can be multiple due to tags)
-    vector<Slot*> pattern; //if shaped, size = x*y; index = yi * x + xi
+    // For shapeless this is 1d
+    // For shaped, it is id pretending to be 2d (index = yi * x + xi)
+    vector<vector<Slot>> pattern;
 
     Slot product;
 
-public:
     Recipe(){};
 
     short partitionMatch(vector<short>& frame); //assume frame is already ordered
