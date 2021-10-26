@@ -6,8 +6,7 @@
 
 class CraftingFrame{
 public:
-    CraftingFrame(){};
-    CraftingFrame(short x, short y);
+    CraftingFrame(short x = 0, short y = 0);
 
     short x, y;
     // index as frame[y][x]

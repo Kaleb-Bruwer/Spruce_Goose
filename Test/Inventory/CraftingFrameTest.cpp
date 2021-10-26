@@ -81,3 +81,8 @@ TEST_F(CraftingFrameTest, test6){
         }
     }
 };
+
+TEST_F(CraftingFrameTest, test7){
+    cf.trim();
+    doAssertions(0, 0);
+};

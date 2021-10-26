@@ -7,10 +7,15 @@
 #include "../Slot.h"
 #include "CraftingFrame.h"
 
+void selectSort(std::vector<short> &arr);
+long long hashPartitionIDs(std::vector<short> &partitionIDs);
 
 // Can be either a shaped or unshaped recipe, no inheritance
 // This is done to reduce use of memory-references when searched
 class Recipe{
+private:
+    bool shapelessMatch(CraftingFrame &frame, vector<bool> matched, short xi, short yi);
+
 public:
     bool shaped;
 
@@ -27,13 +32,12 @@ public:
 
     Recipe(){};
 
-    void sortPartitionIDs();
+    void sortPartitionIDs(){selectSort(partitionIDs);};
     short partitionMatch(std::vector<short>& frame); //assume frame is already ordered
 
-    bool match(CraftingFrame frame);
+    bool match(CraftingFrame &frame);
     Slot getProduct(){return product;};
 };
 
-long long hashPartitionIDs(std::vector<short> &partitionIDs);
 
 #endif

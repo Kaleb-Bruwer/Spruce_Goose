@@ -2,14 +2,15 @@
 
 using namespace std;
 
-CraftingFrame::CraftingFrame(short x, short y){
-    this->x = x;
-    this->y = y;
+CraftingFrame::CraftingFrame(short x1, short y1){
+    this->x = x1;
+    this->y = y1;
 
-    frame.resize(y);
-    for(int i=0; i<y; i++){
-        frame[i].resize(x);
-    }
+    frame = vector<vector<Slot>>(y, vector<Slot>(x, Slot()));
+    // frame.resize(y, vector<Slot>());
+    // for(int i=0; i<y; i++){
+    //     frame[i].resize(x, Slot());
+    // }
 
 }
 
@@ -18,6 +19,27 @@ void CraftingFrame::trim(){
 
     bool flag = true;
     int slowIndex = 0;
+
+    // First check that it's not empty
+    for(int i=0; i<y; i++){
+        for(int j=0; j<x; j++){
+            if(!frame[i][j].isEmpty()){
+                flag = false;
+                break;
+            }
+        }
+        if(!flag)
+            break;
+    }
+    if(flag){
+        // Empty
+        x = 0;
+        y = 0;
+        frame = vector<vector<Slot>>();
+        return;
+    }
+    
+    flag = true;
 
     while(flag){
         for(int i=0; i<x; i++){

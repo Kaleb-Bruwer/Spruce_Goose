@@ -40,6 +40,7 @@ private:
     void generateShaped(Tag_List* shaped);
 
     vector<Slot> getValidSlots(short craftID);
+    long long hashCraftingFrame(CraftingFrame &frame);
 
 public:
     static Crafting* getInstance();

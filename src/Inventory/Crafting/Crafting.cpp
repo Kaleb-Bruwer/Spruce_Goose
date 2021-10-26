@@ -193,7 +193,36 @@ vector<Slot> Crafting::getValidSlots(short craftID){
     }
 }
 
+long long Crafting::hashCraftingFrame(CraftingFrame &frame){
+    // First get partition ids
+    vector<short> partitionIDs;
+
+    for(int i=0; i<frame.y; i++){
+        for(int j=0; j<frame.x; j++){
+            if(!frame.frame[i][j].isEmpty()){
+                partitionIDs.push_back(SlotToPartitionID[frame.frame[i][j]]);
+            }
+        }
+    }
+
+    // Sort
+    selectSort(partitionIDs);
+
+    return hashPartitionIDs(partitionIDs);
+}
+
 Slot Crafting::getProduct(CraftingFrame &frame){
+    frame.trim();
+    long long key = hashCraftingFrame(frame);
+
+    auto it = recipes.find(key);
+    if(it == recipes.end())
+        return Slot(); //No matching recipe exists
+
+    for(int i=0; i<it->second.size(); i++){
+        if(it->second[i].match(frame))
+            return it->second[i].getProduct();
+    }
 
     //Empty slot
     return Slot();
