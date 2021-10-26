@@ -19,6 +19,10 @@ Crafting* Crafting::getInstance(){
 
 Crafting::Crafting(){
     readFromFile();
+
+    cout << "31: " << craftIDToPartitionID[31] << endl;
+    cout << "431: " << craftIDToPartitionID[431] << endl;
+
 }
 
 Crafting::~Crafting(){
@@ -162,7 +166,6 @@ void Crafting::generateShaped(Tag_List* shaped){
             if(xS == -1){
                 xS = xNBT->getSize();
                 recipe.pattern.resize(xS * yS);
-                partitionIDs.resize(xS * yS, 0);
             }
             recipe.x = xS;
 
@@ -170,11 +173,14 @@ void Crafting::generateShaped(Tag_List* shaped){
                 int index = j*xS + k;
 
                 short craftID = ((Tag_Short*)xNBT->getValAt(k))->getVal();
-                recipe.pattern[index] = getValidSlots(craftID);
-                partitionIDs[index] = craftIDToPartitionID[craftID];
+                if(craftID != -1){
+                    recipe.pattern[index] = getValidSlots(craftID);
+                    partitionIDs.push_back(craftIDToPartitionID[craftID]);
+                }
             }
         }
         selectSort(partitionIDs);
+
         long long key = hashPartitionIDs(partitionIDs);
         recipes[key].push_back(recipe);
 
@@ -211,8 +217,9 @@ long long Crafting::hashCraftingFrame(CraftingFrame &frame){
     return hashPartitionIDs(partitionIDs);
 }
 
-Slot Crafting::getProduct(CraftingFrame &frame){
+Slot Crafting::getProduct(CraftingFrame frame){
     frame.trim();
+    frame.dropCounts();
     long long key = hashCraftingFrame(frame);
 
     auto it = recipes.find(key);

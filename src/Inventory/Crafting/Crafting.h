@@ -45,7 +45,7 @@ private:
 public:
     static Crafting* getInstance();
 
-    Slot getProduct(CraftingFrame &frame);
+    Slot getProduct(CraftingFrame frame);
 
 };
 

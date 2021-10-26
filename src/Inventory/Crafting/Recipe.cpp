@@ -51,12 +51,22 @@ bool Recipe::match(CraftingFrame &frame){
     if(shaped){
         // 1:1 comparison
 
+        if(x != frame.x || y != frame.y)
+            return false;
+
+
         for(int y1=0; y1<frame.y; y1++){
-            for(int x1=0; y1<frame.x; x1++){
+            for(int x1=0; x1<frame.x; x1++){
                 int index = y1 * x + x1;
 
+                if(frame.frame[y1][x1].isEmpty() ){
+                    if(pattern[index].size() > 0)
+                        return false; //Empty slot in non-empty spot
+                    continue;
+                }
+
                 bool found = false;
-                for(int i=0; i<pattern.size(); i++){
+                for(int i=0; i<pattern[index].size(); i++){
                     if(frame.frame[y1][x1].typeMatch(pattern[index][i])){
                         found = true;
                         break;
