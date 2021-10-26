@@ -1,6 +1,7 @@
 #include "CraftingTable.h"
 
 #include <iostream>
+#include <climits>
 #include <cstring>
 #include <cmath>
 
@@ -25,12 +26,15 @@ void CraftingTable::craft(bool max, AlteredSlots &altered){
     int numToCraft = 1;
 
     if(max){
-        int lowestLeft = slots[0].maxStackSize();
+        int lowestLeft = INT_MAX;
         for(int i=1; i<10; i++){
             int temp = slots[i].itemCount;
             if(temp > 0 && temp < lowestLeft)
                 lowestLeft = temp;
         }
+        if(lowestLeft == INT_MAX)
+            return;
+
         //TODO: check how much space is left and lower numToCraft if neccesary
         numToCraft = lowestLeft;
     }

@@ -32,7 +32,7 @@ void selectSort(std::vector<short> &arr){
         short smallest = arr[i];
         short index = i;
 
-        for(int j=0; j<arr.size(); j++){
+        for(int j=i+1; j<arr.size(); j++){
             if(arr[j] < smallest){
                 smallest = arr[j];
                 index = j;

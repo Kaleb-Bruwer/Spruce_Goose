@@ -31,46 +31,44 @@ void Inventory2::craft(bool max, AlteredSlots &altered){
     int numToCraft = 1;
 
     if(max){
-        int lowestLeft = slots[0].maxStackSize();
+        numToCraft = INT_MAX;
         for(int i=1; i < 5; i++){
             int temp = slots[i].itemCount;
-            if(temp > 0 && temp < lowestLeft){
-                lowestLeft = temp;
+            if(temp > 0 && temp < numToCraft){
+                numToCraft = temp;
             }
         }
-        if(lowestLeft == INT_MAX){
+        if(numToCraft == INT_MAX){ //Not supposed to happen
             slots[0].makeEmpty();
+            return;
         }
-        numToCraft = lowestLeft;
         //TODO: check how much space is left and lower numToCraft if neccesary
 
     }
 
     slots[0].itemCount *= numToCraft;
     altered.add(0, slots[0]);
+
     for(int i=1; i<5; i++){
         if(slots[i].itemCount == 0)
             continue;
 
         slots[i].itemCount -= numToCraft;
-        if(slots[i].itemCount == 0)
+        if(slots[i].itemCount <= 0)
             slots[i].makeEmpty();
         altered.add(i, slots[i]);
     }
-
     return;
 }
 
 void Inventory2::checkCrafting(AlteredSlots &altered){
-    Crafting* crafting = Crafting::getInstance();
-
     CraftingFrame fr(2,2);
     fr.frame[0][0] = slots[1];
     fr.frame[0][1] = slots[2];
     fr.frame[1][0] = slots[3];
     fr.frame[1][1] = slots[4];
 
-    slots[0] = crafting->getProduct(fr);
+    slots[0] = Crafting::getInstance()->getProduct(fr);
     altered.add(0, slots[0]);
 }
 

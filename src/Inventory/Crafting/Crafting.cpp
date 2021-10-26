@@ -34,12 +34,10 @@ void Crafting::readFromFile(){
 
     int index =0;
     Tag_Compound tc(array+1,index);
-    // cout << tc.printableStr() << endl;
     file.close();
 
     // Populate craftIDToSlot
     Tag_List* items = (Tag_List*) tc.getItem("items");
-    // cout << items->printableStr() << endl;
 
     int numItems = items->getSize();
 
@@ -63,8 +61,6 @@ void Crafting::readFromFile(){
     Tag_List* partitions = (Tag_List*) tc.getItem("partitions");
 
     int numPartitions = partitions->getSize();
-    cout << "NUMPARTITIONS: " << numPartitions << endl;
-    cout << partitions->printableStr() << endl;
     for(int i=0; i<numPartitions; i++){
         Tag_List* list = (Tag_List*) partitions->getValAt(i);
 

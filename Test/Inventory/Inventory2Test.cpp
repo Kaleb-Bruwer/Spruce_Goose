@@ -16,6 +16,49 @@ protected:
 
     };
 
+    void validateInventory(vector<int> pos, vector<Slot> items, Slot hover){
+        ASSERT_TRUE(pos.size() == items.size()) << "Test config invalid";
+
+        // First sort input
+        if(pos.size() > 1){
+            for(int i=0; i<pos.size() -1; i++){
+                short smallest = pos[i];
+                short index = i;
+
+                for(int j=i+1; j<pos.size(); j++){
+                    if(pos[j] < smallest){
+                        smallest = pos[j];
+                        index = j;
+                    }
+                }
+                int temp = pos[i];
+                pos[i] = pos[index];
+                pos[index] = temp;
+
+                Slot tempS = items[i];
+                items[i] = items[index];
+                items[index] = tempS;
+            }
+        }
+
+        int specialPos = 0;
+        for(int i=0; i<inventory2.numSlots; i++){
+            if(specialPos < pos.size() && pos[specialPos] == i){
+                ASSERT_TRUE(inventory2.slots[i] == items[specialPos])
+                    << "[" << i << "]: " << inventory2.slots[i] << ", expected: " << items[specialPos];
+                specialPos++;
+            }
+            else{
+                ASSERT_TRUE(inventory2.slots[i].isEmpty())
+                    << "[" << i << "]: " << inventory2.slots[i] << ", expected: empty";
+            }
+        }
+
+        ASSERT_TRUE(inventory2.hover == hover)
+            << "[hover]: " << inventory2.hover << ", expected: " << hover;
+
+    }
+
     ClickWindowJob* initJob(int mode = 0, int slotNum = 9){
         ClickWindowJob* result = new ClickWindowJob();
 
@@ -49,9 +92,7 @@ protected:
         inventory2.hover = h;
 
         inventory2.clickWindow(job, 0, altered, false);
-
-        ASSERT_TRUE(inventory2.hover == s) << "Incorrect item";
-        ASSERT_TRUE(inventory2.slots[slot] == h) << "Incorrect item";
+        validateInventory(vector<int>{slot}, vector<Slot>{h}, s);
 
         delete job;
 
@@ -105,12 +146,21 @@ protected:
             hExpect = s;
         }
 
-        ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-        ASSERT_TRUE(inventory2.slots[slot] == sExpect) << "slot: " << inventory2.slots[slot] << ", expected: " << sExpect;
-
+        validateInventory(vector<int>{slot}, vector<Slot>{sExpect}, hExpect);
         delete job;
     }
 
+    void testModeE0(Slot s, Slot h, int pos){
+        ClickWindowJob* job = initJob(0, pos);
+        job->button = 0;
+
+        inventory2.slots[pos] = s;
+        inventory2.hover = h;
+
+        inventory2.clickWindow(job, 0, altered, false);
+        validateInventory(vector<int>{pos}, vector<Slot>{h}, s);
+        delete job;
+    }
 };
 
 // Single item
@@ -140,7 +190,7 @@ TEST_F(Inventory2Test, testMode0Btn0T6){
     testMode0Btn0(Slot(), getStone(64));
 }
 
-// can't place in crafting result
+// SPECIAL CASE: can't place in crafting result
 TEST_F(Inventory2Test, testMode0Btn0T7){
     Slot s = Slot();
     Slot h = getStone();
@@ -153,30 +203,12 @@ TEST_F(Inventory2Test, testMode0Btn0T7){
     inventory2.hover = h;
 
     inventory2.clickWindow(job, 0, altered, false);
-
-    ASSERT_TRUE(inventory2.hover == h) << "Incorrect item";
-    ASSERT_TRUE(inventory2.slots[slot] == s) << "Incorrect item";
-
+    validateInventory(vector<int>{slot}, vector<Slot>{s}, h);
     delete job;
 }
 
 TEST_F(Inventory2Test, testMode0Btn0T8){
-    Slot s = getStone();
-    Slot h = Slot();
-    int slot = 0;
-
-    ClickWindowJob* job = initJob(0, slot);
-    job->button = 0;
-
-    inventory2.slots[slot] = s;
-    inventory2.hover = h;
-
-    inventory2.clickWindow(job, 0, altered, false);
-
-    ASSERT_TRUE(inventory2.hover == s) << "hover: " << inventory2.hover;
-    ASSERT_TRUE(inventory2.slots[slot] == h) << "slot: " << inventory2.slots[slot];
-
-    delete job;
+    testModeE0(getStone(), Slot(), 0);
 }
 
 
@@ -264,15 +296,7 @@ TEST_F(Inventory2Test, testMode1T1){
     // execute
     inventory2.clickWindow(job, 0, altered, false);
 
-    Slot hExpect = Slot();
-    Slot sExpect1 = Slot();
-    Slot sExpect2 = getStone();
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(inventory2.slots[9] == sExpect1) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect1;
-    ASSERT_TRUE(inventory2.slots[36] == sExpect2) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect2;
-
+    validateInventory(vector<int>{9, 36}, vector<Slot>{Slot(), getStone()}, Slot());
     delete job;
 }
 
@@ -287,15 +311,7 @@ TEST_F(Inventory2Test, testMode1T2){
     // execute
     inventory2.clickWindow(job, 0, altered, false);
 
-    Slot hExpect = Slot();
-    Slot sExpect1 = Slot();
-    Slot sExpect2 = getStone();
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(inventory2.slots[36] == sExpect1) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect1;
-    ASSERT_TRUE(inventory2.slots[9] == sExpect2) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect2;
-
+    validateInventory(vector<int>{9, 36}, vector<Slot>{getStone(), Slot()}, Slot());
     delete job;
 }
 
@@ -311,17 +327,7 @@ TEST_F(Inventory2Test, testMode1T3){
     // execute
     inventory2.clickWindow(job, 0, altered, false);
 
-    Slot hExpect = Slot();
-    Slot sExpect1 = Slot();
-    Slot sExpect2 = getDirt();
-    Slot sExpect3 = getStone();
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(inventory2.slots[36] == sExpect1) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect1;
-    ASSERT_TRUE(inventory2.slots[9] == sExpect2) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect2;
-    ASSERT_TRUE(inventory2.slots[10] == sExpect3) << "slot10: " << inventory2.slots[10] << ", expected: " << sExpect3;
-
+    validateInventory(vector<int>{9, 10, 36}, vector<Slot>{getDirt(), getStone(), Slot()}, Slot());
     delete job;
 }
 
@@ -336,18 +342,7 @@ TEST_F(Inventory2Test, testMode1T4){
 
     // execute
     inventory2.clickWindow(job, 0, altered, false);
-
-    Slot hExpect = Slot();
-    Slot sExpect1 = Slot();
-    Slot sExpect2 = Slot();
-    Slot sExpect3 = getStone(2);
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(inventory2.slots[36] == sExpect1) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect1;
-    ASSERT_TRUE(inventory2.slots[9] == sExpect2) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect2;
-    ASSERT_TRUE(inventory2.slots[14] == sExpect3) << "slot14: " << inventory2.slots[14] << ", expected: " << sExpect3;
-
+    validateInventory(vector<int>{9, 14, 36}, vector<Slot>{Slot(), getStone(2), Slot()}, Slot());
     delete job;
 }
 
@@ -363,17 +358,7 @@ TEST_F(Inventory2Test, testMode1T5){
     // execute
     inventory2.clickWindow(job, 0, altered, false);
 
-    Slot hExpect = Slot();
-    Slot sExpect1 = Slot();
-    Slot sExpect2 = getStone();
-    Slot sExpect3 = getStone(64);
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(inventory2.slots[36] == sExpect1) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect1;
-    ASSERT_TRUE(inventory2.slots[9] == sExpect2) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect2;
-    ASSERT_TRUE(inventory2.slots[14] == sExpect3) << "slot14: " << inventory2.slots[14] << ", expected: " << sExpect3;
-
+    validateInventory(vector<int>{9, 14, 36}, vector<Slot>{getStone(), getStone(64), Slot()}, Slot());
     delete job;
 }
 
@@ -390,17 +375,7 @@ TEST_F(Inventory2Test, testMode1T6){
     // execute
     inventory2.clickWindow(job, 0, altered, false);
 
-    Slot hExpect = Slot();
-    Slot sExpect1 = Slot();
-    Slot sExpect2 = getStone(5);
-    Slot sExpect3 = getStone(64);
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(inventory2.slots[36] == sExpect1) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect1;
-    ASSERT_TRUE(inventory2.slots[12] == sExpect2) << "slot12: " << inventory2.slots[12] << ", expected: " << sExpect2;
-    ASSERT_TRUE(inventory2.slots[14] == sExpect3) << "slot14: " << inventory2.slots[14] << ", expected: " << sExpect3;
-
+    validateInventory(vector<int>{12, 14, 36}, vector<Slot>{getStone(5), getStone(64), Slot()}, Slot());
     delete job;
 }
 
@@ -416,18 +391,7 @@ TEST_F(Inventory2Test, testMode1T7){
 
     // execute
     inventory2.clickWindow(job, 0, altered, false);
-
-    Slot hExpect = Slot();
-    Slot sExpect1 = Slot();
-    Slot sExpect2 = getStone(64);
-    Slot sExpect3 = getStone(5);
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(inventory2.slots[36] == sExpect1) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect1;
-    ASSERT_TRUE(inventory2.slots[12] == sExpect2) << "slot12: " << inventory2.slots[12] << ", expected: " << sExpect2;
-    ASSERT_TRUE(inventory2.slots[14] == sExpect3) << "slot14: " << inventory2.slots[14] << ", expected: " << sExpect3;
-
+    validateInventory(vector<int>{12, 14, 36}, vector<Slot>{getStone(64), getStone(5), Slot()}, Slot());
     delete job;
 }
 
@@ -445,18 +409,16 @@ TEST_F(Inventory2Test, testMode1T8){
     // execute
     inventory2.clickWindow(job, 0, altered, false);
 
-    Slot hExpect = Slot();
-    Slot sExpect1 = getStone();
-    Slot sExpect2 = getDirt();
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(inventory2.slots[36] == sExpect1) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect1;
-
+    vector<int> pos;
+    vector<Slot> item;
     for(int i=9; i<36; i++){
-        ASSERT_TRUE(inventory2.slots[i] == sExpect2) << "slot: " << inventory2.slots[i] << ", expected: " << sExpect2;
+        pos.push_back(i);
+        item.push_back(getDirt());
     }
+    pos.push_back(36);
+    item.push_back(getStone());
 
+    validateInventory(pos, item, Slot());
     delete job;
 }
 
@@ -474,18 +436,18 @@ TEST_F(Inventory2Test, testMode1T9){
     // execute
     inventory2.clickWindow(job, 0, altered, false);
 
-    Slot hExpect = Slot();
-    Slot sExpect1 = getStone();
-    Slot sExpect2 = getDirt();
+    vector<int> pos;
+    vector<Slot> item;
 
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(inventory2.slots[9] == sExpect1) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect1;
+    pos.push_back(9);
+    item.push_back(getStone());
 
     for(int i=36; i<45; i++){
-        ASSERT_TRUE(inventory2.slots[i] == sExpect2) << "slot: " << inventory2.slots[i] << ", expected: " << sExpect2;
+        pos.push_back(i);
+        item.push_back(getDirt());
     }
 
+    validateInventory(pos, item, Slot());
     delete job;
 }
 
@@ -500,18 +462,7 @@ TEST_F(Inventory2Test, testMode1T10){
 
     // execute
     inventory2.clickWindow(job, 0, altered, false);
-
-    Slot hExpect = Slot();
-    Slot sExpect1 = Slot();
-    Slot sExpect2 = getStone(2);
-    Slot sExpect3 = getStone(64);
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(inventory2.slots[36] == sExpect1) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect1;
-    ASSERT_TRUE(inventory2.slots[9] == sExpect2) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect2;
-    ASSERT_TRUE(inventory2.slots[14] == sExpect3) << "slot14: " << inventory2.slots[14] << ", expected: " << sExpect3;
-
+    validateInventory(vector<int>{9, 14}, vector<Slot>{getStone(2), getStone(64)}, Slot());
     delete job;
 }
 
@@ -530,12 +481,7 @@ TEST_F(Inventory2Test, testMode2T1){
     Slot sExpect2 = getStone();
 
     inventory2.clickWindow(job, 0, altered, false);
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(inventory2.slots[37] == sExpect1) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect1;
-    ASSERT_TRUE(inventory2.slots[40] == sExpect2) << "slot40: " << inventory2.slots[40] << ", expected: " << sExpect2;
-
+    validateInventory(vector<int>{40}, vector<Slot>{getStone()}, Slot());
     delete job;
 }
 
@@ -552,12 +498,7 @@ TEST_F(Inventory2Test, testMode2T2){
     Slot sExpect2 = getStone();
 
     inventory2.clickWindow(job, 0, altered, false);
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(inventory2.slots[37] == sExpect1) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect1;
-    ASSERT_TRUE(inventory2.slots[40] == sExpect2) << "slot40: " << inventory2.slots[40] << ", expected: " << sExpect2;
-
+    validateInventory(vector<int>{40}, vector<Slot>{getStone()}, Slot());
     delete job;
 }
 
@@ -575,12 +516,7 @@ TEST_F(Inventory2Test, testMode2T3){
     Slot sExpect2 = getStone();
 
     inventory2.clickWindow(job, 0, altered, false);
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(inventory2.slots[37] == sExpect1) << "slot36: " << inventory2.slots[36] << ", expected: " << sExpect1;
-    ASSERT_TRUE(inventory2.slots[40] == sExpect2) << "slot40: " << inventory2.slots[40] << ", expected: " << sExpect2;
-
+    validateInventory(vector<int>{37, 40}, vector<Slot>{getDirt(), getStone()}, Slot());
     delete job;
 }
 
@@ -598,12 +534,7 @@ TEST_F(Inventory2Test, testMode2T4){
     Slot sExpect2 = getStone();
 
     inventory2.clickWindow(job, 0, altered, false);
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(inventory2.slots[10] == sExpect1) << "slot10: " << inventory2.slots[10] << ", expected: " << sExpect1;
-    ASSERT_TRUE(inventory2.slots[40] == sExpect2) << "slot40: " << inventory2.slots[40] << ", expected: " << sExpect2;
-
+    validateInventory(vector<int>{10, 40}, vector<Slot>{getDirt(), getStone()}, Slot());
     delete job;
 }
 
@@ -619,11 +550,7 @@ TEST_F(Inventory2Test, testMode3T1){
     Slot sExpect1 = getStone();
 
     inventory2.clickWindow(job, 0, altered, false);
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(inventory2.slots[9] == sExpect1) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect1;
-
+    validateInventory(vector<int>{9}, vector<Slot>{getStone()}, Slot());
     delete job;
 }
 
@@ -639,11 +566,7 @@ TEST_F(Inventory2Test, testMode3T2){
     Slot sExpect1 = getStone();
 
     inventory2.clickWindow(job, 0, altered, true);
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(inventory2.slots[9] == sExpect1) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect1;
-
+    validateInventory(vector<int>{9}, vector<Slot>{getStone()}, getStone(64));
     delete job;
 }
 
@@ -671,14 +594,7 @@ TEST_F(Inventory2Test, testMode5T1){
     job->button = 2;
     inventory2.clickWindow(job, 0, altered, false);
 
-    Slot hExpect = Slot();
-    Slot sExpect1 = getStone(32);
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(inventory2.slots[9] == sExpect1) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect1;
-    ASSERT_TRUE(inventory2.slots[10] == sExpect1) << "slot10: " << inventory2.slots[10] << ", expected: " << sExpect1;
-
+    validateInventory(vector<int>{9, 10}, vector<Slot>{getStone(32), getStone(32)}, Slot());
     delete job;
 }
 
@@ -704,14 +620,7 @@ TEST_F(Inventory2Test, testMode5T2){
     job->button = 2;
     inventory2.clickWindow(job, 0, altered, false);
 
-    Slot hExpect = getStone();
-    Slot sExpect1 = getStone(21);
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    for(int i=9; i<12; i++)
-        ASSERT_TRUE(inventory2.slots[i] == sExpect1) << "slot: " << inventory2.slots[i] << ", expected: " << sExpect1;
-
+    validateInventory(vector<int>{9, 10, 11}, vector<Slot>{getStone(21), getStone(21), getStone(21)}, getStone());
     delete job;
 }
 
@@ -738,16 +647,7 @@ TEST_F(Inventory2Test, testMode5T3){
     job->button = 2;
     inventory2.clickWindow(job, 0, altered, false);
 
-    Slot hExpect = Slot();
-    Slot sExpect1 = getStone(32);
-    Slot sExpect2 = getDirt();
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(inventory2.slots[9] == sExpect1) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect1;
-    ASSERT_TRUE(inventory2.slots[11] == sExpect1) << "slot11: " << inventory2.slots[11] << ", expected: " << sExpect1;
-    ASSERT_TRUE(inventory2.slots[10] == sExpect2) << "slot10: " << inventory2.slots[10] << ", expected: " << sExpect1;
-
+    validateInventory(vector<int>{9, 10, 11}, vector<Slot>{getStone(32), getDirt(), getStone(32)}, Slot());
     delete job;
 }
 
@@ -771,19 +671,11 @@ TEST_F(Inventory2Test, testMode5T4){
     // end drag
     job->slotNum = 10;
     job->button = 2;
+
     inventory2.clickWindow(job, 0, altered, false);
 
-    Slot hExpect = Slot();
-    Slot sExpect1 = getStone();
-    Slot sExpect2 = Slot();
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    for(int i=9; i<12; i++)
-        ASSERT_TRUE(inventory2.slots[i] == sExpect1) << "slot: " << inventory2.slots[i] << ", expected: " << sExpect1;
-    ASSERT_TRUE(inventory2.slots[12] == sExpect2) << "slot12: " << inventory2.slots[12] << ", expected: " << sExpect2;
-    ASSERT_TRUE(inventory2.slots[13] == sExpect2) << "slot13: " << inventory2.slots[13] << ", expected: " << sExpect2;
-
+    validateInventory(vector<int>{9, 10, 11},
+        vector<Slot>{getStone(), getStone(), getStone()}, Slot());
     delete job;
 }
 
@@ -811,14 +703,7 @@ TEST_F(Inventory2Test, testMode5T5){
     job->button = 6;
     inventory2.clickWindow(job, 0, altered, false);
 
-    Slot hExpect = getStone(62);
-    Slot sExpect1 = getStone(1);
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    ASSERT_TRUE(inventory2.slots[9] == sExpect1) << "slot9: " << inventory2.slots[9] << ", expected: " << sExpect1;
-    ASSERT_TRUE(inventory2.slots[10] == sExpect1) << "slot10: " << inventory2.slots[10] << ", expected: " << sExpect1;
-
+    validateInventory(vector<int>{9, 10}, vector<Slot>{getStone(1), getStone(1)}, getStone(62));
     delete job;
 }
 
@@ -844,13 +729,8 @@ TEST_F(Inventory2Test, testMode5T6){
     job->button = 6;
     inventory2.clickWindow(job, 0, altered, false);
 
-    Slot hExpect = getStone(59);
-    Slot sExpect1 = getStone(1);
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    for(int i=9; i<14; i++)
-        ASSERT_TRUE(inventory2.slots[i] == sExpect1) << "slot: " << inventory2.slots[i] << ", expected: " << sExpect1;
+    validateInventory(vector<int>{9, 10, 11, 12, 13},
+        vector<Slot>{getStone(), getStone(), getStone(), getStone(), getStone()}, getStone(59));
 
     delete job;
 }
@@ -877,16 +757,8 @@ TEST_F(Inventory2Test, testMode5T7){
     job->button = 6;
     inventory2.clickWindow(job, 0, altered, false);
 
-    Slot hExpect = Slot();
-    Slot sExpect1 = getStone(1);
-    Slot sExpect2 = Slot();
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    for(int i=9; i<13; i++)
-        ASSERT_TRUE(inventory2.slots[i] == sExpect1) << "slot: " << inventory2.slots[i] << ", expected: " << sExpect1;
-    ASSERT_TRUE(inventory2.slots[13] == sExpect2) << "slot13: " << inventory2.slots[13] << ", expected: " << sExpect2;
-
+    validateInventory(vector<int>{9, 10, 11, 12},
+        vector<Slot>{getStone(), getStone(), getStone(), getStone()}, Slot());
     delete job;
 }
 
@@ -913,19 +785,8 @@ TEST_F(Inventory2Test, testMode5T8){
     job->button = 6;
     inventory2.clickWindow(job, 0, altered, false);
 
-    Slot hExpect = getStone(60);
-    Slot sExpect1 = getStone();
-    Slot sExpect2 = getDirt();
-
-    // Assertions
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    for(int i=9; i<14; i++){
-        if(i != 10)
-            ASSERT_TRUE(inventory2.slots[i] == sExpect1) << "slot: " << inventory2.slots[i] << ", expected: " << sExpect1;
-        else
-            ASSERT_TRUE(inventory2.slots[10] == sExpect2) << "slot10: " << inventory2.slots[10] << ", expected: " << sExpect2;
-    }
-
+    validateInventory(vector<int>{9, 10, 11, 12, 13},
+        vector<Slot>{getStone(), getDirt(), getStone(), getStone(), getStone()}, getStone(60));
     delete job;
 }
 
@@ -944,13 +805,6 @@ TEST_F(Inventory2Test, testMode6T1){
     job->mode = 6;
     inventory2.clickWindow(job, 0, altered, false);
 
-    Slot hExpect = getStone(10);
-    Slot sExpect1 = Slot();
-
-    ASSERT_TRUE(inventory2.hover == hExpect) << "hover: " << inventory2.hover << ", expected: " << hExpect;
-    for(int i=0; i<45; i++){
-        ASSERT_TRUE(inventory2.slots[i] == sExpect1) << "slot: " << inventory2.slots[i] << ", expected: " << sExpect1;
-    }
-
+    validateInventory(vector<int>(), vector<Slot>(), getStone(10));
     delete job;
 }
