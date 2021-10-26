@@ -83,10 +83,11 @@ void Crafting::readFromFile(){
         int n = items->getSize();
         vector<Slot> slots(n);
         for(int j=0; j<n; j++){
-            slots[j] = ((Tag_Short*)items->getValAt(j))->getVal();
+            short c = ((Tag_Short*)items->getValAt(j))->getVal();
+            slots[j] = craftIDToSlot[c];
         }
 
-        tagToSlots[i] = slots;
+        tagToSlots[craftID] = slots;
     }
 
 
@@ -119,15 +120,17 @@ void Crafting::generateShapeless(Tag_List *shapeless){
 
         int n = items->getSize();
         recipe.pattern.resize(n);
-        recipe.partitionIDs.resize(n);
+        vector<short> partitionIDs(n, 0);
+
         for(int j=0; j<n; j++){
             short craftID = ((Tag_Short*)items->getValAt(j))->getVal();
 
             recipe.pattern[j] = getValidSlots(craftID);
-            recipe.partitionIDs[j] = craftIDToPartitionID[craftID];
+            partitionIDs[j] = craftIDToPartitionID[craftID];
         }
-        recipe.sortPartitionIDs();
-        long long key = hashPartitionIDs(recipe.partitionIDs);
+        selectSort(partitionIDs);
+        long long key = hashPartitionIDs(partitionIDs);
+
         recipes[key].push_back(recipe);
     }
 }
@@ -152,13 +155,14 @@ void Crafting::generateShaped(Tag_List* shaped){
         int xS = -1;
         recipe.y = yS;
 
+        vector<short> partitionIDs;
+
         for(int j=0; j<yS; j++){
             Tag_List* xNBT = (Tag_List*)yNBT->getValAt(j);
             if(xS == -1){
                 xS = xNBT->getSize();
                 recipe.pattern.resize(xS * yS);
-                recipe.partitionIDs.resize(xS * yS);
-
+                partitionIDs.resize(xS * yS, 0);
             }
             recipe.x = xS;
 
@@ -167,11 +171,11 @@ void Crafting::generateShaped(Tag_List* shaped){
 
                 short craftID = ((Tag_Short*)xNBT->getValAt(k))->getVal();
                 recipe.pattern[index] = getValidSlots(craftID);
-                recipe.partitionIDs[index] = craftIDToPartitionID[craftID];
+                partitionIDs[index] = craftIDToPartitionID[craftID];
             }
         }
-        recipe.sortPartitionIDs();
-        long long key = hashPartitionIDs(recipe.partitionIDs);
+        selectSort(partitionIDs);
+        long long key = hashPartitionIDs(partitionIDs);
         recipes[key].push_back(recipe);
 
     }

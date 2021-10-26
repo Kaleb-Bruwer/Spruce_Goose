@@ -19,8 +19,6 @@ private:
 public:
     bool shaped;
 
-    std::vector<short> partitionIDs;
-
     short x, y;
 
     // Each element is a list of accepted Slots (can be multiple due to tags)
@@ -32,8 +30,7 @@ public:
 
     Recipe(){};
 
-    void sortPartitionIDs(){selectSort(partitionIDs);};
-    short partitionMatch(std::vector<short>& frame); //assume frame is already ordered
+    // short partitionMatch(std::vector<short>& frame); //assume frame is already ordered
 
     bool match(CraftingFrame &frame);
     Slot getProduct(){return product;};
