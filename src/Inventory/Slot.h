@@ -10,6 +10,7 @@ public:
     int itemID = 0;
     short itemCount = 0;
     //If itemDamage is -1, as in some recipes, it means the meta value gets ignored
+    // ^^ legacy thing from old crafting system
     short itemDamage = 0; //Used for metadata on blocks
 
     //Won't deep copy right when this is in use

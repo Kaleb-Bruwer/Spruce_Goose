@@ -169,9 +169,50 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
             }
             else{
                 // crafting frame
-                Slot temp = hover;
-                hover = origin;
-                origin = temp;
+                if(job->button == 0){
+                    // Left click
+                    Slot temp = hover;
+                    hover = origin;
+                    origin = temp;
+                    altered.add(clicked, origin);
+                }
+                else if(job->button == 1){
+                    if(hover.isEmpty()){
+                        int take = ceil(origin.itemCount/2.0);
+                        hover = origin;
+                        origin.itemCount -= take;
+                        hover.itemCount = take;
+
+                        if(origin.isEmpty())
+                            origin.makeEmpty();
+                    }
+                    else{
+                        if(origin.isEmpty() || (hover.typeMatch(origin)
+                                && origin.itemCount < origin.maxStackSize())){
+                            hover.itemCount--;
+
+                            // Done this way to also cover empty origin case
+                            int c = origin.itemCount;
+                            origin = hover;
+                            origin.itemCount = c + 1;
+
+                            if(hover.isEmpty())
+                                hover.makeEmpty();
+                        }
+                        else if(!hover.typeMatch(origin)){
+                            Slot temp = origin;
+                            origin = hover;
+                            hover = temp;
+                        }
+                    }
+                }
+                else if(job->button == 3){
+                    //create new stack, creative mode only
+                    if(creative && !origin.isEmpty()){
+                        hover = origin;
+                        hover.itemCount = hover.maxStackSize();
+                    }
+                }
                 altered.add(clicked, origin);
             }
             break;

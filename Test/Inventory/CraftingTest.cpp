@@ -223,3 +223,34 @@ TEST_F(CraftingTest, test12){
 
     ASSERT_TRUE(product == expected) << product << " found but " << expected << " expected";
 };
+
+TEST_F(CraftingTest, test13){
+    // Sticks, more input
+    // Construct crafting frame
+    CraftingFrame f(3, 3);
+    f.frame[0][0] = Slot(5);
+    f.frame[0][0].itemCount = 64;
+    f.frame[1][0] = Slot(5);
+    f.frame[1][0].itemCount = 63;
+
+    // get & verify product
+    Slot expected(280);
+    expected.itemCount = 4;
+    Slot product = craft->getProduct(f);
+
+    ASSERT_TRUE(product == expected) << product << " found but " << expected << " expected";
+};
+
+TEST_F(CraftingTest, test14){
+    // invalid
+    // Construct crafting frame
+    CraftingFrame f(3, 3);
+    f.frame[1][0] = Slot(280);
+    f.frame[1][0].itemCount = 63;
+
+    // get & verify product
+    Slot expected;
+    Slot product = craft->getProduct(f);
+
+    ASSERT_TRUE(product == expected) << product << " found but " << expected << " expected";
+};
