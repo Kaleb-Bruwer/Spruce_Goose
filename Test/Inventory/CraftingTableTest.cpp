@@ -353,37 +353,37 @@ TEST_F(CraftingTableTest, testMode0Btn1T15){
     testMode0Btn1(getStone(64), getStone(), 1);
 }
 
-// TEST_F(CraftingTableTest, testMode0Btn3T1){
-//     int slot = 3;
-//
-//     ClickWindowJob* job = initJob(0, slot);
-//     job->button = 3;
-//
-//     craftingTable.slots[slot] = getDirt();
-//     craftingTable.clickWindow(job, &inventory2, altered, false);
-//
-//     validateInventory(vector<int>(), vector<Slot>(), Slot());
-//     validateCraftingTable(vector<int>{slot}, vector<Slot>{getDirt()});
-//
-//     delete job;
-// }
+TEST_F(CraftingTableTest, testMode0Btn3T1){
+    int slot = 3;
 
-// TEST_F(CraftingTableTest, testMode0Btn3T2){
-//     int slot = 13;
-//
-//     ClickWindowJob* job = initJob(0, slot);
-//     job->mode = 0;
-//     job->button = 3;
-//
-//     inventory2.slots[slot-1] = getDirt();
-//
-//     craftingTable.clickWindow(job, &inventory2, altered, false);
-//
-//     validateInventory(vector<int>{slot - 1}, vector<Slot>{getDirt()}, Slot());
-//     validateCraftingTable(vector<int>(), vector<Slot>());
-//
-//     delete job;
-// }
+    ClickWindowJob* job = initJob(0, slot);
+    job->button = 3;
+
+    craftingTable.slots[slot] = getDirt();
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    validateInventory(vector<int>(), vector<Slot>(), Slot());
+    validateCraftingTable(vector<int>{slot}, vector<Slot>{getDirt()});
+
+    delete job;
+}
+
+TEST_F(CraftingTableTest, testMode0Btn3T2){
+    int slot = 13;
+
+    ClickWindowJob* job = initJob(0, slot);
+    job->mode = 0;
+    job->button = 3;
+
+    inventory2.slots[slot-1] = getDirt();
+
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    validateInventory(vector<int>{slot - 1}, vector<Slot>{getDirt()}, Slot());
+    validateCraftingTable(vector<int>(), vector<Slot>());
+
+    delete job;
+}
 
 // shift clicks
 
