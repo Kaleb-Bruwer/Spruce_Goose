@@ -166,6 +166,33 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
             if(clicked == 0){
                 // crafting output
                 // TODO: crafting
+                if(job->button == 0 || job->button == 1){
+                    if(hover.isEmpty()){
+                        craft(false, altered);
+                        hover = origin;
+                        origin.makeEmpty();
+                        checkCrafting(altered);
+                        altered.add(0, origin);
+                    }
+                    else if(hover.typeMatch(origin)){
+                        int take = origin.itemCount;
+                        take = max(hover.maxStackSize() - hover.itemCount, take);
+                        origin.itemCount -= take;
+                        hover.itemCount += take;
+
+                        if(origin.isEmpty())
+                            origin.makeEmpty();
+
+                        checkCrafting(altered);
+                        altered.add(0, origin);
+                    }
+                }
+                else if(job->button == 3 && creative){
+                    if(!origin.isEmpty()){
+                        hover = origin;
+                        hover.itemCount = hover.maxStackSize();
+                    }
+                }
             }
             else{
                 // crafting frame
@@ -174,7 +201,6 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
                     Slot temp = hover;
                     hover = origin;
                     origin = temp;
-                    altered.add(clicked, origin);
                 }
                 else if(job->button == 1){
                     if(hover.isEmpty()){
@@ -214,6 +240,7 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
                     }
                 }
                 altered.add(clicked, origin);
+                checkCrafting(altered);
             }
             break;
         case 1:

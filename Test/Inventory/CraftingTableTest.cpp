@@ -62,6 +62,7 @@ protected:
     }
 
     void validateCraftingTable(vector<int> pos, vector<Slot> items){
+        // Excludes product (slot 0), unless specificly added
         ASSERT_TRUE(pos.size() == items.size()) << "Test config invalid";
 
         // First sort input
@@ -87,7 +88,13 @@ protected:
         }
 
         int specialPos = 0;
-        for(int i=0; i<10; i++){
+        if(pos.size() > 0 && pos[0] == 0){
+            ASSERT_TRUE(craftingTable.slots[0] == items[0])
+                << "[0]: " << craftingTable.slots[0] << ", expected: " << items[0];
+            specialPos++;
+        }
+
+        for(int i=1; i<10; i++){
             if(specialPos < pos.size() && pos[specialPos] == i){
                 ASSERT_TRUE(craftingTable.slots[i] == items[specialPos])
                     << "[" << i << "]: " << craftingTable.slots[i] << ", expected: " << items[specialPos];
@@ -908,4 +915,91 @@ TEST_F(CraftingTableTest, testMode6T1){
     validateCraftingTable(vector<int>(), vector<Slot>());
 
     delete job;
+}
+
+TEST_F(CraftingTableTest, testCraft1){
+    // Craft sticks & pick them up (items start in hover)
+
+    // craftingTable.slots[1] = Slot(5);
+    // craftingTable.slots[4] = Slot(5);
+
+    inventory2.hover = Slot(5);
+    inventory2.hover.itemCount = 10;
+
+    ClickWindowJob* job = initJob(0, 1);
+    job->button = 1;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    Slot hExpect = Slot(5);
+    hExpect.itemCount = 9;
+
+    // Intermediate check
+    validateInventory(vector<int>(), vector<Slot>(), hExpect);
+    validateCraftingTable(vector<int>{1}, vector<Slot>{Slot(5)});
+
+    job->slotNum = 4;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    hExpect.itemCount--;
+    Slot sticks = Slot(280);
+    sticks.itemCount = 4;
+
+    // Check crafting works
+    validateInventory(vector<int>(), vector<Slot>(), hExpect);
+    validateCraftingTable(vector<int>{0, 1, 4}, vector<Slot>{sticks, Slot(5), Slot(5)});
+
+    job->slotNum = 10;
+    job->button = 0;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    job->slotNum = 0;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    // Pick up result
+    validateInventory(vector<int>{9}, vector<Slot>{hExpect}, sticks);
+    validateCraftingTable(vector<int>(), vector<Slot>());
+
+}
+
+TEST_F(CraftingTableTest, testCraft2){
+    // Craft pickaxe (items start in hover & inventory)
+
+    // craftingTable.slots[1] = Slot(5);
+    // craftingTable.slots[4] = Slot(5);
+    Slot cobble = Slot(4);
+    cobble.itemCount = 3;
+
+    inventory2.hover = Slot(280);
+    inventory2.hover.itemCount = 2;
+    inventory2.slots[9] = cobble;
+
+    ClickWindowJob* job = initJob(0, 5);
+    job->button = 1;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+    job->slotNum = 8;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    // Intermediate
+    validateInventory(vector<int>{9}, vector<Slot>{cobble}, Slot());
+    validateCraftingTable(vector<int>{5, 8}, vector<Slot>{Slot(280), Slot(280)});
+
+    job->slotNum = 10;
+    job->button = 0;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    job->button = 1;
+    job->slotNum = 1;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+    job->slotNum = 2;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+    job->slotNum = 3;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    Slot pickaxe = Slot(274);
+
+    // Check Crafting
+    validateInventory(vector<int>(), vector<Slot>(), Slot());
+    validateCraftingTable(vector<int>{0, 1, 2, 3, 5, 8},
+        vector<Slot>{pickaxe, Slot(4), Slot(4), Slot(4), Slot(280), Slot(280)});
+
 }
