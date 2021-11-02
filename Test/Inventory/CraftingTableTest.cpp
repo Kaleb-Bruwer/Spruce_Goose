@@ -144,12 +144,27 @@ protected:
         inventory2.hover = h;
         craftingTable.clickWindow(job, &inventory2, altered, false);
 
+        Slot sExpect = h;
+        Slot hExpect = s;
+        if(s.typeMatch(h)){
+            sExpect.itemCount = s.itemCount + h.itemCount;
+            int maxStack = sExpect.maxStackSize();
+            int leftover = sExpect.itemCount - maxStack;
+            if(leftover <= 0){
+                hExpect.makeEmpty();
+            }
+            else{
+                hExpect.itemCount = leftover;
+                sExpect.itemCount = maxStack;
+            }
+        }
+
         if(slot < 10){
-            validateCraftingTable(vector<int>{slot}, vector<Slot>{h});
-            validateInventory(vector<int>(), vector<Slot>(), s);
+            validateCraftingTable(vector<int>{slot}, vector<Slot>{sExpect});
+            validateInventory(vector<int>(), vector<Slot>(), hExpect);
         }
         else{
-            validateInventory(vector<int>{slot-1}, vector<Slot>{h}, s);
+            validateInventory(vector<int>{slot-1}, vector<Slot>{hExpect}, sExpect);
             validateCraftingTable(vector<int>(), vector<Slot>());
         }
         delete job;
@@ -269,30 +284,29 @@ TEST_F(CraftingTableTest, testMode0Btn0T7){
     delete job;
 }
 
-// pick up crafting result
-// TEST_F(CraftingTableTest, testMode0Btn0T8){
-//     Slot s = getStone();
-//     Slot h = Slot();
-//     int slot = 0;
-//
-//     ClickWindowJob* job = initJob(0, slot);
-//     job->button = 0;
-//
-//     craftingTable.slots[slot] = s;
-//     inventory2.hover = h;
-//
-//     craftingTable.clickWindow(job, &inventory2, altered, false);
-//
-//     ASSERT_TRUE(inventory2.hover == s) << "hover: " << inventory2.hover;
-//     ASSERT_TRUE(craftingTable.slots[slot] == h) << "slot: " << inventory2.slots[slot];
-//
-//     delete job;
-// }
-
-
 // items both sides
 TEST_F(CraftingTableTest, testMode0Btn0T9){
     testMode0Btn0(getStone(), getDirt(), 1);
+}
+
+TEST_F(CraftingTableTest, testMode0Btn0T10){
+    testMode0Btn0(getStone(5), getStone(3), 1);
+}
+
+TEST_F(CraftingTableTest, testMode0Btn0T11){
+    testMode0Btn0(getStone(), getStone(), 1);
+}
+
+TEST_F(CraftingTableTest, testMode0Btn0T12){
+    testMode0Btn0(getStone(64), getStone(3), 1);
+}
+
+TEST_F(CraftingTableTest, testMode0Btn0T13){
+    testMode0Btn0(getStone(3), getStone(64), 1);
+}
+
+TEST_F(CraftingTableTest, testMode0Btn0T14){
+    testMode0Btn0(getStone(62), getStone(3), 1);
 }
 
 // Single item
@@ -357,7 +371,7 @@ TEST_F(CraftingTableTest, testMode0Btn1T14){
 }
 
 TEST_F(CraftingTableTest, testMode0Btn1T15){
-    testMode0Btn1(getStone(64), getStone(), 1);
+    testMode0Btn1(getStone(63), getStone(4), 1);
 }
 
 TEST_F(CraftingTableTest, testMode0Btn3T1){
@@ -958,7 +972,6 @@ TEST_F(CraftingTableTest, testCraft1){
     // Pick up result
     validateInventory(vector<int>{9}, vector<Slot>{hExpect}, sticks);
     validateCraftingTable(vector<int>(), vector<Slot>());
-
 }
 
 TEST_F(CraftingTableTest, testCraft2){
@@ -1001,5 +1014,106 @@ TEST_F(CraftingTableTest, testCraft2){
     validateInventory(vector<int>(), vector<Slot>(), Slot());
     validateCraftingTable(vector<int>{0, 1, 2, 3, 5, 8},
         vector<Slot>{pickaxe, Slot(4), Slot(4), Slot(4), Slot(280), Slot(280)});
+
+    job->button  = 0;
+    job->slotNum = 0;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    validateInventory(vector<int>(), vector<Slot>(), pickaxe);
+    validateCraftingTable(vector<int>(), vector<Slot>());
+}
+
+TEST_F(CraftingTableTest, testCraft3){
+    // Craft sticks with excess input
+
+    inventory2.hover = Slot(5);
+    inventory2.hover.itemCount = 10;
+
+    ClickWindowJob* job = initJob(0, 1);
+    job->button = 1;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    Slot hExpect = Slot(5);
+    hExpect.itemCount = 8;
+
+    Slot sExpect = Slot(5);
+    sExpect.itemCount = 2;
+    // Intermediate check
+    validateInventory(vector<int>(), vector<Slot>(), hExpect);
+    validateCraftingTable(vector<int>{1}, vector<Slot>{sExpect});
+
+    job->slotNum = 4;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    hExpect.itemCount--;
+    Slot sticks = Slot(280);
+    sticks.itemCount = 4;
+
+    // Check crafting works
+    validateInventory(vector<int>(), vector<Slot>(), hExpect);
+    validateCraftingTable(vector<int>{0, 1, 4}, vector<Slot>{sticks, sExpect, Slot(5)});
+
+    job->slotNum = 10;
+    job->button = 0;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    job->slotNum = 0;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    // Pick up result
+    validateInventory(vector<int>{9}, vector<Slot>{hExpect}, sticks);
+    validateCraftingTable(vector<int>{1}, vector<Slot>{Slot(5)});
+
+}
+
+TEST_F(CraftingTableTest, testCraft4){
+    // Craft sticks with excess input
+
+    inventory2.hover = Slot(5);
+    inventory2.hover.itemCount = 10;
+
+    ClickWindowJob* job = initJob(0, 1);
+    job->button = 1;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    Slot hExpect = Slot(5);
+    hExpect.itemCount = 8;
+
+    Slot sExpect = Slot(5);
+    sExpect.itemCount = 2;
+    // Intermediate check
+    validateInventory(vector<int>(), vector<Slot>(), hExpect);
+    validateCraftingTable(vector<int>{1}, vector<Slot>{sExpect});
+
+    job->slotNum = 4;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    hExpect.itemCount -= 2;
+    Slot sticks = Slot(280);
+    sticks.itemCount = 4;
+
+    // Check crafting works
+    validateInventory(vector<int>(), vector<Slot>(), hExpect);
+    validateCraftingTable(vector<int>{0, 1, 4}, vector<Slot>{sticks, sExpect, sExpect});
+
+    job->slotNum = 10;
+    job->button = 0;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    job->slotNum = 0;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    // Pick up result
+    validateInventory(vector<int>{9}, vector<Slot>{hExpect}, sticks);
+    validateCraftingTable(vector<int>{1, 4}, vector<Slot>{Slot(5), Slot(5)});
+
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    sticks.itemCount = 8;
+    validateInventory(vector<int>{9}, vector<Slot>{hExpect}, sticks);
+    validateCraftingTable(vector<int>(), vector<Slot>());
 
 }

@@ -29,6 +29,7 @@ public:
     virtual int movHalf(Slot& origin, int start, int end, AlteredSlots &altered);
     virtual int movEmpty(Slot& origin, int start, int end, AlteredSlots &altered);
 
+    int availableSpace(Slot in, int start, int end);
 
 };
 

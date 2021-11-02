@@ -11,7 +11,7 @@ class Inventory2;
 class CraftingTable : public BlockDataS<10>{
 protected:
     //uses inv for addAlteredSlot
-    void craft(bool max, AlteredSlots &altered);
+    void craft(bool max, AlteredSlots &altered, int m = 0);
     void checkCrafting(AlteredSlots &altered);
 
     void mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots & altered);

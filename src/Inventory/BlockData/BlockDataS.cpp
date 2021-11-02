@@ -135,3 +135,25 @@ int BlockDataS<nSlots>::movEmpty(Slot& origin, int start, int end, AlteredSlots 
 
     return startCount - origin.itemCount;
 }
+
+template <int nSlots>
+int BlockDataS<nSlots>::availableSpace(Slot in, int start, int end){
+    int total = 0;
+
+    int m = in.maxStackSize();
+    if(end < start){
+        int temp = start;
+        start = end;
+        end = temp;
+    }
+
+    for(int i= start; i<=end; i++){
+        if(slots[i].isEmpty()){
+            total += m;
+        }
+        else if(slots[i].typeMatch(in)){
+            total += m - slots[i].itemCount;
+        }
+    }
+    return total;
+}
