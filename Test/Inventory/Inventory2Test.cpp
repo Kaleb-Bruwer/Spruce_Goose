@@ -456,13 +456,14 @@ TEST_F(Inventory2Test, testMode1T10){
     // Set up inventory
     inventory2.slots[36] = getStone(4);
     inventory2.slots[14] = getStone(62);
+    inventory2.slots[15] = getStone(62);
 
     // Create job
     ClickWindowJob* job = initJob(1, 36);
 
     // execute
     inventory2.clickWindow(job, 0, altered, false);
-    validateInventory(vector<int>{9, 14}, vector<Slot>{getStone(2), getStone(64)}, Slot());
+    validateInventory(vector<int>{14, 15}, vector<Slot>{getStone(64), getStone(64)}, Slot());
     delete job;
 }
 
