@@ -374,38 +374,6 @@ TEST_F(CraftingTableTest, testMode0Btn1T15){
     testMode0Btn1(getStone(63), getStone(4), 1);
 }
 
-TEST_F(CraftingTableTest, testMode0Btn3T1){
-    int slot = 3;
-
-    ClickWindowJob* job = initJob(0, slot);
-    job->button = 3;
-
-    craftingTable.slots[slot] = getDirt();
-    craftingTable.clickWindow(job, &inventory2, altered, false);
-
-    validateInventory(vector<int>(), vector<Slot>(), Slot());
-    validateCraftingTable(vector<int>{slot}, vector<Slot>{getDirt()});
-
-    delete job;
-}
-
-TEST_F(CraftingTableTest, testMode0Btn3T2){
-    int slot = 13;
-
-    ClickWindowJob* job = initJob(0, slot);
-    job->mode = 0;
-    job->button = 3;
-
-    inventory2.slots[slot-1] = getDirt();
-
-    craftingTable.clickWindow(job, &inventory2, altered, false);
-
-    validateInventory(vector<int>{slot - 1}, vector<Slot>{getDirt()}, Slot());
-    validateCraftingTable(vector<int>(), vector<Slot>());
-
-    delete job;
-}
-
 // shift clicks
 
 // crafting frame into inventory
@@ -888,7 +856,7 @@ TEST_F(CraftingTableTest, testMode5T8){
     inventory2.hover = getStone(64);
     craftingTable.slots[9] = getDirt();
 
-    // Start left drag
+    // Start right drag
     ClickWindowJob* job = initJob(5, 8);
     job->button = 4;
     craftingTable.clickWindow(job, &inventory2, altered, false);
@@ -1116,4 +1084,68 @@ TEST_F(CraftingTableTest, testCraft4){
     validateInventory(vector<int>{9}, vector<Slot>{hExpect}, sticks);
     validateCraftingTable(vector<int>(), vector<Slot>());
 
+}
+
+TEST_F(CraftingTableTest, testCraft5){
+    // Craft wooden pickaxe (items start in hover & inventory)
+
+    // craftingTable.slots[1] = Slot(5);
+    // craftingTable.slots[4] = Slot(5);
+    Slot cobble = Slot(5);
+    cobble.itemDamage = 1;
+    cobble.itemCount = 3;
+
+    inventory2.hover = Slot(280);
+    inventory2.hover.itemCount = 2;
+    inventory2.slots[9] = cobble;
+
+    ClickWindowJob* job = initJob(0, 5);
+    job->button = 1;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+    job->slotNum = 8;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    // Intermediate
+    validateInventory(vector<int>{9}, vector<Slot>{cobble}, Slot());
+    validateCraftingTable(vector<int>{5, 8}, vector<Slot>{Slot(280), Slot(280)});
+
+    job->slotNum = 10;
+    job->button = 0;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+
+    job->mode = 5;
+    job->button = 4;
+    job->slotNum = -999;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    job->button = 5;
+    job->slotNum = 1;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+    job->slotNum = 2;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+    job->slotNum = 3;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    job->button = 6;
+    job->slotNum = -999;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    Slot pickaxe = Slot(270);
+
+    // Check Crafting
+
+    cobble.itemCount = 1;
+
+    validateInventory(vector<int>(), vector<Slot>(), Slot());
+    validateCraftingTable(vector<int>{0, 1, 2, 3, 5, 8},
+        vector<Slot>{pickaxe, cobble, cobble, cobble, Slot(280), Slot(280)});
+
+    job->mode = 0;
+    job->button  = 0;
+    job->slotNum = 0;
+    craftingTable.clickWindow(job, &inventory2, altered, false);
+
+    validateInventory(vector<int>(), vector<Slot>(), pickaxe);
+    validateCraftingTable(vector<int>(), vector<Slot>());
 }

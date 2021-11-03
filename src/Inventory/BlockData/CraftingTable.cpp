@@ -95,9 +95,9 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
     int clicked = job->slotNum;
     Slot& hover = inv->hover;
 
-    if(clicked < 0 || clicked > 45){
-        return dropped; //invalid request
-    }
+    // if((job->mode != 4 && job->mode != 5) && (clicked < 0 || clicked > 45)){
+    //     return dropped; //invalid request
+    // }
 
     if(job->mode == 5){
         // inventory or not, these need to be handled in the same place
@@ -245,13 +245,11 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
                 return dropped;
 
             if(clicked==0){
-                // TODO: crafting
                 // Check max available space
                 int available = inv->availableSpace(slots[0], 9, 44);
 
                 // Craft max amount possible
                 craft(true, altered, available);
-
             }
             //move items (same if origin is slots[0] or not)
             if(!origin.isEmpty()){
@@ -332,10 +330,11 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
         //same as that
         //In future versions of MC this changes
 
-        altered.setOffset(-1); //slot numbers are offset from normal inventory
+        //For some reason, only hotbar changes are recognized from the Crafting table
+        altered.hotbarOnly = true;
         job->slotNum--;
         dropped = inv->clickWindow(job, inv, altered, creative);
-        altered.setOffset(0);
+        altered.hotbarOnly = false;
     }
 
     return dropped;
@@ -345,7 +344,7 @@ void CraftingTable::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots
     // use DragData in inventory, since this info must be player specific
     // putting it in CraftingTable would make it shared between players
     int i = job->slotNum;
-    if(i < 0 || i > 45)
+    if((job->button == 1 || job->button == 5) && (i < 0 || i > 45))
         return;
 
     switch(job->button){
@@ -356,7 +355,7 @@ void CraftingTable::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots
 
         case 1: //add slot to left drag
         // First check some conditions
-        if(i <0 || i > 44) //invalid
+        if(i <=0 || i > 45) //invalid (also can't involve crafting product)
             break;
         if(inv->dragData.dragMode == LEFT){
             Slot clickedSlot;
@@ -383,8 +382,8 @@ void CraftingTable::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots
 
             int maxStack = inv->hover.maxStackSize();
 
-            for(int i=0; i<inv->dragData.dragSlots.size(); i++){
-                int s = inv->dragData.dragSlots[i];
+            for(int j=0; j<inv->dragData.dragSlots.size(); j++){
+                int s = inv->dragData.dragSlots[j];
 
                 Slot* slot;
                 if(s < 10)
@@ -393,7 +392,7 @@ void CraftingTable::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots
                     slot = &inv->slots[s-1];
 
                 *slot = inv->hover; // sets the type
-                slot->itemCount = inv->dragData.baseCount[i] + numToAdd;
+                slot->itemCount = inv->dragData.baseCount[j] + numToAdd;
                 if(slot->itemCount > maxStack){
                     remainder += slot->itemCount - maxStack;
                     slots->itemCount = maxStack;
@@ -401,6 +400,7 @@ void CraftingTable::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots
                 altered.add(s, *slot);
             }
             inv->hover.itemCount = remainder;
+            checkCrafting(altered);
         }
         break;
 
@@ -415,6 +415,7 @@ void CraftingTable::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots
                     inv->slots[s-1] = inv->hover;
 
                 inv->hover.makeEmpty();
+                checkCrafting(altered);
             }
             if(inv->hover.isEmpty())
                 inv->hover.makeEmpty();
@@ -430,7 +431,7 @@ void CraftingTable::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots
         break;
 
         case 5: //add slot to right drag
-        if(i <0 || i > 44) //invalid
+        if(i <= 0 || i > 45) //invalid
             break;
         if(inv->dragData.dragMode == RIGHT){
             Slot *slot;
@@ -457,6 +458,7 @@ void CraftingTable::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots
                     inv->hover.makeEmpty();
             }
             altered.add(i, *slot);
+            checkCrafting(altered);
         }
         break;
 

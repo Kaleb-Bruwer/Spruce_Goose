@@ -27,7 +27,7 @@ class Inventory2 : public BlockDataS<45>{
 protected:
 
     //0: only craft 1 unit. 1:craft maximum possible
-    void craft(bool max, AlteredSlots &altered);
+    void craft(bool max, AlteredSlots &altered, int m = 0);
 
     //Calls Crafting class and sets slots[0] to the appropriate product
     //Returns true if crafting product is altered

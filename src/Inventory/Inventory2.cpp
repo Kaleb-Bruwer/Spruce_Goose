@@ -13,7 +13,7 @@ BlockData* Inventory2::clone(){
     throw 0;
 };
 
-void Inventory2::craft(bool max, AlteredSlots &altered){
+void Inventory2::craft(bool max, AlteredSlots &altered, int m){
     /*
     This function assumes that there is already a valid crafting recipe in
     the crafting window and that it has its corresponding result in the product
@@ -39,10 +39,12 @@ void Inventory2::craft(bool max, AlteredSlots &altered){
             }
         }
         if(numToCraft == INT_MAX){ //Not supposed to happen
-            slots[0].makeEmpty();
+            checkCrafting(altered);
             return;
         }
         //TODO: check how much space is left and lower numToCraft if neccesary
+
+        numToCraft = min(numToCraft, m/slots[0].itemCount);
 
     }
 
@@ -185,17 +187,13 @@ vector<Slot> Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, Alter
         return;
         //Either movToMain or movToHotbar
         if(i == 0){
-            //Craft max amount
-            craft(true, altered);
+            // Check max available space
+            int available = inv->availableSpace(slots[0], 9, 44);
 
-            //The result from crafting is inserted differently from the inputs
-            int slotOrder[36];
-            int index = 0;
-            for(int j=44; j>=9; j--){
-                slotOrder[index++] = j;
-            }
-            mov(slots[0], 44, 9, altered);
-            // mov((slotOrder[0]), 36, slots[0], 0);
+            // Craft max amount possible
+            craft(true, altered, available);
+            inv->mov(slots[0], 44, 9, altered);
+            altered.add(0, slots[0]);
             checkCrafting(altered);
         }
         else if(i >= 36){
@@ -358,10 +356,10 @@ vector<Slot> Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, Alter
 
                 int maxStack = hover.maxStackSize();
 
-                for(int i=0; i<dragData.dragSlots.size(); i++){
-                    int s = dragData.dragSlots[i];
+                for(int j=0; j < dragData.dragSlots.size(); j++){
+                    int s = dragData.dragSlots[j];
                     slots[s] = hover; // sets the type
-                    slots[s].itemCount = dragData.baseCount[i] + numToAdd;
+                    slots[s].itemCount = dragData.baseCount[j] + numToAdd;
                     if(slots[s].itemCount > maxStack){
                         remainder += slots[s].itemCount - maxStack;
                         slots[s].itemCount = maxStack;
