@@ -60,6 +60,10 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
             // Within chest
             switch(job->mode){
             case 0: //Normal clicks
+                // Validity check
+                if(clicked < 0)
+                    break;
+
                 if(btn == 0){ //left click
                     if(!inv->hover.isEmpty() && inv->hover.typeMatch(origin)){
                         // Add to origin
@@ -114,19 +118,58 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
 
                 break;
             case 2: //Number keys
+                // Validity checks
+                if(btn < 0 || btn > 8)
+                    break;
+                if(clicked < 0)
+                    break;
 
+                Slot& target = inv->slots[36 + btn];
+                Slot temp = target;
+                target = origin;
+                origin = temp;
+                altered.add(clicked, origin);
+                altered.add(36 + btn, target);
                 break;
             case 3: //middle click (creative only)
+                // Validity check
+                if(clicked < 0 || clicked > nSlots + 35)
+                    break;
+
+                if(creative && inv->hover.isEmpty() && btn == 2){
+                    inv->hover = this->slots[i];
+                    inv->hover.itemCount = inv->hover.maxStackSize();
+                }
 
                 break;
             case 4: //Drop item(s)
+                if(clicked < 0)
+                    break;
+            // Buttons 0 & 1 with clicked = -999 are in protocol, but as no-op
+                if(btn == 0){
+                    //Drop one
+                    Slot drop = origin;
+                    drop.itemCount = 1;
+                    origin.itemCount--;
+                    if(origin.isEmpty())
+                        origin.makeEmpty();
 
+                    dropped.push_back(drop);
+                    altered.add(clicked, origin);
+                }
+                else if(job->button == 1){
+                    //Drop stack
+                    dropped.push_back(origin);
+                    origin.makeEmpty();
+                    altered.add(clicked, Slot());
+                }
                 break;
             }
         }
         else{
             // Within inventory
             altered.setOffset(invOffset);
+            job->button -= invOffset;
             inv->clickWindow(job, inv, altered, creative);
             altered.setOffset(0);
         }
