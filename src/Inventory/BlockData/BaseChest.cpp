@@ -55,9 +55,62 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
         break;
     default:
         if(clicked < nSlots){
+            Slot& origin = this->slots[clicked];
+
             // Within chest
             switch(job->mode){
             case 0: //Normal clicks
+                if(btn == 0){ //left click
+                    if(!inv->hover.isEmpty() && inv->hover.typeMatch(origin)){
+                        // Add to origin
+                        int take = min(inv->hover.itemCount, ( short int) (origin.maxStackSize() - origin.itemCount));
+                        inv->hover.itemCount -= take;
+                        if(inv->hover.isEmpty())
+                            inv->hover.makeEmpty();
+
+                        origin.itemCount += take;
+                        altered.add(clicked, origin);
+                    }
+                    else{
+                        // Swap
+                        Slot temp = origin;
+                        origin = inv->hover;
+                        inv->hover = temp;
+                        altered.add(clicked, origin);
+                    }
+                }
+                else if(btn == 1){ //right click
+                    if(inv->hover.isEmpty()){ //pick up half
+                        int take = ceil(origin.itemCount/2.0);
+                        inv->hover = origin;
+                        origin.itemCount -= take;
+                        inv->hover.itemCount = take;
+
+                        if(origin.isEmpty()) //if there was only 1 item
+                            origin.makeEmpty();
+                    }
+                    else{ //place 1 item
+                        if(origin.isEmpty() || (inv->hover.typeMatch(origin)
+                                && origin.itemCount < origin.maxStackSize())){
+                            inv->hover.itemCount--;
+
+                            // Done this way to also cover empty origin case
+                            int c = origin.itemCount;
+                            origin = inv->hover;
+                            origin.itemCount = c + 1;
+
+                            if(inv->hover.isEmpty())
+                                inv->hover.makeEmpty();
+                        }
+                        else if(!inv->hover.typeMatch(origin)){
+                            // If mismatched, this is equivalent to a left-click
+                            Slot temp = origin;
+                            origin = inv->hover;
+                            inv->hover = temp;
+                        }
+                    }
+                }
+
 
                 break;
             case 2: //Number keys
