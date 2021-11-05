@@ -13,7 +13,7 @@
 #include "ChunkSection.h"
 #include "ChunkChangeTracker.h"
 #include "../../Inventory/BlockData/BlockData.h"
-#include "../../Inventory/BlockData/Chest.h"
+// #include "../../Inventory/BlockData/Chest.h"
 #include "../../Inventory/BlockData/CraftingTable.h"
 
 using namespace std;
@@ -49,9 +49,9 @@ protected:
     //returns 0 if none needed
     BlockData* makeBlockData(Block b){
         switch(b.id){
-            case 54:
-            case 146:
-                return new Chest();
+            // case 54:
+            // case 146:
+                // return new Chest();
             case 58:
                 return new CraftingTable();
             case 61:

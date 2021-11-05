@@ -1,4 +1,4 @@
-#include "Chest.h"
+#include "BaseChest.h"
 
 #include <cstring>
 #include <cmath>
@@ -35,13 +35,13 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
             if(clicked < nSlots){
                 // Within chest
                 altered.setOffset(invOffset);
-                inv->mov(slots[clicked], 44, 9, altered);
+                inv->mov(this->slots[clicked], 44, 9, altered);
                 altered.setOffset(0);
-                altered.add(clicked, slots[clicked]);
+                altered.add(clicked, this->slots[clicked]);
             }
             else{
                 // Within inventory
-                mov(inv->slots[clicked - invOffset], 0, nSlots - 1, altered);
+                this->mov(inv->slots[clicked - invOffset], 0, nSlots - 1, altered);
                 altered.add(clicked, inv->slots[clicked - invOffset]);
             }
 
@@ -169,7 +169,8 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
     // return dropped;
 }
 
-void CraftingTable::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered){
+template <int nSlots>
+void BaseChest<nSlots>::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered){
     // use DragData in inventory, since this info must be player specific
     // putting it in CraftingTable would make it shared between players
     const int invOffset = nSlots - 9;
@@ -194,7 +195,7 @@ void CraftingTable::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots
         if(inv->dragData.dragMode == LEFT){
             Slot clickedSlot;
             if(clicked < nSlots)
-                clickedSlot = slots[clicked];
+                clickedSlot = this->slots[clicked];
             else
                 clickedSlot = inv->slots[clicked - invOffset];
 
@@ -221,7 +222,7 @@ void CraftingTable::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots
 
                 Slot* slot;
                 if(s < nSlots)
-                    slot = &slots[s];
+                    slot = &(this->slots[s]);
                 else
                     slot = &inv->slots[s - invOffset];
 
@@ -229,7 +230,7 @@ void CraftingTable::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots
                 slot->itemCount = inv->dragData.baseCount[j] + numToAdd;
                 if(slot->itemCount > maxStack){
                     remainder += slot->itemCount - maxStack;
-                    slots->itemCount = maxStack;
+                    this->slots->itemCount = maxStack;
                 }
                 altered.add(s, *slot);
             }
@@ -243,12 +244,11 @@ void CraftingTable::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots
             if(inv->dragData.dragSlots.size() == 1){
                 int s = inv->dragData.dragSlots[0];
                 if(s < nSlots)
-                    slots[s] = inv->hover;
+                    this->slots[s] = inv->hover;
                 else
                     inv->slots[s - invOffset] = inv->hover;
 
                 inv->hover.makeEmpty();
-                checkCrafting(altered);
             }
             if(inv->hover.isEmpty())
                 inv->hover.makeEmpty();
@@ -269,11 +269,11 @@ void CraftingTable::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots
         if(inv->dragData.dragMode == RIGHT){
             Slot *slot;
             if(clicked < nSlots)
-                slot = &slots[clicked];
+                slot = &(this->slots[clicked]);
             else
                 slot = &inv->slots[clicked - invOffset];
 
-            if(!slot->isEmpty() && !slots->typeMatch(inv->hover))
+            if(!slot->isEmpty() && !slot->typeMatch(inv->hover))
                 break;
 
             // Conditions where no action is required

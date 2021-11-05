@@ -59,8 +59,8 @@ SET (SRCS
     ./src/Inventory/BlockData/BlockData.cpp
     ./src/Inventory/BlockData/BlockDataS.h
     ./src/Inventory/BlockData/BlockDataS.cpp
-    ./src/Inventory/BlockData/Chest.h
-    ./src/Inventory/BlockData/Chest.cpp
+    ./src/Inventory/BlockData/BaseChest.h
+    ./src/Inventory/BlockData/BaseChest.cpp
     ./src/Inventory/BlockData/CraftingTable.h
     ./src/Inventory/BlockData/CraftingTable.cpp
 
