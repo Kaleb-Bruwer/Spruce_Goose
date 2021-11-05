@@ -8,12 +8,16 @@ using namespace std;
 class Inventory2;
 
 //This class represents the contents of a single chest
-class Chest : public BlockDataS<27>{
+template <int nSlots>
+class BaseChest : public BlockDataS<nSlots>{
+private:
+    void mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered);
+
 public:
-    Chest() : BlockDataS<27>(true){};
+    BaseChest() : BlockDataS<nSlots>(true){};
 
     int getWindowID(){return 0;};
-    BlockData* clone();
+    // BlockData* clone();
 
     vector<Slot> clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative);
 
