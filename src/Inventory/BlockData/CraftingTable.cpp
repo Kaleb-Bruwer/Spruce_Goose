@@ -440,7 +440,7 @@ void CraftingTable::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots
             else
                 slot = &inv->slots[i-1];
 
-            if(!slot->isEmpty() && !slots->typeMatch(inv->hover))
+            if(!slot->isEmpty() && !slot->typeMatch(inv->hover))
                 break;
 
             // Conditions where no action is required
