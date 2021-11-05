@@ -51,6 +51,80 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
 
         break;
     case 6: //double click
+        // Fill hover with similar items, starting from slots[0].
+        // Take from partial stacks first, then full ones
+        Slot& hover = inv->hover;
+
+        if(hover.isEmpty() || clicked < 0 || clicked > nSlots + 35)
+            break;
+
+        int stackLimit = hover.maxStackSize();
+
+        // partial stacks
+        for(int i = 0; i < nSlots; i++){
+            if(hover.itemCount == stackLimit)
+                break;
+
+            if(this->slots[i].typeMatch(hover) && this->slots[i].itemCount < stackLimit){
+                int take = min(stackLimit - hover.itemCount, this->slots[i].itemCount);
+                this->slots[i].itemCount -= take;
+                hover.itemCount += take;
+
+                if(this->slots[i].isEmpty())
+                    this->slots[i].makeEmpty();
+            }
+
+        }
+        if(hover.itemCount == stackLimit)
+            break; //1st break only escaped the for loop
+        for(int i = nSlots; i< nSlots + 36; i++){
+            if(hover.itemCount == stackLimit)
+                break;
+
+            if(inv->slots[i- invOffset].typeMatch(hover) && this->slots[i].itemCount < stackLimit){
+                int take = min(stackLimit - hover.itemCount, this->slots[i- invOffset].itemCount);
+                this->slots[i- invOffset].itemCount -= take;
+                hover.itemCount += take;
+
+                if(this->slots[i- invOffset].isEmpty())
+                    this->slots[i- invOffset].makeEmpty();
+            }
+        }
+        if(hover.itemCount == stackLimit)
+            break;
+
+        // Full stacks
+        for(int i = 0; i < nSlots; i++){
+            if(hover.itemCount == stackLimit)
+                break;
+
+            if(this->slots[i].typeMatch(hover)){
+                int take = min(stackLimit - hover.itemCount, this->slots[i].itemCount);
+                this->slots[i].itemCount -= take;
+                hover.itemCount += take;
+
+                if(this->slots[i].isEmpty())
+                    this->slots[i].makeEmpty();
+            }
+
+        }
+        if(hover.itemCount == stackLimit)
+            break; //1st break only escaped the for loop
+        for(int i = nSlots; i< nSlots + 36; i++){
+            if(hover.itemCount == stackLimit)
+                break;
+
+            if(inv->slots[i- invOffset].typeMatch(hover)){
+                int take = min(stackLimit - hover.itemCount, this->slots[i- invOffset].itemCount);
+                this->slots[i- invOffset].itemCount -= take;
+                hover.itemCount += take;
+
+                if(this->slots[i- invOffset].isEmpty())
+                    this->slots[i- invOffset].makeEmpty();
+            }
+        }
+
+
 
         break;
     default:
@@ -137,7 +211,7 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
                     break;
 
                 if(creative && inv->hover.isEmpty() && btn == 2){
-                    inv->hover = this->slots[i];
+                    inv->hover = origin;
                     inv->hover.itemCount = inv->hover.maxStackSize();
                 }
 
