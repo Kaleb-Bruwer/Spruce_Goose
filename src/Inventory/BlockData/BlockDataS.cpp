@@ -8,41 +8,6 @@ template class BlockDataS<10>; //Crafting table
 template class BlockDataS<27>; //Single chest
 template class BlockDataS<45>; //Inventory
 
-template <int nSlots>
-int BlockDataS<nSlots>::tryInsertHalfSlot(Slot& dest, Slot& origin, int stackSize){
-    if(origin.isEmpty() || dest.isEmpty())
-        return 0;
-
-    if(!origin.typeMatch(&dest))
-        return 0;
-
-    int canTake = stackSize - dest.itemCount;
-    if(canTake <= 0)
-        return 0;
-
-    int willTake = min(canTake, (int) origin.itemCount);
-    dest.itemCount += willTake;
-    origin.itemCount -= willTake;
-
-    if(origin.itemCount == 0)
-        origin.makeEmpty();
-
-    return willTake;
-}
-
-template <int nSlots>
-int BlockDataS<nSlots>::tryInsertEmptySlot(Slot& dest, Slot& origin, int stackSize){
-    if(!dest.isEmpty() || origin.isEmpty())
-        return 0;
-
-    int willTake = min(stackSize, (int)origin.itemCount);
-    dest = origin;
-    dest.itemCount = willTake;
-    origin.itemCount -= willTake;
-
-    return willTake;
-}
-
 // template <int nSlots>
 // bool BlockDataS<nSlots>::mov(Slot& origin, Inventory2* inv, int slotOffset){
 //     int stackSize = origin.maxStackSize();

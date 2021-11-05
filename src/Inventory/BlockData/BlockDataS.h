@@ -17,9 +17,6 @@ public:
 // for example chest would not be able to use Inventory2
     Slot slots[nSlots];
 
-    int tryInsertHalfSlot(Slot& dest, Slot& origin, int stackSize);
-    int tryInsertEmptySlot(Slot& dest, Slot& origin, int stackSize);
-
     //Inserts in slots, iterating from start to end
     //Overload for classes where this isn't appropriate
     //Inventory used to call addAlteredSlot

@@ -48,4 +48,7 @@ public:
     virtual vector<Slot> clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative) = 0;
 };
 
+int tryInsertHalfSlot(Slot& dest, Slot& origin, int stackSize);
+int tryInsertEmptySlot(Slot& dest, Slot& origin, int stackSize);
+
 #endif
