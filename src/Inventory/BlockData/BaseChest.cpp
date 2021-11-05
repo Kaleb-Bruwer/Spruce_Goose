@@ -7,11 +7,17 @@
 
 using namespace std;
 
-// BlockData* Chest::clone(){
-//     BlockData* result = new Chest();
-//     memcpy(result->slots, slots, sizeof(slots));
-//     return result;
-// }
+BlockData* ChestSingle::clone(){
+    BlockDataS* result = new ChestSingle();
+    memcpy(result->slots, slots, sizeof(slots));
+    return result;
+}
+
+BlockData* ChestDouble::clone(){
+    BlockDataS* result = new ChestDouble();
+    memcpy(result->slots, slots, sizeof(slots));
+    return result;
+}
 
 template <int nSlots>
 vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative){
@@ -50,7 +56,7 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
         mouseDrag(job, inv, altered);
 
         break;
-    case 6: //double click
+    case 6:{ //double click
         // Fill hover with similar items, starting from slots[0].
         // Take from partial stacks first, then full ones
         Slot& hover = inv->hover;
@@ -58,7 +64,7 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
         if(hover.isEmpty() || clicked < 0 || clicked > nSlots + 35)
             break;
 
-        int stackLimit = hover.maxStackSize();
+        short int stackLimit = hover.maxStackSize();
 
         // partial stacks
         for(int i = 0; i < nSlots; i++){
@@ -66,7 +72,7 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
                 break;
 
             if(this->slots[i].typeMatch(hover) && this->slots[i].itemCount < stackLimit){
-                int take = min(stackLimit - hover.itemCount, this->slots[i].itemCount);
+                int take = min(stackLimit - hover.itemCount, (int) this->slots[i].itemCount);
                 this->slots[i].itemCount -= take;
                 hover.itemCount += take;
 
@@ -82,7 +88,7 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
                 break;
 
             if(inv->slots[i- invOffset].typeMatch(hover) && this->slots[i].itemCount < stackLimit){
-                int take = min(stackLimit - hover.itemCount, this->slots[i- invOffset].itemCount);
+                int take = min(stackLimit - hover.itemCount, (int) this->slots[i- invOffset].itemCount);
                 this->slots[i- invOffset].itemCount -= take;
                 hover.itemCount += take;
 
@@ -99,7 +105,7 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
                 break;
 
             if(this->slots[i].typeMatch(hover)){
-                int take = min(stackLimit - hover.itemCount, this->slots[i].itemCount);
+                int take = min(stackLimit - hover.itemCount, (int) this->slots[i].itemCount);
                 this->slots[i].itemCount -= take;
                 hover.itemCount += take;
 
@@ -115,7 +121,7 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
                 break;
 
             if(inv->slots[i- invOffset].typeMatch(hover)){
-                int take = min(stackLimit - hover.itemCount, this->slots[i- invOffset].itemCount);
+                int take = min(stackLimit - hover.itemCount, (int) this->slots[i- invOffset].itemCount);
                 this->slots[i- invOffset].itemCount -= take;
                 hover.itemCount += take;
 
@@ -124,9 +130,8 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
             }
         }
 
-
-
         break;
+    }
     default:
         if(clicked < nSlots){
             Slot& origin = this->slots[clicked];
@@ -191,7 +196,7 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
 
 
                 break;
-            case 2: //Number keys
+            case 2:{ //Number keys
                 // Validity checks
                 if(btn < 0 || btn > 8)
                     break;
@@ -205,6 +210,7 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
                 altered.add(clicked, origin);
                 altered.add(36 + btn, target);
                 break;
+            }
             case 3: //middle click (creative only)
                 // Validity check
                 if(clicked < 0 || clicked > nSlots + 35)

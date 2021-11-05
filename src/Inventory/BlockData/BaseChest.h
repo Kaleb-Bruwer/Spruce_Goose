@@ -23,4 +23,14 @@ public:
 
 };
 
+class ChestSingle : public BaseChest<27>{
+public:
+    BlockData* clone();
+};
+
+class ChestDouble : public BaseChest<54>{
+public:
+    BlockData* clone();
+};
+
 #endif

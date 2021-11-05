@@ -7,6 +7,7 @@ using namespace std;
 template class BlockDataS<10>; //Crafting table
 template class BlockDataS<27>; //Single chest
 template class BlockDataS<45>; //Inventory
+template class BlockDataS<54>; //Double chest
 
 // template <int nSlots>
 // bool BlockDataS<nSlots>::mov(Slot& origin, Inventory2* inv, int slotOffset){
