@@ -19,6 +19,12 @@ BlockData* ChestDouble::clone(){
     return result;
 }
 
+ChestDouble::ChestDouble(ChestSingle* c1, ChestSingle* c2){
+    memcpy(slots, c1->slots, sizeof(slots));
+    memcpy(slots + 27, c2->slots, sizeof(slots));    
+}
+
+
 template <int nSlots>
 vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative){
     // 0 to nSlots-1 is the chest
