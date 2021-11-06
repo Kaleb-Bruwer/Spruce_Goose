@@ -19,11 +19,15 @@ BlockData* ChestDouble::clone(){
     return result;
 }
 
-ChestDouble::ChestDouble(ChestSingle* c1, ChestSingle* c2){
-    memcpy(slots, c1->slots, sizeof(slots));
-    memcpy(slots + 27, c2->slots, sizeof(slots));    
+ChestDouble::ChestDouble(ChestSingle& c1, ChestSingle& c2){
+    memcpy(slots, c1.slots, sizeof(c1.slots));
+    memcpy(slots + 27, c2.slots, sizeof(c2.slots));
 }
 
+void ChestDouble::splitChest(ChestSingle& c1, ChestSingle& c2){
+    memcpy(c1.slots, slots, sizeof(c1.slots));
+    memcpy(c2.slots, slots + 27, sizeof(c2.slots));
+}
 
 template <int nSlots>
 vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative){

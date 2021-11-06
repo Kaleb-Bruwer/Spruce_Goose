@@ -31,9 +31,11 @@ public:
 class ChestDouble : public BaseChest<54>{
 public:
     ChestDouble(){};
-    ChestDouble(ChestSingle* c1, ChestSingle* c2);
+    ChestDouble(ChestSingle& c1, ChestSingle& c2);
 
     BlockData* clone();
+
+    void splitChest(ChestSingle& c1, ChestSingle& c2);
 };
 
 #endif
