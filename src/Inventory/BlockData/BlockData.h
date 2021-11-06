@@ -4,8 +4,9 @@
 #include <vector>
 
 #include "../Slot.h"
-#include "../../JobTickets/ProtocolToWorld/ClickWindowJob.h"
 #include "../AlteredSlots.h"
+#include "BlockDataType.h"
+#include "../../JobTickets/ProtocolToWorld/ClickWindowJob.h"
 
 using namespace std;
 
@@ -42,6 +43,7 @@ public:
     virtual vector<Slot> close(InventoryControl*, AlteredSlots&, Inventory2*);
 
     virtual int getWindowID() = 0;
+    virtual BlockDataType getType() = 0;
     virtual BlockData* clone() = 0;
 
     //Returns vector of altered slots, which is tracked by InventoryControl

@@ -26,6 +26,8 @@ public:
 
     // void clickWindow(ClickWindowJob* job, Inventory* inv, bool creative);
     vector<Slot> clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative);
+
+    BlockDataType getType(){return CRAFTINGTABLE;};
 };
 
 #endif

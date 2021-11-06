@@ -1,0 +1,6 @@
+enum BlockDataType{
+    INVENTORY2,
+    CRAFTINGTABLE,
+    CHESTSINGLE,
+    CHESTDOUBLE
+};

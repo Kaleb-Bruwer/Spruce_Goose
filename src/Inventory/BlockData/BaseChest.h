@@ -26,6 +26,9 @@ public:
 class ChestSingle : public BaseChest<27>{
 public:
     BlockData* clone();
+
+    BlockDataType getType(){return CHESTSINGLE;};
+
 };
 
 class ChestDouble : public BaseChest<54>{
@@ -36,6 +39,8 @@ public:
     BlockData* clone();
 
     void splitChest(ChestSingle& c1, ChestSingle& c2);
+
+    BlockDataType getType(){return CHESTDOUBLE;};    
 };
 
 #endif

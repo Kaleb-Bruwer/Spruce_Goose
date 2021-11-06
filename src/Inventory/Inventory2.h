@@ -55,4 +55,5 @@ public:
 
     void moveIn(Slot& origin, AlteredSlots&);
 
+    BlockDataType getType(){return INVENTORY2;};
 };
