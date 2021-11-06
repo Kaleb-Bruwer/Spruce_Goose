@@ -14,6 +14,8 @@
 #include "ChunkChangeTracker.h"
 #include "../../Inventory/BlockData/BlockData.h"
 
+#include "ChestDoubleWrapper.h"
+
 class ThreadArea;
 
 //IMPORTANT: if logChanges==false, then players will not see each other's
@@ -38,12 +40,15 @@ protected:
     ChunkChangeTracker changes;
     list<pair<int, Coordinate<int>>> pendingBreaks;
     map<Coordinate<int>, BlockData*> blockData;
+    map<Coordinate<int>, ChestDoubleWrapper*> doubleChests;
 
     void commonConstructor();
 
     //Handles entire deal
     void makeBlockData(Coordinate<int>, Block b);
     void makeBlockData(Coordinate<int>, BlockData* bd);
+
+    void combineDoubleChests();
 
     friend class ThreadArea;
 public:

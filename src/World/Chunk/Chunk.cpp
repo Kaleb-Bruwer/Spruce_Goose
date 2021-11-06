@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include <climits>
+#include <set>
 
 #include "../../Entities/PlayerEntity.h"
 
@@ -194,6 +195,23 @@ Chunk::~Chunk(){
         if(sections[i] != 0)
             delete sections[i];
     }
+
+    // TODO missing a bunch of stuff
+
+    for(auto it = blockData.begin(); it != blockData.end(); it++){
+        delete it->second;
+    }
+
+    // The set prevents double deletes
+    set<ChestDoubleWrapper*> doubles;
+    for(auto it = doubleChests.begin(); it != doubleChests.end(); it++){
+        doubles.insert(it->second);
+    }
+
+    for(auto it = doubles.begin(); it != doubles.end(); it++){
+        delete *it;
+    }
+
 }
 
 Block Chunk::getBlock(Coordinate<int> coord){
@@ -233,6 +251,67 @@ void Chunk::makeBlockData(Coordinate<int> coord, BlockData* bd){
     else
         blockData[coord] = bd;
 }
+
+void Chunk::combineDoubleChests(){
+    for(int s=0; s<16; s++){
+        ChunkSection* cs = sections[s];
+        if(!cs)
+            continue;
+
+        Coordinate<int> base(chunkCoord.x * 16, s * 16, chunkCoord.z * 16);
+        for(int y=0; y<16; y++){
+            for(int z=0; z<16; z++){
+                for(int x=0; x<16; x++){
+                    Coordinate<int> pos = base;
+                    pos.x += x;
+                    pos.y += y;
+                    pos.z += z;
+                    auto bd = blockData.find(pos);
+                    if(bd == blockData.end())
+                        continue;
+
+                    if(bd->second->getType() == CHESTSINGLE){
+                        // Check one up on x and y axes for another CHESTSINGLE
+                        Coordinate<int> p1 = pos;
+                        pos.x++;
+
+                        auto bd2 = blockData.find(pos);
+                        if(bd == blockData.end()){
+                            // Check at z + 1
+                            pos.x--;
+                            pos.z++;
+
+                            bd2 = blockData.find(pos);
+
+                        }
+
+                        if(bd != blockData.end()){
+                            // Match has been found
+                            ChestDoubleWrapper* wrap = new ChestDoubleWrapper();
+                            ChestSingle* c1 = (ChestSingle*) bd->second;
+                            ChestSingle* c2 = (ChestSingle*) bd2->second;
+
+                            wrap->chest = new ChestDouble(*c1, *c2);
+                            wrap->pos1 = p1;
+                            wrap->pos2 = pos;
+
+                            delete bd->second;
+                            delete bd2->second;
+
+                            blockData.erase(bd);
+                            blockData.erase(bd2);
+
+                            doubleChests[p1] = wrap;
+                            doubleChests[pos] = wrap;
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+}
+
 
 void Chunk::setBlock(Coordinate<int> coord, Block block){
     makeBlockData(coord, block);

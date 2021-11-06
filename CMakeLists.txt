@@ -146,6 +146,8 @@ SET (SRCS
     ./src/World/Chunk/PlayerToken.cpp
     ./src/World/Chunk/BlockChanges.h
     ./src/World/Chunk/BlockChanges.cpp
+    ./src/World/Chunk/ChestDoubleWrapper.h
+    ./src/World/Chunk/ChestDoubleWrapper.cpp
 
     ./src/World/Functors/BlockUpdatesF.h
     ./src/World/Functors/ChunkCheckBreaksF.h
