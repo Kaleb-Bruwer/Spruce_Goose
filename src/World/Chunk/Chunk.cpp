@@ -12,9 +12,35 @@
 #include "../../Datastructures/NBT/Tag_Byte_Array.h"
 #include "../../Datastructures/NBT/Tag_List.h"
 
+#include "../../Inventory/BlockData/BaseChest.h"
+#include "../../Inventory/BlockData/CraftingTable.h"
+
 #include "../../JobTickets/WorldToProtocol/BlockUpdateToPlayer.h"
 
 using namespace std;
+
+//Creates the appropriate BlockData object for provided block
+//returns 0 if none needed
+BlockData* makeBD(Block b){
+    switch(b.id){
+        case 54:
+        case 146:
+            return new ChestSingle();
+        case 58:
+            return new CraftingTable();
+        case 61:
+        case 62:
+            //furnace
+        case 23:
+        case 158:
+            //Dispenser / dropper
+        case 116:
+            //enchantment table
+            break;
+    }
+    //Most cases will be a 0
+    return 0;
+};
 
 Chunk::Chunk(int x, int z){
     chunkCoord.x = x;
@@ -133,7 +159,7 @@ void Chunk::readRawBlocks(char* blocks, ChunkSection* sect, int sectIndex){
         sect->blocks[b].id = (unsigned char) blocks[b];
 
         //This method means I don't need to calculate excessive coordinates
-        BlockData* bd = makeBlockData(blocks[b]);
+        BlockData* bd = makeBD(Block(blocks[b]));
         if(bd){
             Coordinate<int> pos;
             pos.y = sectIndex * 16;
@@ -178,7 +204,7 @@ Block Chunk::getBlock(Coordinate<int> coord){
 }
 
 void Chunk::makeBlockData(Coordinate<int> coord, Block b){
-    BlockData* bd = makeBlockData(b);
+    BlockData* bd = makeBD(b);
     if(bd){
         auto it = blockData.find(coord);
         if(it != blockData.end()){
@@ -236,7 +262,7 @@ void Chunk::setBlockRange(Coordinate<int> coord1, Coordinate<int> coord2, Block 
         highCorner.y = max(coord1.y, coord2.y);
         highCorner.z = max(coord1.z, coord2.z);
 
-        BlockData* bd = makeBlockData(block);
+        BlockData* bd = makeBD(block);
         bool needBD = false;
         if(bd){
             needBD = true;

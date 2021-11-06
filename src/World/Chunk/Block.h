@@ -1,8 +1,6 @@
 #ifndef BLOCK_H
 #define BLOCK_H
 
-using namespace std;
-
 class Slot;
 
 class Block{

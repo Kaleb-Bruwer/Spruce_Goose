@@ -13,10 +13,6 @@
 #include "ChunkSection.h"
 #include "ChunkChangeTracker.h"
 #include "../../Inventory/BlockData/BlockData.h"
-// #include "../../Inventory/BlockData/Chest.h"
-#include "../../Inventory/BlockData/CraftingTable.h"
-
-using namespace std;
 
 class ThreadArea;
 
@@ -45,28 +41,6 @@ protected:
 
     void commonConstructor();
 
-    //Creates the appropriate BlockData object for provided block
-    //returns 0 if none needed
-    BlockData* makeBlockData(Block b){
-        switch(b.id){
-            // case 54:
-            // case 146:
-                // return new Chest();
-            case 58:
-                return new CraftingTable();
-            case 61:
-            case 62:
-                //furnace
-            case 23:
-            case 158:
-                //Dispenser / dropper
-            case 116:
-                //enchantment table
-                break;
-        }
-        //Most cases will be a 0
-        return 0;
-    };
     //Handles entire deal
     void makeBlockData(Coordinate<int>, Block b);
     void makeBlockData(Coordinate<int>, BlockData* bd);
