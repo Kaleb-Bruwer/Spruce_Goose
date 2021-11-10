@@ -458,10 +458,14 @@ void Chunk::checkBreaks(){
 
 BlockData* Chunk::getBlockData(Coordinate<int> pos){
     auto it = blockData.find(pos);
-    if(it == blockData.end())
-        return 0;
-    else
+    if(it != blockData.end())
         return it->second;
+
+    auto it2 = doubleChests.find(pos);
+    if(it2 != doubleChests.end()){
+        return it2->second->chest;
+    }
+    return 0;
 }
 
 void Chunk::writeBlockIDs(unsigned char* buffer){ //size = 65536 = 16 * 4096

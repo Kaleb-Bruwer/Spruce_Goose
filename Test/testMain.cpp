@@ -6,7 +6,7 @@
 #include "./Inventory/CraftingFrameTest.cpp"
 #include "./Protocol/PacketReaderTest.cpp"
 #include "./Datastructures/NBTReadTest.cpp"
-
+#include "./World/Chunk/ChunkTest.cpp"
 
 int main(int argc, char **argv){
     testing::InitGoogleTest(&argc, argv);
