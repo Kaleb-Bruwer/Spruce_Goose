@@ -32,7 +32,7 @@ void PlayerCheckBreaksF::operator()(PlayerEntity* p){
                 drop->setPos(p->breakTarget);
                 area->newItemToPlayers(drop);
                 area->entities.addEntity(drop);
-    }
+            }
             p->isBreaking = false;
             p->doneBreaking = false;
         }

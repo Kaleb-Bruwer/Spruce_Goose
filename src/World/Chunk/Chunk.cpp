@@ -443,8 +443,7 @@ int Chunk::breakTicksLeft(Coordinate<int> pos){
     pos.insideChunk();
     for(auto it = pendingBreaks.begin(); it != pendingBreaks.end(); it++){
         if(it->second == pos){
-            int nTicks = it->first;
-            return nTicks;
+            return it->first;
         }
     }
     return INT_MAX;

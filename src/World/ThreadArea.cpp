@@ -890,10 +890,19 @@ void ThreadArea::startDigging(PlayerEntity* player, Coordinate<int> pos){
     if(player->breakCooldown == 0){
         if(numTicks <= 1){//instamine
             //Drop item
-            Item* drop = new Item(block, pos);
-            newItemToPlayers(drop);
-            entities.addEntity(drop);
+            // Item* drop = new Item(block, pos);
+            // newItemToPlayers(drop);
+            // entities.addEntity(drop);
+
+            Slot dropS = block.getDrop(player->inventory.getHeldItem());
+            if(!dropS.isEmpty()){
+                Item* drop = new Item(dropS);
+                drop->setPos(pos);
+                newItemToPlayers(drop);
+                entities.addEntity(drop);
+            }
             c->setBlock(pos, Block(0));
+
         }
         else{ //normal mine
             player->isBreaking = true;
