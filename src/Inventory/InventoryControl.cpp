@@ -5,6 +5,9 @@
 #include "../JobTickets/WorldToProtocol/SendWindowItem.h"
 #include "../JobTickets/WorldToProtocol/ConfirmTransaction.h"
 #include "../JobTickets/WorldToProtocol/OpenCloseWindow.h"
+#include "../JobTickets/SendPacket.h"
+
+#include "../Protocol/AdvancedWriter.h"
 
 #include <algorithm>
 
@@ -74,10 +77,18 @@ void InventoryControl::openBlock(BlockData* b){
         job->name = "Crafting table";
         job->numSlots = 10;
     }
+
+    // If applicable, send contents of block
+    AdvancedWriter writer;
+    bool didWrite = writer.writeWindowItems(b);
+
     conn->pushJobToPlayer(job);
+    if(didWrite){
+        cout << "Sending window items\n";
+        conn->pushJobToPlayer(new SendPacket(&writer));
+    }
+
 }
-
-
 
 vector<Slot> InventoryControl::closeBlock(bool byPlayer){
     vector<Slot> dropped;

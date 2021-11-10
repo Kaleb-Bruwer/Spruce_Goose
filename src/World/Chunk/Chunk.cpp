@@ -208,8 +208,6 @@ Chunk::~Chunk(){
             delete sections[i];
     }
 
-    // TODO missing a bunch of stuff
-
     for(auto it = blockData.begin(); it != blockData.end(); it++){
         delete it->second;
     }
@@ -635,6 +633,7 @@ void Chunk::checkBreaks(){
 }
 
 BlockData* Chunk::getBlockData(Coordinate<int> pos){
+    pos.insideChunk();
     auto it = blockData.find(pos);
     if(it != blockData.end())
         return it->second;
