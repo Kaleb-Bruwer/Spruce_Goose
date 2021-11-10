@@ -233,9 +233,94 @@ Block Chunk::getBlock(Coordinate<int> coord){
     return sections[sectIndex]->getBlock(coord);
 }
 
+void Chunk::makeChest(Coordinate<int> coord, ChestSingle* chest){
+    // Check for an adjacent chest
+    Coordinate<int> pos = coord;
+    bool found = false;
+    bool lower;
+    Coordinate<int> target;
+
+
+    pos.x--;
+    auto it = blockData.find(pos);
+    if(it != blockData.end()){
+        target = pos;
+        found = true;
+        lower = true;
+    }
+    else{
+        pos.x++;
+        pos.z--;
+        auto it = blockData.find(pos);
+        if(it != blockData.end()){
+            target = pos;
+            found = true;
+            lower = true;
+        }
+        else{
+            pos.z += 2;
+            auto it = blockData.find(pos);
+            if(it != blockData.end()){
+                target = pos;
+                found = true;
+                lower = false;
+            }
+            else{
+                pos.z--;
+                pos.x++;
+                auto it = blockData.find(pos);
+                if(it != blockData.end()){
+                    target = pos;
+                    found = true;
+                    lower = false;
+                }
+            }
+        }
+    }
+
+    if(found){
+        // Found an adjacent chest
+        ChestDoubleWrapper* wrap = new ChestDoubleWrapper();
+        ChestDouble* cd;
+
+        if(lower){
+            wrap->chest = new ChestDouble(*((ChestSingle*) it->second), *(chest));
+            wrap->pos1 = target;
+            wrap->pos2 = coord;
+        }
+        else{
+            wrap->chest = new ChestDouble(*chest, *((ChestSingle*) it->second));
+            wrap->pos1 = coord;
+            wrap->pos2 = target;
+        }
+        delete it->second;
+        delete chest;
+        blockData.erase(it);
+        doubleChests[wrap->pos1] = wrap;
+        doubleChests[wrap->pos2] = wrap;
+        return;
+    }
+    else{
+        // If here, it's not a double chest
+        auto it = blockData.find(coord);
+        if(it != blockData.end()){
+            delete it->second;
+            it->second = chest;
+        }
+        else
+            blockData[coord] = chest;
+    }
+}
+
 void Chunk::makeBlockData(Coordinate<int> coord, Block b){
     BlockData* bd = makeBD(b);
     if(bd){
+        if(bd->getType() == CHESTSINGLE){
+            makeChest(coord, (ChestSingle*) bd);
+            return;
+        }
+
+        // If here, it's not a double chest
         auto it = blockData.find(coord);
         if(it != blockData.end()){
             delete it->second;
@@ -245,7 +330,8 @@ void Chunk::makeBlockData(Coordinate<int> coord, Block b){
             blockData[coord] = bd;
     }
     else{
-        //If no blockData, simply delete any existing blockData if any
+        //If no blockData, simply delete any existing blockData
+        // DOESN'T CHECK FOR DOUBLE CHESTS
         auto it = blockData.find(coord);
         if(it != blockData.end()){
             delete it->second;
@@ -255,6 +341,11 @@ void Chunk::makeBlockData(Coordinate<int> coord, Block b){
 }
 
 void Chunk::makeBlockData(Coordinate<int> coord, BlockData* bd){
+    if(bd->getType() == CHESTSINGLE){
+        makeChest(coord, (ChestSingle*) bd);
+        return;
+    }
+
     auto it = blockData.find(coord);
     if(it != blockData.end()){
         delete it->second;

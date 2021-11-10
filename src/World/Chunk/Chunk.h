@@ -18,6 +18,7 @@
 
 class ThreadArea;
 class Item;
+class ChestSingle;
 
 //IMPORTANT: if logChanges==false, then players will not see each other's
 //block changes.
@@ -46,6 +47,7 @@ protected:
     void commonConstructor();
 
     //Handles entire deal
+    void makeChest(Coordinate<int> coord, ChestSingle* chest);
     void makeBlockData(Coordinate<int>, Block b);
     void makeBlockData(Coordinate<int>, BlockData* bd);
 

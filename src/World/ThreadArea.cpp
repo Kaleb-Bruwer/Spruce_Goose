@@ -1029,7 +1029,8 @@ void ThreadArea::handleplayerBlock(JobTicket* j, PlayerEntity* player){
     if(!player->crouching && getBlockData(job->pos))
         return;
 
-
+    // Check if current block is replacable (i.e. snow)
+    // This also depends on what is being placed (snow compounds on snow)
 
     switch(job->direction){
     case -1:
