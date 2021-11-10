@@ -16,6 +16,8 @@
 #include "../../Inventory/BlockData/BaseChest.h"
 #include "../../Inventory/BlockData/CraftingTable.h"
 
+#include "../../Entities/Item.h"
+
 #include "../../JobTickets/WorldToProtocol/BlockUpdateToPlayer.h"
 
 using namespace std;
@@ -335,6 +337,79 @@ void Chunk::setBlock(Coordinate<int> coord, Block block){
         changes.addChange(coord, block);
     }
 }
+
+vector<Item*> Chunk::breakBlock(Coordinate<int> coord, Slot tool){
+    ChunkSection* sect = sections[(int)floor(coord.y/16)];
+    if(!sect)
+        return vector<Item*>();
+
+    vector<Item*> drops;
+    Slot drop0 = sect->getBlock(coord).getDrop(tool);
+    if(!drop0.isEmpty()){
+        Item* item = new Item(drop0);
+        item->setPos(coord);
+        drops.push_back(item);
+    }
+
+    // If block contained items, those must be dropped
+    BlockData* bd = getBlockData(coord);
+    if(bd){
+        switch(bd->getType()){
+        case CHESTDOUBLE:{
+            ChestDouble* c = (ChestDouble*) bd;
+            // First split into two single chests, one of which will survive
+            ChestSingle* single1 = new ChestSingle();
+            ChestSingle* single2 = new ChestSingle();
+
+            // single1 is first half of chest
+            c->splitChest(*single1, *single2);
+
+            // Can be assumed to exist since CHESTDOUBLE was returned by getBlockData
+            ChestDoubleWrapper* wrap = doubleChests[coord];
+            doubleChests.erase(wrap->pos1);
+            doubleChests.erase(wrap->pos2);
+
+            ChestSingle* broke;
+
+            if(wrap->pos1 == coord){
+                blockData[wrap->pos2] = single2;
+                broke = single1;
+            }
+            else{
+                blockData[wrap->pos1] = single1;
+                broke = single2;
+            }
+
+            for(int i=0; i<27; i++){
+                if(!broke->slots[i].isEmpty()){
+                    Item* item = new Item(broke->slots[i]);
+                    item->setPos(coord);
+                    drops.push_back(item);
+                }
+            }
+            delete wrap;
+            delete broke;
+
+            break;
+        }
+        case CHESTSINGLE:{
+            ChestSingle* c = (ChestSingle*) bd;
+            for(int i=0; i<27; i++){
+                if(!c->slots[i].isEmpty()){
+                    Item* item = new Item(c->slots[i]);
+                    item->setPos(coord);
+                    drops.push_back(item);
+                }
+            }
+            break;
+        }
+        }
+    }
+
+
+    return drops;
+}
+
 
 void Chunk::setBlockRange(Coordinate<int> coord1, Coordinate<int> coord2, Block block){
     int lowestSect = floor(coord1.y/16);

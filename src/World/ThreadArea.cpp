@@ -894,14 +894,13 @@ void ThreadArea::startDigging(PlayerEntity* player, Coordinate<int> pos){
             // newItemToPlayers(drop);
             // entities.addEntity(drop);
 
-            Slot dropS = block.getDrop(player->inventory.getHeldItem());
-            if(!dropS.isEmpty()){
-                Item* drop = new Item(dropS);
-                drop->setPos(pos);
-                newItemToPlayers(drop);
-                entities.addEntity(drop);
+            vector<Item*> drops = c->breakBlock(pos, player->inventory.getHeldItem());
+            for(int i=0; i<drops.size(); i++){
+                newItemToPlayers(drops[i]);
+                entities.addEntity(drops[i]);
             }
-            c->setBlock(pos, Block(0));
+
+            // c->setBlock(pos, Block(0));
 
         }
         else{ //normal mine

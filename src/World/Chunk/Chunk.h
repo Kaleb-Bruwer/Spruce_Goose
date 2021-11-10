@@ -17,6 +17,7 @@
 #include "ChestDoubleWrapper.h"
 
 class ThreadArea;
+class Item;
 
 //IMPORTANT: if logChanges==false, then players will not see each other's
 //block changes.
@@ -65,6 +66,8 @@ public:
 
     Block getBlock(Coordinate<int> coord);
     void setBlock(Coordinate<int> coord, Block block);
+
+    vector<Item*> breakBlock(Coordinate<int> coord, Slot tool);
 
     // Was originally intended for use in world generation, back when I thought
     // world generation was a good idea

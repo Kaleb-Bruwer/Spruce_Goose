@@ -24,15 +24,22 @@ void PlayerCheckBreaksF::operator()(PlayerEntity* p){
         int tLeft = c->breakTicksLeft(p->breakTarget);
         if(tLeft <= 0){
             Block target = c->getBlock(p->breakTarget);
-            c->setBlock(p->breakTarget, Block(0));
 
-            Slot dropS = target.getDrop(p->inventory.getHeldItem());
-            if(!dropS.isEmpty()){
-                Item* drop = new Item(dropS);
-                drop->setPos(p->breakTarget);
-                area->newItemToPlayers(drop);
-                area->entities.addEntity(drop);
+            vector<Item*> drops = c->breakBlock(p->breakTarget, p->inventory.getHeldItem());
+            for(int i=0; i<drops.size(); i++){
+                area->newItemToPlayers(drops[i]);
+                area->entities.addEntity(drops[i]);
             }
+
+            // c->setBlock(p->breakTarget, Block(0));
+
+            // Slot dropS = target.getDrop(p->inventory.getHeldItem());
+            // if(!dropS.isEmpty()){
+            //     Item* drop = new Item(dropS);
+            //     drop->setPos(p->breakTarget);
+            //     area->newItemToPlayers(drop);
+            //     area->entities.addEntity(drop);
+            // }
             p->isBreaking = false;
             p->doneBreaking = false;
         }
