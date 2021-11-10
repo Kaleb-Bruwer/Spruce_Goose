@@ -11,4 +11,6 @@ public:
     Coordinate<int> pos2;
 
     ~ChestDoubleWrapper();
+
+    ChestDoubleWrapper* clone();
 };

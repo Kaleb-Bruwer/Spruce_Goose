@@ -67,8 +67,15 @@ Chunk::Chunk(Chunk* rhs){
         BlockData* newB = it->second->clone();
         blockData[it->first] = newB;
     }
+
+    for(auto it = rhs->doubleChests.begin(); it != rhs->doubleChests.end(); it++){
+        ChestDoubleWrapper* newB = it->second->clone();
+        doubleChests[it->first] = newB;
+    }
+
 }
 
+//Uncompressed chunk data from file
 Chunk::Chunk(char* data, int size, ChunkCoord coord){
     chunkCoord = coord;
     commonConstructor();
@@ -102,11 +109,13 @@ Chunk::Chunk(char* data, int size, ChunkCoord coord){
 
         //Light values
     }
+    combineDoubleChests();
 
     //read nbt->Level->Entities
     activateChangeLog();
 }
 
+//Uncompressed chunk data from protocol
 Chunk::Chunk(char* data, int &index, ChunkCoord pos, short bitmask, short addBitmask){
     chunkCoord = pos;
     commonConstructor();
@@ -125,6 +134,7 @@ Chunk::Chunk(char* data, int &index, ChunkCoord pos, short bitmask, short addBit
             index += 2048;
         }
     }
+    combineDoubleChests();
 
     // I realize this isn't the most effective way to skip these fields, but
     // that doesn't really matter. Plus I'll have to read them eventually anyways

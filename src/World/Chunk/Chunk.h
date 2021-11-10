@@ -65,6 +65,9 @@ public:
 
     Block getBlock(Coordinate<int> coord);
     void setBlock(Coordinate<int> coord, Block block);
+
+    // Was originally intended for use in world generation, back when I thought
+    // world generation was a good idea
     void setBlockRange(Coordinate<int> coord1, Coordinate<int> coord2, Block block);
 
     void activateChangeLog();
