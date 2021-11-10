@@ -283,13 +283,15 @@ void Chunk::makeChest(Coordinate<int> coord, ChestSingle* chest){
         ChestDoubleWrapper* wrap = new ChestDoubleWrapper();
         ChestDouble* cd;
 
+        // Passing by reference can't be combined with a type cast
+        ChestSingle* c1 = (ChestSingle*) it->second;
         if(lower){
-            wrap->chest = new ChestDouble(*((ChestSingle*) it->second), *(chest));
+            wrap->chest = new ChestDouble(*c1, *chest);
             wrap->pos1 = target;
             wrap->pos2 = coord;
         }
         else{
-            wrap->chest = new ChestDouble(*chest, *((ChestSingle*) it->second));
+            wrap->chest = new ChestDouble(*chest, *c1);
             wrap->pos1 = coord;
             wrap->pos2 = target;
         }
@@ -417,6 +419,7 @@ void Chunk::combineDoubleChests(){
 
 
 void Chunk::setBlock(Coordinate<int> coord, Block block){
+    coord.insideChunk();
     makeBlockData(coord, block);
     int sectIndex = floor(coord.y/16);
     if(!sections[sectIndex]){

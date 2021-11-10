@@ -61,19 +61,19 @@ void InventoryControl::openBlock(BlockData* b){
     job->open = true;
     job->windowID = windowID;
 
-    switch(job->windowID){
-    case 0:
+    switch(activeBlock->getType()){
+    case CHESTSINGLE:
         job->name = "Chest";
         job->numSlots = 27;
         break;
-
-    case 1:
-        job->name = "Crafting Table";
-        job->numSlots = 10;
+    case CHESTDOUBLE:
+        job->name = "Chest";
+        job->numSlots = 54;
         break;
-
+    case CRAFTINGTABLE:
+        job->name = "Crafting table";
+        job->numSlots = 10;
     }
-
     conn->pushJobToPlayer(job);
 }
 
