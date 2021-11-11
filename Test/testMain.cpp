@@ -4,6 +4,7 @@
 #include "./Inventory/CraftingTableTest.cpp"
 #include "./Inventory/CraftingTest.cpp"
 #include "./Inventory/CraftingFrameTest.cpp"
+#include "./Inventory/BaseChestTest.cpp"
 #include "./Protocol/PacketReaderTest.cpp"
 #include "./Datastructures/NBTReadTest.cpp"
 #include "./World/Chunk/ChunkTest.cpp"

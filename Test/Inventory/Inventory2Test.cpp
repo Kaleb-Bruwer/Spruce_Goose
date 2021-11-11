@@ -1,6 +1,8 @@
 #include<gtest/gtest.h>
 #include <cmath>
 
+#include "CommonHelpers.cpp"
+
 #include "../../src/Inventory/Inventory2.h"
 
 class Inventory2Test : public ::testing::Test{
@@ -17,46 +19,7 @@ protected:
     };
 
     void validateInventory(vector<int> pos, vector<Slot> items, Slot hover){
-        ASSERT_TRUE(pos.size() == items.size()) << "Test config invalid";
-
-        // First sort input
-        if(pos.size() > 1){
-            for(int i=0; i<pos.size() -1; i++){
-                short smallest = pos[i];
-                short index = i;
-
-                for(int j=i+1; j<pos.size(); j++){
-                    if(pos[j] < smallest){
-                        smallest = pos[j];
-                        index = j;
-                    }
-                }
-                int temp = pos[i];
-                pos[i] = pos[index];
-                pos[index] = temp;
-
-                Slot tempS = items[i];
-                items[i] = items[index];
-                items[index] = tempS;
-            }
-        }
-
-        int specialPos = 0;
-        for(int i=0; i<inventory2.numSlots; i++){
-            if(specialPos < pos.size() && pos[specialPos] == i){
-                ASSERT_TRUE(inventory2.slots[i] == items[specialPos])
-                    << "[" << i << "]: " << inventory2.slots[i] << ", expected: " << items[specialPos];
-                specialPos++;
-            }
-            else{
-                ASSERT_TRUE(inventory2.slots[i].isEmpty())
-                    << "[" << i << "]: " << inventory2.slots[i] << ", expected: empty";
-            }
-        }
-
-        ASSERT_TRUE(inventory2.hover == hover)
-            << "[hover]: " << inventory2.hover << ", expected: " << hover;
-
+        ::validateInventory(inventory2, pos, items, hover);
     }
 
     ClickWindowJob* initJob(int mode = 0, int slotNum = 9){
@@ -95,7 +58,6 @@ protected:
         validateInventory(vector<int>{slot}, vector<Slot>{h}, s);
 
         delete job;
-
     }
 
     void testMode0Btn1(Slot s, Slot h, int slot = 9){
