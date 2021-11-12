@@ -212,6 +212,8 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
                     break;
                 if(clicked < 0)
                     break;
+                if(!inv->hover.isEmpty())
+                    break;
 
 
                 Slot& target = inv->slots[35 + btn];

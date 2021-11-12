@@ -288,7 +288,7 @@ vector<Slot> Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, Alter
         if(i < 0 || i > 44) //invalid
             break;
 
-        int targetSlot = job->button + 36;
+        int targetSlot = job->button + 35;
         Slot temp = slots[targetSlot];
         slots[targetSlot] = slots[i];
         slots[i] = temp;

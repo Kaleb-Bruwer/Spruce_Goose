@@ -444,7 +444,7 @@ TEST_F(Inventory2Test, testMode2T1){
     Slot sExpect2 = getStone();
 
     inventory2.clickWindow(job, 0, altered, false);
-    validateInventory(vector<int>{40}, vector<Slot>{getStone()}, Slot());
+    validateInventory(vector<int>{39}, vector<Slot>{getStone()}, Slot());
     delete job;
 }
 
@@ -454,7 +454,7 @@ TEST_F(Inventory2Test, testMode2T2){
     inventory2.slots[37] = getStone();
 
     ClickWindowJob* job = initJob(2, 40);
-    job->button = 1;
+    job->button = 2;
 
     Slot hExpect = Slot();
     Slot sExpect1 = Slot();
@@ -472,7 +472,7 @@ TEST_F(Inventory2Test, testMode2T3){
     inventory2.slots[40] = getDirt();
 
     ClickWindowJob* job = initJob(2, 40);
-    job->button = 1;
+    job->button = 2;
 
     Slot hExpect = Slot();
     Slot sExpect1 = getDirt();
@@ -490,7 +490,7 @@ TEST_F(Inventory2Test, testMode2T4){
     inventory2.slots[40] = getDirt();
 
     ClickWindowJob* job = initJob(2, 10);
-    job->button = 4;
+    job->button = 5;
 
     Slot hExpect = Slot();
     Slot sExpect1 = getDirt();
