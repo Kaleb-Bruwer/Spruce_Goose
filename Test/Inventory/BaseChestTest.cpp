@@ -885,3 +885,93 @@ TEST_F(BaseChestTest, mode2Test8){
         testMode2(slot, 3, fullInv, chest);
     }
 }
+
+TEST_F(BaseChestTest, mode3Test1){
+    // Try to dupicate items in survival
+    //Set up inventory
+    ChestSingle chest;
+    Inventory2 inv;
+
+    chest.slots[9] = Slot(1);
+
+    ClickWindowJob* job = new ClickWindowJob();
+    job->mode = 3;
+    job->button = 2;
+    job->slotNum = 9;
+
+    AlteredSlots altered;
+    chest.clickWindow(job, &inv, altered, false);
+
+    validateChestSingle(chest, vector<int>{9}, vector<Slot>{Slot(1)});
+    validateInventory(inv, vector<int>(), vector<Slot>(), Slot());
+    delete job;
+}
+
+TEST_F(BaseChestTest, mode3Test2){
+    // Try to dupicate items in survival
+    //Set up inventory
+    ChestSingle chest;
+    Inventory2 inv;
+
+    inv.slots[9] = Slot(1);
+
+    ClickWindowJob* job = new ClickWindowJob();
+    job->mode = 3;
+    job->button = 2;
+    job->slotNum = 27;
+
+    AlteredSlots altered;
+    chest.clickWindow(job, &inv, altered, false);
+
+    validateChestSingle(chest, vector<int>(), vector<Slot>());
+    validateInventory(inv, vector<int>{9}, vector<Slot>{Slot(1)}, Slot());
+    delete job;
+}
+
+TEST_F(BaseChestTest, mode3Test3){
+    // Dupicate items in creative
+    //Set up inventory
+    ChestSingle chest;
+    Inventory2 inv;
+
+    chest.slots[9] = Slot(1);
+
+    ClickWindowJob* job = new ClickWindowJob();
+    job->mode = 3;
+    job->button = 2;
+    job->slotNum = 9;
+
+    AlteredSlots altered;
+    chest.clickWindow(job, &inv, altered, true);
+
+    Slot stoneStack = Slot(1);
+    stoneStack.itemCount = 64;
+
+    validateChestSingle(chest, vector<int>{9}, vector<Slot>{Slot(1)});
+    validateInventory(inv, vector<int>(), vector<Slot>(), stoneStack);
+    delete job;
+}
+
+TEST_F(BaseChestTest, mode3Test4){
+    // Dupicate items in creative
+    //Set up inventory
+    ChestSingle chest;
+    Inventory2 inv;
+
+    inv.slots[9] = Slot(1);
+
+    ClickWindowJob* job = new ClickWindowJob();
+    job->mode = 3;
+    job->button = 2;
+    job->slotNum = 27;
+
+    AlteredSlots altered;
+    chest.clickWindow(job, &inv, altered, true);
+
+    Slot stoneStack = Slot(1);
+    stoneStack.itemCount = 64;
+
+    validateChestSingle(chest, vector<int>(), vector<Slot>());
+    validateInventory(inv, vector<int>{9}, vector<Slot>{Slot(1)}, stoneStack);
+    delete job;
+}
