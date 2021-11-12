@@ -529,7 +529,7 @@ TEST_F(CraftingTableTest, testMode2T3){
     inventory2.slots[40] = getDirt();
 
     ClickWindowJob* job = initJob(2, 41);
-    job->button = 2;
+    job->button = 1;
 
     craftingTable.clickWindow(job, &inventory2, altered, false);
 
@@ -545,7 +545,7 @@ TEST_F(CraftingTableTest, testMode2T4){
     inventory2.slots[40] = getDirt();
 
     ClickWindowJob* job = initJob(2, 11);
-    job->button = 5;
+    job->button = 4;
 
     craftingTable.clickWindow(job, &inventory2, altered, false);
 

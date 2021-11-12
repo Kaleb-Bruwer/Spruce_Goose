@@ -156,7 +156,8 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
                 if(btn == 0){ //left click
                     if(!inv->hover.isEmpty() && inv->hover.typeMatch(origin)){
                         // Add to origin
-                        int take = min(inv->hover.itemCount, ( short int) (origin.maxStackSize() - origin.itemCount));
+                        int take = min(inv->hover.itemCount,
+                            (short int) (origin.maxStackSize() - origin.itemCount));
                         inv->hover.itemCount -= take;
                         if(inv->hover.isEmpty())
                             inv->hover.makeEmpty();
@@ -216,19 +217,19 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
                     break;
 
 
-                Slot& target = inv->slots[35 + btn];
+                Slot& target = inv->slots[36 + btn];
                 if(target.isEmpty() || origin.isEmpty()){
                     Slot temp = target;
                     target = origin;
                     origin = temp;
                     altered.add(clicked, origin);
-                    altered.add(35 + btn + invOffset, target);
+                    altered.add(36 + btn + invOffset, target);
                 }
                 else{
                     // Both contain stuff, 1.7's implementation of this case
                     // is weird and I need to match it...
                     // WHY DIDN'T THEY JUST SWAP IT? THE CORRECT IMPLEMENTATION
-                    // IS ACTUALLY EASIER THAN THIS MESS
+                    // IS SO MUCH EASIER THAN THIS MESS
 
                     // Can only move if there's an open slot somewhere
                     // in inventory (yes, seriously...)
@@ -250,7 +251,7 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
 
                         origin.itemCount -= take;
                         target.itemCount += take;
-                        altered.add(35 + btn + invOffset, target);
+                        altered.add(36 + btn + invOffset, target);
 
                         if(origin.isEmpty())
                             origin.makeEmpty();
@@ -284,7 +285,7 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
 
                         // Check for partial stacks
                         for(int i=36; i<45; i++){
-                            if(i - 35 == btn) //Can't move to self
+                            if(i - 36 == btn) //Can't move to self
                                 continue;
                             if(inv->slots[i].typeMatch(target)){
                                 int take = target.maxStackSize() - inv->slots[i].itemCount;
@@ -346,7 +347,7 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
                         target = origin;
                         origin.makeEmpty();
                         altered.add(clicked, origin);
-                        altered.add(35 + btn + invOffset, target);
+                        altered.add(36 + btn + invOffset, target);
                     }
                 }
                 break;
