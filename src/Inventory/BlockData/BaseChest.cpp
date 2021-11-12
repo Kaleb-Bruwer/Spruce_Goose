@@ -213,12 +213,140 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
                 if(clicked < 0)
                     break;
 
-                Slot& target = inv->slots[36 + btn];
-                Slot temp = target;
-                target = origin;
-                origin = temp;
-                altered.add(clicked, origin);
-                altered.add(36 + btn, target);
+
+                Slot& target = inv->slots[35 + btn];
+                if(target.isEmpty() || origin.isEmpty()){
+                    Slot temp = target;
+                    target = origin;
+                    origin = temp;
+                    altered.add(clicked, origin);
+                    altered.add(35 + btn + invOffset, target);
+                }
+                else{
+                    // Both contain stuff, 1.7's implementation of this case
+                    // is weird and I need to match it...
+                    // WHY DIDN'T THEY JUST SWAP IT? THE CORRECT IMPLEMENTATION
+                    // IS ACTUALLY EASIER THAN THIS MESS
+
+                    // Can only move if there's an open slot somewhere
+                    // in inventory (yes, seriously...)
+                    bool found = false;
+                    for(int i=9; i<45; i++){
+                        if(inv->slots[i].isEmpty()){
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if(!found) //no-op scenario
+                        break;
+
+                    if(target.typeMatch(origin)){
+                        // Same type
+                        int take = target.maxStackSize() - target.itemCount;
+                        take = min(take, (int) origin.itemCount);
+
+                        origin.itemCount -= take;
+                        target.itemCount += take;
+                        altered.add(35 + btn + invOffset, target);
+
+                        if(origin.isEmpty())
+                            origin.makeEmpty();
+                        else{
+                            // Place what's left of origin on some open slot
+                            // First check hotbar
+                            for(int i=36; i<45; i++){
+                                if(inv->slots[i].isEmpty()){
+                                    inv->slots[i] = origin;
+                                    origin.makeEmpty();
+                                    altered.add(invOffset + i, inv->slots[i]);
+                                    break;
+                                }
+                            }
+                            if(!origin.isEmpty()){
+                                for(int i=9; i<36; i++){
+                                    if(inv->slots[i].isEmpty()){
+                                        inv->slots[i] = origin;
+                                        origin.makeEmpty();
+                                        altered.add(invOffset + i, inv->slots[i]);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        altered.add(clicked, origin);
+                    }
+                    else{
+                        // Different types
+                        // Move target out first
+
+                        // Check for partial stacks
+                        for(int i=36; i<45; i++){
+                            if(i - 35 == btn) //Can't move to self
+                                continue;
+                            if(inv->slots[i].typeMatch(target)){
+                                int take = target.maxStackSize() - inv->slots[i].itemCount;
+                                take = min(take, (int) target.itemCount);
+
+                                target.itemCount -= take;
+                                inv->slots[i].itemCount += take;
+
+                                altered.add(i + invOffset, inv->slots[i]);
+                                if(target.isEmpty()){
+                                    target.makeEmpty();
+                                    break;
+                                }
+                            }
+                        }
+                        if(!target.isEmpty()){
+                            for(int i=9; i<36; i++){
+                                if(inv->slots[i].typeMatch(target)){
+                                    int take = target.maxStackSize() - inv->slots[i].itemCount;
+                                    take = min(take, (int) target.itemCount);
+
+                                    target.itemCount -= take;
+                                    inv->slots[i].itemCount += take;
+
+                                    altered.add(i + invOffset, inv->slots[i]);
+                                    if(target.isEmpty()){
+                                        target.makeEmpty();
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        // Look for an open slot
+                        if(!target.isEmpty()){
+                            for(int i=36; i<45; i++){
+                                if(inv->slots[i].isEmpty()){
+                                    inv->slots[i] = target;
+                                    target.makeEmpty();
+                                    altered.add(i + invOffset, inv->slots[i]);
+                                    break;
+                                }
+                            }
+
+                            if(!target.isEmpty()){
+                                for(int i=9; i<36; i++){
+                                    if(inv->slots[i].isEmpty()){
+                                        inv->slots[i] = target;
+                                        target.makeEmpty();
+                                        altered.add(i + invOffset, inv->slots[i]);
+                                        break;
+                                    }
+                                }
+                            }
+
+                        }
+
+                        // Now move origin to target
+                        target = origin;
+                        origin.makeEmpty();
+                        altered.add(clicked, origin);
+                        altered.add(35 + btn + invOffset, target);
+                    }
+                }
                 break;
             }
             case 3: //middle click (creative only)
@@ -259,8 +387,8 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
         else{
             // Within inventory
             altered.setOffset(invOffset);
-            job->button -= invOffset;
-            inv->clickWindow(job, inv, altered, creative);
+            job->slotNum -= invOffset;
+            dropped = inv->clickWindow(job, inv, altered, creative);
             altered.setOffset(0);
         }
         break;
