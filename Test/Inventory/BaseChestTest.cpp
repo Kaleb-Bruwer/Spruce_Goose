@@ -664,6 +664,46 @@ protected:
 
     }
 
+    void sendMode5Jobs(Inventory2 &inv, ChestSingle &chest, vector<int> slots, bool mode){
+        ClickWindowJob* job = new ClickWindowJob();
+        AlteredSlots altered;
+
+        if(!mode){
+            // Left mouse drag
+            job->mode = 5;
+            job->button = 0;
+            job->slotNum = -999;
+            chest.clickWindow(job, &inv, altered, false);
+
+            job->button = 1;
+            for(int slot : slots){
+                job->slotNum = slot;
+                chest.clickWindow(job, &inv, altered, false);
+            }
+
+            job->button = 2;
+            job->slotNum = -999;
+            chest.clickWindow(job, &inv, altered, false);
+        }
+        else{
+            // Right mouse drag
+            job->mode = 5;
+            job->button = 4;
+            job->slotNum = -999;
+            chest.clickWindow(job, &inv, altered, false);
+
+            job->button = 5;
+            for(int slot : slots){
+                job->slotNum = slot;
+                chest.clickWindow(job, &inv, altered, false);
+            }
+
+            job->button = 6;
+            job->slotNum = -999;
+            chest.clickWindow(job, &inv, altered, false);
+        }
+    }
+
 };
 
 TEST_F(BaseChestTest, mode0Btn0){
@@ -1076,4 +1116,95 @@ TEST_F(BaseChestTest, mode4Test3){
 
     testMode4(30, 0, inv, ChestSingle());
     testMode4(30, 1, inv, ChestSingle());
+}
+
+TEST_F(BaseChestTest, mode5Test1){
+    Inventory2 inv;
+    ChestSingle chest;
+
+    inv.hover = Slot(1);
+    inv.hover.itemCount = 32;
+    sendMode5Jobs(inv, chest, vector<int>{2, 3}, false);
+
+    Slot stone16 = Slot(1);
+    stone16.itemCount = 16;
+
+    validateInventory(inv, vector<int>(), vector<Slot>(), Slot());
+    validateChestSingle(chest, vector<int>{2,3}, vector<Slot>{stone16, stone16});
+}
+
+TEST_F(BaseChestTest, mode5Test2){
+    Inventory2 inv;
+    ChestSingle chest;
+
+    inv.hover = Slot(1);
+    inv.hover.itemCount = 32;
+    sendMode5Jobs(inv, chest, vector<int>{2, 3}, true);
+
+    Slot stone30 = Slot(1);
+    stone30.itemCount = 30;
+
+    validateInventory(inv, vector<int>(), vector<Slot>(), stone30);
+    validateChestSingle(chest, vector<int>{2,3}, vector<Slot>{Slot(1), Slot(1)});
+}
+
+
+TEST_F(BaseChestTest, mode5Test3){
+    Inventory2 inv;
+    ChestSingle chest;
+
+    inv.hover = Slot(1);
+    inv.hover.itemCount = 64;
+    sendMode5Jobs(inv, chest, vector<int>{2, 3, 4}, false);
+
+    Slot stone21 = Slot(1);
+    stone21.itemCount = 21;
+
+    validateInventory(inv, vector<int>(), vector<Slot>(), Slot(1));
+    validateChestSingle(chest, vector<int>{2, 3, 4}, vector<Slot>{stone21, stone21, stone21});
+}
+
+TEST_F(BaseChestTest, mode5Test4){
+    Inventory2 inv;
+    ChestSingle chest;
+
+    inv.hover = Slot(1);
+    inv.hover.itemCount = 64;
+    sendMode5Jobs(inv, chest, vector<int>{2, 3, 40}, false);
+
+    Slot stone21 = Slot(1);
+    stone21.itemCount = 21;
+
+    validateInventory(inv, vector<int>{22}, vector<Slot>{stone21}, Slot(1));
+    validateChestSingle(chest, vector<int>{2,3}, vector<Slot>{stone21, stone21});
+}
+
+TEST_F(BaseChestTest, mode5Test5){
+    Inventory2 inv;
+    ChestSingle chest;
+
+    inv.hover = Slot(1);
+    inv.hover.itemCount = 64;
+    sendMode5Jobs(inv, chest, vector<int>{2, 3, 4}, true);
+
+    Slot stone61 = Slot(1);
+    stone61.itemCount = 61;
+
+    validateInventory(inv, vector<int>(), vector<Slot>(), stone61);
+    validateChestSingle(chest, vector<int>{2, 3, 4}, vector<Slot>{Slot(1), Slot(1), Slot(1)});
+}
+
+TEST_F(BaseChestTest, mode5Test6){
+    Inventory2 inv;
+    ChestSingle chest;
+
+    inv.hover = Slot(1);
+    inv.hover.itemCount = 64;
+    sendMode5Jobs(inv, chest, vector<int>{2, 3, 40}, true);
+
+    Slot stone61 = Slot(1);
+    stone61.itemCount = 61;
+
+    validateInventory(inv, vector<int>{22}, vector<Slot>{Slot(1)}, stone61);
+    validateChestSingle(chest, vector<int>{2,3}, vector<Slot>{Slot(1), Slot(1)});
 }
