@@ -599,6 +599,71 @@ protected:
         validateChestSingle(chest, chestSlots, chestItems);
     }
 
+    void testMode4(int slot, int btn, Inventory2 inv, ChestSingle chest){
+        // Assumes slot is the only slot with items in it
+
+        ClickWindowJob* job = new ClickWindowJob();
+        job->mode = 4;
+        job->slotNum = slot;
+        job->button = btn;
+
+        // Determine what is expected
+        Slot dropExpect;
+        Slot sExpect;
+        Slot hExpect = inv.hover;
+
+        if(slot >= 0 && inv.hover.isEmpty()){
+            if(slot < 27){
+                if(!chest.slots[slot].isEmpty()){
+                    dropExpect = chest.slots[slot];
+                    if(btn == 0){
+                        dropExpect.itemCount = 1;
+                        sExpect = chest.slots[slot];
+                        sExpect.itemCount--;
+                        if(sExpect.isEmpty())
+                            sExpect.makeEmpty();
+                    }
+                }
+            }
+            else{
+                if(!inv.slots[slot - 18].isEmpty()){
+                    dropExpect = inv.slots[slot - 18];
+                    if(btn == 0){
+                        dropExpect.itemCount = 1;
+                        sExpect = inv.slots[slot - 18];
+                        sExpect.itemCount--;
+                        if(sExpect.isEmpty())
+                            sExpect.makeEmpty();
+                    }
+                }
+            }
+        }
+
+        vector<Slot> dropped = chest.clickWindow(job, &inv, altered, false);
+        delete job;
+
+        // Assume there's only one drop
+        if(dropExpect.isEmpty()){
+            ASSERT_TRUE(dropped.size() == 0) << "Dropped " << dropped[0]
+                << " instead of nothing\n";
+        }
+        else{
+            ASSERT_TRUE(dropped.size() != 0) << "Dropped nothing instead of " << dropExpect << endl;
+            ASSERT_TRUE(dropped[0] == dropExpect) << "dropped " << dropped[0]
+                << " instead of " << dropExpect << endl;
+        }
+
+        if(slot <= 27){
+            validateInventory(inv, vector<int>(), vector<Slot>(), hExpect);
+            validateChestSingle(chest, vector<int>{slot}, vector<Slot>{sExpect});
+        }
+        else{
+            validateInventory(inv, vector<int>{slot - 18}, vector<Slot>{sExpect}, hExpect);
+            validateChestSingle(chest, vector<int>(), vector<Slot>());
+        }
+
+    }
+
 };
 
 TEST_F(BaseChestTest, mode0Btn0){
@@ -974,4 +1039,41 @@ TEST_F(BaseChestTest, mode3Test4){
     validateChestSingle(chest, vector<int>(), vector<Slot>());
     validateInventory(inv, vector<int>{9}, vector<Slot>{Slot(1)}, stoneStack);
     delete job;
+}
+
+TEST_F(BaseChestTest, mode4Test1){
+    testMode4(-999, 0, Inventory2(), ChestSingle());
+    testMode4(-999, 1, Inventory2(), ChestSingle());
+
+    testMode4(4, 0, Inventory2(), ChestSingle());
+    testMode4(4, 1, Inventory2(), ChestSingle());
+
+    testMode4(34, 0, Inventory2(), ChestSingle());
+    testMode4(34, 1, Inventory2(), ChestSingle());
+}
+
+TEST_F(BaseChestTest, mode4Test2){
+    ChestSingle chest;
+    chest.slots[4] = Slot(1);
+
+    testMode4(4, 0, Inventory2(), chest);
+    testMode4(4, 1, Inventory2(), chest);
+
+    chest.slots[4].itemCount = 64;
+
+    testMode4(4, 0, Inventory2(), chest);
+    testMode4(4, 1, Inventory2(), chest);
+}
+
+TEST_F(BaseChestTest, mode4Test3){
+    Inventory2 inv;
+    inv.slots[12] = Slot(1);
+
+    testMode4(30, 0, inv, ChestSingle());
+    testMode4(30, 1, inv, ChestSingle());
+
+    inv.slots[12].itemCount = 64;
+
+    testMode4(30, 0, inv, ChestSingle());
+    testMode4(30, 1, inv, ChestSingle());
 }

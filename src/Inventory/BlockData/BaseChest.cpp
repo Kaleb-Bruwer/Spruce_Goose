@@ -364,7 +364,7 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
 
                 break;
             case 4: //Drop item(s)
-                if(clicked < 0)
+                if(clicked < 0 || origin.isEmpty())
                     break;
             // Buttons 0 & 1 with clicked = -999 are in protocol, but as no-op
                 if(btn == 0){

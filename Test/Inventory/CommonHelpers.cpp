@@ -50,6 +50,15 @@ void validateInventory(Inventory2& inventory2, vector<int> pos, vector<Slot> ite
 
 }
 
+void validateInventory(Inventory2& lhs, Inventory2& rhs){
+    for(int i=0; i<45; i++){
+        ASSERT_TRUE(lhs.slots[i] == rhs.slots[i])
+            << "[" << i << "]: " << lhs.slots[i] << ", expected: " << rhs.slots[i];
+    }
+    ASSERT_TRUE(lhs.hover == rhs.hover)
+        << "[hover]: " << lhs.hover << ", expected: " << rhs.hover;
+}
+
 void validateChestSingle(ChestSingle& c, vector<int> pos, vector<Slot> items){
     ASSERT_TRUE(pos.size() == items.size()) << "Test config invalid";
 
