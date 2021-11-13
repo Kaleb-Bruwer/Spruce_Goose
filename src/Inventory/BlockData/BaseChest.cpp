@@ -89,21 +89,21 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
                 if(this->slots[i].isEmpty())
                     this->slots[i].makeEmpty();
             }
-
         }
+
         if(hover.itemCount == stackLimit)
             break; //1st break only escaped the for loop
         for(int i = nSlots; i< nSlots + 36; i++){
             if(hover.itemCount == stackLimit)
                 break;
 
-            if(inv->slots[i- invOffset].typeMatch(hover) && this->slots[i].itemCount < stackLimit){
-                int take = min(stackLimit - hover.itemCount, (int) this->slots[i- invOffset].itemCount);
-                this->slots[i- invOffset].itemCount -= take;
+            if(inv->slots[i- invOffset].typeMatch(hover) && inv->slots[i- invOffset].itemCount < stackLimit){
+                int take = min(stackLimit - hover.itemCount, (int) inv->slots[i- invOffset].itemCount);
+                inv->slots[i- invOffset].itemCount -= take;
                 hover.itemCount += take;
 
-                if(this->slots[i- invOffset].isEmpty())
-                    this->slots[i- invOffset].makeEmpty();
+                if(inv->slots[i- invOffset].isEmpty())
+                    inv->slots[i- invOffset].makeEmpty();
             }
         }
         if(hover.itemCount == stackLimit)
@@ -131,12 +131,12 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
                 break;
 
             if(inv->slots[i- invOffset].typeMatch(hover)){
-                int take = min(stackLimit - hover.itemCount, (int) this->slots[i- invOffset].itemCount);
-                this->slots[i- invOffset].itemCount -= take;
+                int take = min(stackLimit - hover.itemCount, (int) inv->slots[i- invOffset].itemCount);
+                inv->slots[i- invOffset].itemCount -= take;
                 hover.itemCount += take;
 
-                if(this->slots[i- invOffset].isEmpty())
-                    this->slots[i- invOffset].makeEmpty();
+                if(inv->slots[i- invOffset].isEmpty())
+                    inv->slots[i- invOffset].makeEmpty();
             }
         }
 
