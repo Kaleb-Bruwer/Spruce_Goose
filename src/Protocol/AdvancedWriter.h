@@ -9,6 +9,7 @@
 using namespace std;
 
 class BlockData;
+class Inventory2;
 
 class AdvancedWriter : public PacketWriter{
 private:
@@ -57,6 +58,6 @@ public:
     void writeChat(string message);
 
     void writeOpenWindow(short windowID, short invType, string title, int numSlots, bool useTitle, int eid = -1);
-    bool writeWindowItems(BlockData* b);
+    bool writeWindowItems(Inventory2* inv, BlockData* b, short windowID);
     void writeCloseWindow(short windowID);
 };

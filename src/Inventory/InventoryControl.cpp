@@ -60,33 +60,38 @@ void InventoryControl::openBlock(BlockData* b){
     activeBlock->open(this);
     windowID = activeBlock->getWindowID();
 
-    OpenCloseWindow* job = new OpenCloseWindow();
-    job->open = true;
-    job->windowID = windowID;
+    string title;
+    short int numSlots = 0;
 
     switch(activeBlock->getType()){
     case CHESTSINGLE:
-        job->name = "Chest";
-        job->numSlots = 27;
+        title = "Chest";
+        numSlots = 27;
         break;
     case CHESTDOUBLE:
-        job->name = "Chest";
-        job->numSlots = 54;
+        title = "Chest";
+        numSlots = 54;
         break;
     case CRAFTINGTABLE:
-        job->name = "Crafting table";
-        job->numSlots = 10;
+        title = "Crafting table";
+        numSlots = 10;
     }
 
     // If applicable, send contents of block
     AdvancedWriter writer;
-    bool didWrite = writer.writeWindowItems(b);
 
-    conn->pushJobToPlayer(job);
-    if(didWrite){
-        cout << "Sending window items\n";
-        conn->pushJobToPlayer(new SendPacket(&writer));
-    }
+
+    // OpenWindow and Window Items must have the same window ID, not to be
+    // confused with the window type
+    short winID = 1;
+    writer.writeOpenWindow(winID, windowID, title, numSlots, false);
+    bool didWrite = writer.writeWindowItems(&inventory, b, winID);
+
+    conn->pushJobToPlayer(new SendPacket(&writer));
+    // // conn->pushJobToPlayer(job);
+    // if(didWrite){
+    //     cout << "Sending window items\n";
+    // }
 
 }
 

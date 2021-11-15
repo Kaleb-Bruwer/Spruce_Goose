@@ -17,7 +17,6 @@ public:
     BaseChest() : BlockDataS<nSlots>(true){};
 
     int getWindowID(){return 0;};
-    // BlockData* clone();
 
     vector<Slot> clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative);
 
@@ -40,7 +39,7 @@ public:
 
     void splitChest(ChestSingle& c1, ChestSingle& c2);
 
-    BlockDataType getType(){return CHESTDOUBLE;};    
+    BlockDataType getType(){return CHESTDOUBLE;};
 };
 
 #endif

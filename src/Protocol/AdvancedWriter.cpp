@@ -5,6 +5,7 @@
 #include "../Inventory/Crafting/Crafting.h"
 
 #include "../Inventory/BlockData/BaseChest.h"
+#include "../Inventory/Inventory2.h"
 
 AdvancedWriter::AdvancedWriter(unsigned int size) :PacketWriter(size){};
 
@@ -353,7 +354,7 @@ void AdvancedWriter::writeOpenWindow(short windowID, short invType, string title
     addMsgLen();
 }
 
-bool AdvancedWriter::writeWindowItems(BlockData* b){
+bool AdvancedWriter::writeWindowItems(Inventory2* inv, BlockData* b, short int windowID){
     // Return indicates if anything has been written
 
     short numSlots;
@@ -368,27 +369,34 @@ bool AdvancedWriter::writeWindowItems(BlockData* b){
         return false;
     }
 
+    numSlots += 36; //For player's inventory
+
     writePacketID(0x30);
 
-    baseThis << (unsigned char) b->getWindowID();
+    baseThis << (unsigned char) windowID;
     baseThis << (short) numSlots;
 
     switch(b->getType()){
     case CHESTSINGLE:{
         ChestSingle* chest = (ChestSingle*) b;
 
-        for(int i=0; i<numSlots; i++){
+        for(int i=0; i<27; i++){
             baseThis << chest->slots[i];
         }
         break;
     }
-    case CHESTDOUBLE:
+    case CHESTDOUBLE:{
         ChestDouble* chest = (ChestDouble*) b;
 
-        for(int i=0; i<numSlots; i++){
+        for(int i=0; i<54; i++){
             baseThis << chest->slots[i];
         }
         break;
+    }
+    }
+
+    for(int i=9; i<45; i++){
+        baseThis << inv->slots[i];
     }
 
     addMsgLen();
