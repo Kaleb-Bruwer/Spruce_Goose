@@ -104,6 +104,7 @@ void Crafting::readFromFile(){
 
     generateShapeless((Tag_List*) tc.getItem("shapeless"));
     generateShaped((Tag_List*) tc.getItem("shaped"));
+    generateSmelting((Tag_List*) tc.getItem("smelting"));
 }
 
 void Crafting::generateShapeless(Tag_List *shapeless){
@@ -187,6 +188,30 @@ void Crafting::generateShaped(Tag_List* shaped){
     }
 }
 
+void Crafting::generateSmelting(Tag_List* smelting){
+    int numRecipes = smelting->getSize();
+
+    for(int i=0; i<numRecipes; i++){
+        Tag_Compound* recipeNBT = (Tag_Compound*)smelting->getValAt(i);
+
+        short resultID = ((Tag_Short*)recipeNBT->getItem("result"))->getVal();
+        Slot result = craftIDToSlot[resultID];
+
+        Tag_List* ingredients = (Tag_List*)recipeNBT->getItem("items");
+        int numIngredients = ingredients->getSize();
+
+        for(int j=0; j<numIngredients; j++){
+            short craftID = ((Tag_Short*)ingredients->getValAt(j))->getVal();
+            Slot s = craftIDToSlot[craftID];
+            smeltingRecipes[s] = result;
+        }
+
+
+    }
+
+}
+
+
 vector<Slot> Crafting::getValidSlots(short craftID){
     auto it = craftIDToSlot.find(craftID);
     if(it == craftIDToSlot.end()){
@@ -233,4 +258,11 @@ Slot Crafting::getProduct(CraftingFrame frame){
 
     //Empty slot
     return Slot();
+}
+
+Slot Crafting::getSmeltingProduct(Slot input){
+    auto it = smeltingRecipes.find(input);
+    if(it == smeltingRecipes.end())
+        return Slot();
+    return it->second;
 }

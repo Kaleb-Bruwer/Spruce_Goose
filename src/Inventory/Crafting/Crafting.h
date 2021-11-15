@@ -30,6 +30,9 @@ private:
     // Use hashPartitionIDs() to get key
     unordered_map<long long, vector<Recipe>> recipes;
 
+    // Maps ingredient to result
+    map<Slot,Slot> smeltingRecipes;
+
     inline static Crafting* instance;
     inline static mutex constructMutex;
     Crafting();
@@ -38,6 +41,7 @@ private:
     void readFromFile();
     void generateShapeless(Tag_List* shapeless);
     void generateShaped(Tag_List* shaped);
+    void generateSmelting(Tag_List* smelting);
 
     vector<Slot> getValidSlots(short craftID);
     long long hashCraftingFrame(CraftingFrame &frame);
@@ -46,6 +50,7 @@ public:
     static Crafting* getInstance();
 
     Slot getProduct(CraftingFrame frame);
+    Slot getSmeltingProduct(Slot input);
 
 };
 
