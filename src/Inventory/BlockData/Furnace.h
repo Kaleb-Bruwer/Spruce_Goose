@@ -5,6 +5,9 @@
 class Inventory2;
 
 class Furnace : public BlockDataS<3>{
+private:
+    vector<Slot> clickMode2(int clicked, int btn, Inventory2* inv,
+            AlteredSlots &altered, bool creative);
 public:
 
     int getWindowID(){return 2;};
