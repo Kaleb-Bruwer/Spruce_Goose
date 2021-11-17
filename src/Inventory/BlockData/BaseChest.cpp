@@ -230,6 +230,7 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
                     // is weird and I need to match it...
                     // WHY DIDN'T THEY JUST SWAP IT? THE CORRECT IMPLEMENTATION
                     // IS SO MUCH EASIER THAN THIS MESS
+                    // Oh it's probably copied from Furnace
 
                     // Can only move if there's an open slot somewhere
                     // in inventory (yes, seriously...)
@@ -258,24 +259,17 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
                         else{
                             // Place what's left of origin on some open slot
                             // First check hotbar
-                            for(int i=36; i<45; i++){
-                                if(inv->slots[i].isEmpty()){
-                                    inv->slots[i] = origin;
-                                    origin.makeEmpty();
-                                    altered.add(invOffset + i, inv->slots[i]);
-                                    break;
-                                }
-                            }
+                            altered.setOffset(invOffset);
+                            inv->movHalf(origin, 36, 44, altered);
                             if(!origin.isEmpty()){
-                                for(int i=9; i<36; i++){
-                                    if(inv->slots[i].isEmpty()){
-                                        inv->slots[i] = origin;
-                                        origin.makeEmpty();
-                                        altered.add(invOffset + i, inv->slots[i]);
-                                        break;
-                                    }
+                                inv->movHalf(origin, 9, 35, altered);
+                                if(!origin.isEmpty()){
+                                    inv->movEmpty(origin, 36, 44, altered);
+                                    if(!origin.isEmpty())
+                                        inv->movEmpty(origin, 9, 35, altered);
                                 }
                             }
+                            altered.setOffset(0);
                         }
                         altered.add(clicked, origin);
                     }
@@ -325,7 +319,7 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
                                 if(inv->slots[i].isEmpty()){
                                     inv->slots[i] = target;
                                     target.makeEmpty();
-                                    altered.add(i + invOffset, inv->slots[i]);
+                                    altered.add(36 + i + invOffset, inv->slots[i]);
                                     break;
                                 }
                             }
@@ -335,7 +329,7 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
                                     if(inv->slots[i].isEmpty()){
                                         inv->slots[i] = target;
                                         target.makeEmpty();
-                                        altered.add(i + invOffset, inv->slots[i]);
+                                        altered.add(9 + i + invOffset, inv->slots[i]);
                                         break;
                                     }
                                 }
