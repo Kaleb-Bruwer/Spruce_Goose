@@ -91,6 +91,9 @@ vector<Slot> Furnace::clickWindow(ClickWindowJob* job, Inventory2* inv,
     case 5:
         mouseDrag(job, inv, altered);
         break;
+    case 6:
+        clickMode6(clicked, btn, inv, altered);
+        break;
 
     default:
         if(clicked < 3){
@@ -317,7 +320,7 @@ void Furnace::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots &alte
     int btn = job->button;
 
     // Validity check
-    if((btn == 1 || btn == 5) && (clicked < 0 || clicked > 38))
+    if((btn == 1 || btn == 5) && (clicked < 0 || clicked > 38 || clicked == 2))
         return;
 
     switch(btn){
@@ -435,5 +438,76 @@ void Furnace::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots &alte
         case 6: //end right drag
             inv->dragData.dragMode = NONE;
         break;
+    }
+}
+
+void Furnace::clickMode6(int clicked, int btn, Inventory2* inv, AlteredSlots& altered){
+    // Fill hover with similar items, starting from slots[0].
+    // Take from partial stacks first, then full ones
+    const int invOffset = -6;
+    Slot& hover = inv->hover;
+
+    if(hover.isEmpty() || clicked < 0 || clicked > 38)
+        return;
+
+    short int stackLimit = hover.maxStackSize();
+
+    // partial stacks
+    for(int i = 0; i < 3; i++){
+        if(hover.itemCount == stackLimit)
+            return;
+
+        if(slots[i].typeMatch(hover) && slots[i].itemCount < stackLimit){
+            int take = min(stackLimit - hover.itemCount, (int) slots[i].itemCount);
+            slots[i].itemCount -= take;
+            hover.itemCount += take;
+
+            if(this->slots[i].isEmpty())
+                this->slots[i].makeEmpty();
+        }
+    }
+
+    for(int i = 3; i< 39; i++){
+        if(hover.itemCount == stackLimit)
+            return;
+
+        if(inv->slots[i- invOffset].typeMatch(hover) && inv->slots[i- invOffset].itemCount < stackLimit){
+            int take = min(stackLimit - hover.itemCount, (int) inv->slots[i- invOffset].itemCount);
+            inv->slots[i- invOffset].itemCount -= take;
+            hover.itemCount += take;
+
+            if(inv->slots[i- invOffset].isEmpty())
+                inv->slots[i- invOffset].makeEmpty();
+        }
+    }
+
+    // Full stacks
+    for(int i = 0; i < 3; i++){
+        if(hover.itemCount == stackLimit)
+            return;
+
+        if(this->slots[i].typeMatch(hover)){
+            int take = min(stackLimit - hover.itemCount, (int) this->slots[i].itemCount);
+            this->slots[i].itemCount -= take;
+            hover.itemCount += take;
+
+            if(this->slots[i].isEmpty())
+                this->slots[i].makeEmpty();
+        }
+
+    }
+
+    for(int i = 3; i< 39; i++){
+        if(hover.itemCount == stackLimit)
+            return;
+
+        if(inv->slots[i- invOffset].typeMatch(hover)){
+            int take = min(stackLimit - hover.itemCount, (int) inv->slots[i- invOffset].itemCount);
+            inv->slots[i- invOffset].itemCount -= take;
+            hover.itemCount += take;
+
+            if(inv->slots[i- invOffset].isEmpty())
+                inv->slots[i- invOffset].makeEmpty();
+        }
     }
 }
