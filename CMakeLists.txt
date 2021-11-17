@@ -63,6 +63,8 @@ SET (SRCS
     ./src/Inventory/BlockData/BaseChest.cpp
     ./src/Inventory/BlockData/CraftingTable.h
     ./src/Inventory/BlockData/CraftingTable.cpp
+    ./src/Inventory/BlockData/Furnace.h
+    ./src/Inventory/BlockData/Furnace.cpp
 
     ./src/Protocol/Protocol.h
     ./src/Protocol/Protocol.cpp

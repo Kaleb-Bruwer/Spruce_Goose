@@ -3,8 +3,6 @@
 
 #include "BlockDataS.h"
 
-using namespace std;
-
 class Inventory2;
 
 //This class represents the contents of a single chest

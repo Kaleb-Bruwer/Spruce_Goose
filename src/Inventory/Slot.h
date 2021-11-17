@@ -41,6 +41,7 @@ public:
 
     //Returns the maximum stack size for an item of this type
     int maxStackSize();
+    bool isFuel();
 
     bool isEmpty(){
         return (itemCount == 0) || itemID == 0;

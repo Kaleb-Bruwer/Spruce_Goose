@@ -10,6 +10,11 @@ int Slot::maxStackSize(){
     return table->getStackSize(itemID);
 }
 
+bool Slot::isFuel(){
+    // TODO
+}
+
+
 bool Slot::typeMatch(Slot* rhs){
     return (itemID == rhs->itemID)
         && (itemDamage == rhs->itemDamage

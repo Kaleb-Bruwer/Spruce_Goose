@@ -1,0 +1,183 @@
+#include "Furnace.h"
+
+#include <cmath>
+
+#include "../Inventory2.h"
+#include "../Crafting/Crafting.h"
+
+using namespace std;
+
+BlockData* Furnace::clone(){
+
+}
+
+vector<Slot> Furnace::clickWindow(ClickWindowJob* job, Inventory2* inv,
+        AlteredSlots &altered, bool creative){
+    // 0: input
+    // 1: fuel
+    // 2: output
+    vector<Slot> dropped;
+
+    int clicked = job->slotNum;
+    int btn = job->button;
+    int mode = job->mode;
+
+    Slot& hover = inv->hover;
+
+    // Handle modes that can't be passed down to inventory here
+    switch(mode){
+    case 1:{
+        // Shift click
+        if(clicked < 0 | clicked > 38) //Validity check
+            break;
+
+        if(clicked > 2){
+            //inv -> furnace
+            Slot& origin = inv->slots[clicked + 6]; //6 is the offset for furnace
+            if(origin.isEmpty())
+                break; //Don't waste time in this case
+
+            Crafting* crafting = Crafting::getInstance();
+            Slot result = crafting->getSmeltingProduct(origin);
+
+            int targetSlot = -1;
+
+            if(!result.isEmpty()){
+                // move into input
+                targetSlot = 0;
+            }
+            else if(result.isFuel()){
+                // move into fuel
+                targetSlot = 1;
+            }
+            else{
+                // Between inventory and hotbar
+                altered.setOffset(-6);
+                job->slotNum += 6;
+                inv->clickWindow(job, 0, altered, creative);
+                altered.setOffset(0);
+                break;
+            }
+
+            Slot& target = slots[targetSlot];
+            if(target.isEmpty()){
+                target = origin;
+                origin.makeEmpty();
+                altered.add(targetSlot, target);
+            }
+            else if(target.typeMatch(origin)){
+                int take = target.maxStackSize() - target.itemCount;
+                take = min(take, (int) origin.itemCount);
+
+                origin.itemCount -= take;
+                target.itemCount += take;
+
+                if(origin.isEmpty())
+                    origin.makeEmpty();
+
+                altered.add(targetSlot, target);
+            }
+        }
+        else{
+            // furnace -> inv
+            altered.setOffset(-6);
+            inv->mov(slots[clicked], 9, 44, altered);
+            altered.setOffset(0);
+            altered.add(clicked, slots[clicked]);
+        }
+
+        break;
+    }
+
+    default:
+        if(clicked < 3){
+            switch(mode){
+            case 0:{ //left & right click
+                if(clicked < 0) //validation check
+                    break;
+
+                Slot& origin = slots[clicked];
+
+                if(clicked == 0){
+                    // Output is a special case: nothing can be placed here
+                    if(btn != 0 && btn != 1) //validation check
+                        break;
+
+                    if(hover.isEmpty()){
+                        hover = origin;
+                        origin.makeEmpty();
+                        altered.add(0, origin);
+                    }
+                    else if(hover.typeMatch(origin) &&
+                            (hover.maxStackSize() - hover.itemCount >= origin.itemCount)){
+                        hover.itemCount += origin.itemCount;
+                        origin.makeEmpty();
+                        altered.add(0, origin);
+                    }
+
+                } //After this you can assume it's a placable slot
+                else if(btn == 0){ //left click
+                    if(origin.isEmpty() || hover.isEmpty() || !origin.typeMatch(hover)){
+                        // Swap slots
+                        Slot temp = origin;
+                        origin = hover;
+                        hover = temp;
+                        altered.add(clicked, origin);
+                    }
+                    else{ //Place extra, same type
+                        int stackSize = origin.maxStackSize();
+                        int take = min(stackSize - origin.itemCount, (int)hover.itemCount);
+                        hover.itemCount -= take;
+                        origin.itemCount += take;
+
+                        if(hover.isEmpty())
+                            hover.makeEmpty();
+                        altered.add(clicked, origin);
+                    }
+                }
+                else if(btn == 1){ //right click
+                    if(hover.isEmpty() && !origin.isEmpty()){
+                        // Pick up half
+                        int take = ceil(origin.itemCount / 2.0);
+                        hover.itemID = origin.itemID;
+                        hover.itemDamage = origin.itemDamage;
+                        hover.itemCount = take;
+                        origin.itemCount -= take;
+
+                        if(origin.isEmpty())
+                            origin.makeEmpty();
+
+                        altered.add(clicked, origin);
+                        break;
+
+                    }
+                    else if(!hover.isEmpty() && (origin.isEmpty() || origin.typeMatch(hover))){
+                        int oldCount = origin.itemCount;
+                        origin = hover;
+                        origin.itemCount = oldCount + 1;
+                        hover.itemCount--;
+                        if(hover.isEmpty())
+                            hover.makeEmpty();
+
+                        altered.add(clicked, origin);
+
+                    }
+                }
+                break;
+            }
+
+            }
+        }
+        else{
+
+        }
+    };
+
+
+
+
+
+
+
+    return dropped;
+}

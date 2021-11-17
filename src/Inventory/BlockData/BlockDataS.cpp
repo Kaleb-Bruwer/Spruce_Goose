@@ -4,6 +4,7 @@
 
 using namespace std;
 
+template class BlockDataS<3>;  //Furnace
 template class BlockDataS<10>; //Crafting table
 template class BlockDataS<27>; //Single chest
 template class BlockDataS<45>; //Inventory

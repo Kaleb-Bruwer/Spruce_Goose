@@ -164,7 +164,6 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
             //normal click
             if(clicked == 0){
                 // crafting output
-                // TODO: crafting
                 if(job->button == 0 || job->button == 1){
                     if(hover.isEmpty()){
                         craft(false, altered);
