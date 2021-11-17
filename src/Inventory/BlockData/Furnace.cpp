@@ -165,22 +165,49 @@ vector<Slot> Furnace::clickWindow(ClickWindowJob* job, Inventory2* inv,
                 }
                 break;
             }
-            case 2:{
+            case 2:
                 dropped = clickMode2(clicked, btn, inv, altered, creative);
+                break;
+            case 3:
+                if(creative && clicked >= 0 && hover.isEmpty()){
+                    hover = slots[clicked];
+                    hover.itemCount = hover.maxStackSize();
+                }
+                break;
+            case 4:{ //Drop item(s)
+                if(clicked < 0 || slots[clicked].isEmpty())
+                    break;
+
+                Slot& origin = slots[clicked];
+                // Buttons 0 & 1 with clicked = -999 are in protocol, but as no-op
+                if(btn == 0){
+                    //Drop one
+                    Slot drop = origin;
+                    drop.itemCount = 1;
+                    origin.itemCount--;
+                    if(origin.isEmpty())
+                        origin.makeEmpty();
+
+                    dropped.push_back(drop);
+                    altered.add(clicked, origin);
+                }
+                else if(job->button == 1){
+                    //Drop stack
+                    dropped.push_back(origin);
+                    origin.makeEmpty();
+                    altered.add(clicked, Slot());
+                }
+                break;
             }
             }
         }
         else{
-
+            altered.setOffset(-6);
+            job->slotNum += 6;
+            dropped = inv->clickWindow(job, inv, altered, creative);
+            altered.setOffset(0);
         }
     };
-
-
-
-
-
-
-
     return dropped;
 }
 
