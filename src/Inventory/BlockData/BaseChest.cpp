@@ -405,7 +405,7 @@ void BaseChest<nSlots>::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredS
     int btn = job->button;
 
     // Validity check
-    if((btn == 1 || btn == 5) && (clicked < 0 || clicked > 45))
+    if((btn == 1 || btn == 5) && (clicked < 0 || clicked > 44 + invOffset))
         return;
 
     switch(btn){
@@ -490,8 +490,8 @@ void BaseChest<nSlots>::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredS
         break;
 
         case 5: //add slot to right drag
-        if(clicked < 0 || clicked > nSlots + 35) //invalid
-            break;
+        // if(clicked < 0 || clicked > nSlots + 35) //invalid
+        //     break;
         if(inv->dragData.dragMode == RIGHT){
             Slot *slot;
             if(clicked < nSlots)

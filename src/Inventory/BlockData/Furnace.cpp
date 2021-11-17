@@ -88,6 +88,9 @@ vector<Slot> Furnace::clickWindow(ClickWindowJob* job, Inventory2* inv,
 
         break;
     }
+    case 5:
+        mouseDrag(job, inv, altered);
+        break;
 
     default:
         if(clicked < 3){
@@ -303,4 +306,134 @@ vector<Slot> Furnace::clickMode2(int clicked, int btn, Inventory2* inv,
     }
 
     return vector<Slot>(); //dropped
+}
+
+void Furnace::mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered){
+    // use DragData in inventory, since this info must be player specific
+    // putting it in CraftingTable would make it shared between players
+    const int invOffset = -6;
+
+    int clicked = job->slotNum;
+    int btn = job->button;
+
+    // Validity check
+    if((btn == 1 || btn == 5) && (clicked < 0 || clicked > 38))
+        return;
+
+    switch(btn){
+        case 0: //start left drag
+            inv->dragData.dragMode = LEFT;
+            inv->dragData.dragTotal = inv->hover.itemCount;
+            break;
+
+        case 1: //add slot to left drag
+        // First check some conditions
+        if(clicked < 0 || clicked > 38) //invalid slot
+            break;
+        if(inv->dragData.dragMode == LEFT){
+            Slot clickedSlot;
+            if(clicked < 3)
+                clickedSlot = this->slots[clicked];
+            else
+                clickedSlot = inv->slots[clicked - invOffset];
+
+            if(!clickedSlot.isEmpty() && !clickedSlot.typeMatch(inv->hover))
+                break;
+
+            inv->dragData.dragSlots.push_back(clicked);
+            inv->dragData.baseCount.push_back(clickedSlot.itemCount);
+
+            // Conditions where no action is required
+            int numSlotsInDrag = inv->dragData.dragSlots.size();
+            if(numSlotsInDrag <= 1 || numSlotsInDrag > inv->dragData.dragTotal)
+                break;
+
+            // Split from scrach every time
+            // numToAdd: num added to each slot in dragSlots
+            int numToAdd = floor((float)inv->dragData.dragTotal/numSlotsInDrag);
+            int remainder = inv->dragData.dragTotal - numToAdd * numSlotsInDrag;
+
+            int maxStack = inv->hover.maxStackSize();
+
+            for(int j=0; j<inv->dragData.dragSlots.size(); j++){
+                int s = inv->dragData.dragSlots[j];
+
+                Slot* slot;
+                if(s < 3)
+                    slot = &(this->slots[s]);
+                else
+                    slot = &inv->slots[s - invOffset];
+
+                *slot = inv->hover; // sets the type
+                slot->itemCount = inv->dragData.baseCount[j] + numToAdd;
+                if(slot->itemCount > maxStack){
+                    remainder += slot->itemCount - maxStack;
+                    this->slots->itemCount = maxStack;
+                }
+                altered.add(s, *slot);
+            }
+            inv->hover.itemCount = remainder;
+        }
+        break;
+
+        case 2: //end left drag
+            inv->dragData.dragMode = NONE;
+
+            if(inv->dragData.dragSlots.size() == 1){
+                int s = inv->dragData.dragSlots[0];
+                if(s < 3)
+                    this->slots[s] = inv->hover;
+                else
+                    inv->slots[s - invOffset] = inv->hover;
+
+                inv->hover.makeEmpty();
+            }
+            if(inv->hover.isEmpty())
+                inv->hover.makeEmpty();
+
+            inv->dragData.dragSlots.clear();
+            inv->dragData.baseCount.clear();
+            break;
+
+
+        case 4: //start right drag
+            inv->dragData.dragMode = RIGHT;
+            inv->dragData.dragTotal = inv->hover.itemCount;
+        break;
+
+        case 5: //add slot to right drag
+        // if(clicked < 0 || clicked > nSlots + 35) //invalid
+        //     break;
+        if(inv->dragData.dragMode == RIGHT){
+            Slot *slot;
+            if(clicked < 3)
+                slot = &(this->slots[clicked]);
+            else
+                slot = &inv->slots[clicked - invOffset];
+
+            if(!slot->isEmpty() && !slot->typeMatch(inv->hover))
+                break;
+
+            // Conditions where no action is required
+            if(inv->hover.itemCount == 0)
+                break;
+
+            // Add one item to new slot (if possible)
+            int maxStack = inv->hover.maxStackSize();
+            if(slot->itemCount < maxStack){
+                slot->itemID = inv->hover.itemID;
+                slot->itemDamage = inv->hover.itemDamage;
+                slot->itemCount++;
+                inv->hover.itemCount--;
+                if(inv->hover.itemCount == 0)
+                    inv->hover.makeEmpty();
+            }
+            altered.add(clicked, *slot);
+        }
+        break;
+
+        case 6: //end right drag
+            inv->dragData.dragMode = NONE;
+        break;
+    }
 }
