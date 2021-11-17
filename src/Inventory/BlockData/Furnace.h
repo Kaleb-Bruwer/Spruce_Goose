@@ -11,6 +11,7 @@ private:
     void clickMode6(int clicked, int btn, Inventory2* inv, AlteredSlots& altered);
     void mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered);
 public:
+    Furnace() : BlockDataS<3>(true){};
 
     int getWindowID(){return 2;};
 

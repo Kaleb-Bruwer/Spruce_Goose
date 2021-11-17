@@ -104,7 +104,7 @@ vector<Slot> Furnace::clickWindow(ClickWindowJob* job, Inventory2* inv,
 
                 Slot& origin = slots[clicked];
 
-                if(clicked == 0){
+                if(clicked == 2){
                     // Output is a special case: nothing can be placed here
                     if(btn != 0 && btn != 1) //validation check
                         break;
@@ -142,7 +142,9 @@ vector<Slot> Furnace::clickWindow(ClickWindowJob* job, Inventory2* inv,
                     }
                 }
                 else if(btn == 1){ //right click
-                    if(hover.isEmpty() && !origin.isEmpty()){
+                    if(hover.isEmpty()){
+                        if(origin.isEmpty())
+                            break;
                         // Pick up half
                         int take = ceil(origin.itemCount / 2.0);
                         hover.itemID = origin.itemID;
@@ -157,8 +159,11 @@ vector<Slot> Furnace::clickWindow(ClickWindowJob* job, Inventory2* inv,
                         break;
 
                     }
-                    else if(!hover.isEmpty() && (origin.isEmpty() || origin.typeMatch(hover))){
+                    else if(origin.isEmpty() || origin.typeMatch(hover)){
                         int oldCount = origin.itemCount;
+
+                        if(oldCount == origin.maxStackSize())
+                            break;
                         origin = hover;
                         origin.itemCount = oldCount + 1;
                         hover.itemCount--;
@@ -167,6 +172,13 @@ vector<Slot> Furnace::clickWindow(ClickWindowJob* job, Inventory2* inv,
 
                         altered.add(clicked, origin);
 
+                    }
+                    else{
+                        Slot temp = origin;
+                        origin = hover;
+                        hover = temp;
+
+                        altered.add(clicked, origin);
                     }
                 }
                 break;
@@ -210,7 +222,7 @@ vector<Slot> Furnace::clickWindow(ClickWindowJob* job, Inventory2* inv,
         else{
             altered.setOffset(-6);
             job->slotNum += 6;
-            dropped = inv->clickWindow(job, inv, altered, creative);
+            dropped = inv->clickWindow(job, 0, altered, creative);
             altered.setOffset(0);
         }
     };
