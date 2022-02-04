@@ -15,6 +15,7 @@
 
 #include "../../Inventory/BlockData/BaseChest.h"
 #include "../../Inventory/BlockData/CraftingTable.h"
+#include "../../Inventory/BlockData/Furnace.h"
 
 #include "../../Entities/Item.h"
 
@@ -33,10 +34,11 @@ BlockData* makeBD(Block b){
             return new CraftingTable();
         case 61:
         case 62:
-            //furnace
+            return new Furnace();
         case 23:
         case 158:
             //Dispenser / dropper
+            break;
         case 116:
             //enchantment table
             break;
