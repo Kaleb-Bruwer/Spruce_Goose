@@ -3,6 +3,7 @@
 
 #include <thread>
 #include <vector>
+#include <tuple>
 
 #include "Chunk/Chunk.h"
 #include "SynchedArea.h"
@@ -19,7 +20,12 @@
 
 #include "../JobTickets/JobTicket.h"
 
+// TODO: remove namespace from .h
 using namespace std;
+
+// Callback functions used for timed events (i.e. do this in 10 ticks)
+// They take no parameters and return nothing
+typedef void (*callback_void)(void*);
 
 class World;
 class PlayerCheckBreaksF;
@@ -31,7 +37,61 @@ private:
     chrono::high_resolution_clock::time_point tickStart;
     const chrono::milliseconds tickLen{50}; //In milliseconds
     chrono::high_resolution_clock::time_point nextTick;
-    unsigned long long tickNum;
+    // in future, read tickNum from file or get from a settings singleton
+    unsigned long long tickNum = 0;
+
+    class {
+        vector<tuple<unsigned long long, callback_void, void*>> queue;
+    public:
+        void add(unsigned long long tick, callback_void callback, void* obj){
+            std::tuple t(tick, callback, obj);
+
+            if(queue.empty()){
+                // queue.push_back(std::make_tuple(tick, callback, obj));
+                queue.push_back(t);
+                return;
+            }
+            int l = 0;
+            int h = queue.size()-1;
+
+            if(tick < std::get<0>(queue[0]))
+                l = -1; //insert at start
+            else while(h > l){
+                int m = (h + l)/2;
+
+                if(tick < std::get<0>(queue[m]))
+                    h = m - 1;
+                else if(tick > std::get<0>(queue[m]))
+                    l = m + 1;
+                else{
+                    l = m;
+                    break;
+                }
+            }
+
+            // queue.insert(l + 1, std::make_tuple(tick, callback, obj));
+            queue.insert(queue.begin() + l+1, t);
+
+        }
+
+        // This class doesn't track ticks, instead it's passed from ThreadArea
+        void exec_tick(unsigned long long tick){
+            int i = 0;
+            for(; i<queue.size(); i++){
+                // By this logic, all records up to the previous one reached must be deleted
+                if(std::get<0>(queue[i]) <= tick){
+                    // i will be incremented again if this was reached
+                    // queue[i].second(queue[i].third);
+                    std::get<1>(queue[i])(std::get<2>(queue[i]));
+                }
+                else break;
+            }
+            if(i > 0){
+                queue.erase(queue.begin(), queue.begin() + i);
+            }
+        }
+
+    } callbacks;
 
     BlockingQueue<JobTicket*> inQueue;
 

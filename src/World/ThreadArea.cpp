@@ -138,8 +138,6 @@ void ThreadArea::join(){
 void ThreadArea::run(){
     synchedArea->addThreadArea();
 
-    int tick = 0;
-
     int uspt = 0;
     int usptI = 0;
 
@@ -184,11 +182,13 @@ void ThreadArea::run(){
         }
 
         synchronize();
-        //synchedArea->sync();
+        tickNum++;
     }
 }
 
 void ThreadArea::loop(){
+    // I don't think this is being used, but I'll leave it alone for now
+
     //includeChunks();
     synchronize();
 }
