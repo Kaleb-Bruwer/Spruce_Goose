@@ -523,3 +523,58 @@ void Furnace::clickMode6(int clicked, int btn, Inventory2* inv, AlteredSlots& al
         }
     }
 }
+
+void Furnace::burnCallback(){
+    //Add item to result
+    if(slots[2].isEmpty()){
+        slots[2] = crafting->getSmeltingProduct(slots[0]);
+        slots[2].itemCount = 1;
+    }
+    else{
+        slots[2].itemCount++;
+    }
+    slots[0].itemCount--;
+    if(slots[0].isEmpty())
+        slots[0].makeEmpty();
+
+    // if not burning, start next fuel and if no fuel, stop here
+    if(fuelFinish != 0){
+        startNextFuel();
+    }
+    if(fuelFinish == 0)
+        return;
+
+    // If more input, start next smelting
+    if(!slots[0].isEmpty()){
+        burnFinish += 200;
+    }
+    else
+        burnFinish = 0;
+
+}
+
+void Furnace::fuelCallback(){
+    // If burn incomplete, start next fuel.
+        // if no next fuel, cancel burn instead
+    unsigned long long currTick = fuelFinish;
+
+    if(burnFinish != fuelFinish){
+        startNextFuel();
+        if(fuelFinish == 0)
+            burnFinish = 0;
+    }
+    // if burn complete, stop fire (will be restarted from burnCallback if neccesary)
+    else{
+        fuelFinish = 0;
+    }
+}
+
+void burnCallbackWrap(void* obj){
+    Furnace* furnace = (Furnace*) obj;
+    furnace->burnCallback();
+}
+
+void fuelCallbackWrap(void* obj){
+    Furnace* furnace = (Furnace*) obj;
+    furnace->fuelCallback();
+}
