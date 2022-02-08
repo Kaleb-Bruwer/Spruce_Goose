@@ -9,6 +9,8 @@
 
 #include "./Protocol/PacketReaderTest.cpp"
 #include "./Datastructures/NBTReadTest.cpp"
+
+#include "./World/ThreadAreaCallbacksTest.cpp"
 #include "./World/Chunk/ChunkTest.cpp"
 
 int main(int argc, char **argv){
