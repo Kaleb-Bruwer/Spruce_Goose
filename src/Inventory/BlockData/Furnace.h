@@ -24,15 +24,15 @@ public:
     BlockDataType getType(){return FURNACE;};
 
     // These can be called in any order if occuring on same tick
-    void burnCallback();
-    void fuelCallback();
+    void burnCallback(unsigned long long currTick);
+    void fuelCallback(unsigned long long currTick);
 
     // Takes fuel source and sets fuelFinish appropriately
     // sets fuelFinish to 0 if none available
-    void startNextFuel();
+    void startNextFuel(unsigned long long currTick);
 
 };
 
-void burnCallbackWrap(void* obj);
+void burnCallbackWrap(void* obj, unsigned long long currTick);
 
-void fuelCallbackWrap(void* obj);
+void fuelCallbackWrap(void* obj, unsigned long long currTick);

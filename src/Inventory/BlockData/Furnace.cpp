@@ -4,6 +4,8 @@
 
 #include "../Inventory2.h"
 #include "../Crafting/Crafting.h"
+#include "../../General/FuelTable.h"
+
 
 using namespace std;
 
@@ -524,9 +526,35 @@ void Furnace::clickMode6(int clicked, int btn, Inventory2* inv, AlteredSlots& al
     }
 }
 
-void Furnace::burnCallback(){
+void Furnace::startNextFuel(unsigned long long currTick){
+    // If no more fuel, just finish
+    if(slots[1].isEmpty()){
+        fuelFinish = 0;
+        return;
+    }
+
+    // Get next fuel's duration from FuelTable
+    FuelTable* ft = FuelTable::getInstance();
+    int duration = ft->getDuration(slots[1].itemID);
+
+    // fuelFinish = currTick + duration
+    if(duration == 0)
+        fuelFinish = 0;
+    else
+        fuelFinish = currTick + duration;
+
+    // TODO: Set new fuelCallback
+
+
+}
+
+
+void Furnace::burnCallback(unsigned long long currTick){
+    // TODO: handle failed burn case (if fuel ran out)
+
     //Add item to result
-    if(slots[2].isEmpty()){
+        if(slots[2].isEmpty()){
+        Crafting* crafting = Crafting::getInstance();
         slots[2] = crafting->getSmeltingProduct(slots[0]);
         slots[2].itemCount = 1;
     }
@@ -539,7 +567,7 @@ void Furnace::burnCallback(){
 
     // if not burning, start next fuel and if no fuel, stop here
     if(fuelFinish != 0){
-        startNextFuel();
+        startNextFuel(currTick);
     }
     if(fuelFinish == 0)
         return;
@@ -547,19 +575,18 @@ void Furnace::burnCallback(){
     // If more input, start next smelting
     if(!slots[0].isEmpty()){
         burnFinish += 200;
+        // TODO: Set new burnCallback
     }
     else
         burnFinish = 0;
 
 }
 
-void Furnace::fuelCallback(){
+void Furnace::fuelCallback(unsigned long long currTick){
     // If burn incomplete, start next fuel.
         // if no next fuel, cancel burn instead
-    unsigned long long currTick = fuelFinish;
-
-    if(burnFinish != fuelFinish){
-        startNextFuel();
+    if(burnFinish != currTick){
+        startNextFuel(currTick);
         if(fuelFinish == 0)
             burnFinish = 0;
     }
@@ -569,12 +596,12 @@ void Furnace::fuelCallback(){
     }
 }
 
-void burnCallbackWrap(void* obj){
+void burnCallbackWrap(void* obj, unsigned long long currTick){
     Furnace* furnace = (Furnace*) obj;
-    furnace->burnCallback();
+    furnace->burnCallback(currTick);
 }
 
-void fuelCallbackWrap(void* obj){
+void fuelCallbackWrap(void* obj, unsigned long long currTick){
     Furnace* furnace = (Furnace*) obj;
-    furnace->fuelCallback();
+    furnace->fuelCallback(currTick);
 }

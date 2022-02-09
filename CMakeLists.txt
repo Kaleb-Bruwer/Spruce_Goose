@@ -32,6 +32,8 @@ SET (SRCS
     ./src/General/BlockStrengths.cpp
     ./src/General/ToolTable.h
     ./src/General/ToolTable.cpp
+    ./src/General/FuelTable.h
+    ./src/General/FuelTable.cpp
     ./src/General/ToolSpeedTable.h
     ./src/General/ToolSpeedTable.cpp
     ./src/General/StackSizeTable.h

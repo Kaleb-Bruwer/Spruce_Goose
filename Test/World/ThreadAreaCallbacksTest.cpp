@@ -14,7 +14,7 @@ namespace callback_tests{
     // a bool vector wouldn't reveal if a callback was repeatedly called
     std::vector<int> callback_flags;
 
-    void testing_callback(void* obj){
+    void testing_callback(void* obj, unsigned long long _){
         // In reality obj would be the object the method should be executed on,
         // but here I 'hijacked' it for the test to be simpler since that's not
         // what's being tested here

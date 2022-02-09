@@ -24,8 +24,11 @@
 using namespace std;
 
 // Callback functions used for timed events (i.e. do this in 10 ticks)
-// They take no parameters and return nothing
-typedef void (*callback_void)(void*);
+// param 1: object pointer (a wrapper function will have to convert it back from void)
+// param 2: current tick
+// NOTE: if any more parameters become neccesary it would be better to create a
+//       struct and pass it as a void ptr
+typedef void (*Callback)(void*, unsigned long long);
 
 class World;
 class PlayerCheckBreaksF;
@@ -143,9 +146,9 @@ public:
 
 
     class {
-        vector<tuple<unsigned long long, callback_void, void*>> queue;
+        vector<tuple<unsigned long long, Callback, void*>> queue;
     public:
-        void add(unsigned long long tick, callback_void callback, void* obj){
+        void add(unsigned long long tick, Callback callback, void* obj){
             std::tuple t(tick, callback, obj);
 
             if(queue.empty()){
@@ -188,7 +191,11 @@ public:
                 if(std::get<0>(queue[i]) <= tick){
                     // i will be incremented again if this was reached
                     // queue[i].second(queue[i].third);
-                    std::get<1>(queue[i])(std::get<2>(queue[i]));
+
+                    // callback executed here
+                    // param 1: void ptr (object)
+                    // param 2: current tick
+                    std::get<1>(queue[i])(std::get<2>(queue[i]), tick);
                 }
                 else break;
             }
