@@ -6,6 +6,11 @@ class Inventory2;
 class ThreadArea;
 
 class Furnace : public BlockDataS<3>{
+// slots:
+//     0: input
+//     1: fuel
+//     2: output
+
 private:
     unsigned long long burnFinish = 0; //0 means no burn
     unsigned long long fuelFinish = 0;

@@ -565,8 +565,6 @@ void Furnace::burnCallback(ThreadArea* tArea){
         slots[2].itemCount++;
     }
     slots[0].itemCount--;
-    if(slots[0].isEmpty())
-        slots[0].makeEmpty();
 
     // if not burning, start next fuel and if no fuel, stop here
     if(fuelFinish != 0){
@@ -580,8 +578,10 @@ void Furnace::burnCallback(ThreadArea* tArea){
         burnFinish += 200;
         tArea->callbacks.add(burnFinish, &burnCallbackWrap, this);
     }
-    else
+    else{
+        slots[0].makeEmpty();
         burnFinish = 0;
+    }
 
 }
 
