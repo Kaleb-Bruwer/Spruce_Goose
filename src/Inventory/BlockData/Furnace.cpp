@@ -571,7 +571,7 @@ void Furnace::clickMode6(int clicked, int btn, Inventory2* inv, AlteredSlots& al
 
 void Furnace::startBurn(ThreadArea* tArea){
     if(fuelFinish == 0)
-        startNextFuel();
+        startNextFuel(tArea);
 
     if(fuelFinish != 0){
         unsigned long long tick = tArea->getTick();
