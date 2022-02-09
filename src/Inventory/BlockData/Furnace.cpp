@@ -34,6 +34,7 @@ vector<Slot> Furnace::clickWindow(ClickWindowRequest request){
     int mode = job->mode;
 
     Slot& hover = inv->hover;
+    Slot oldBurn = slots[0];
 
     // Handle modes that can't be passed down to inventory here
     switch(mode){
@@ -237,7 +238,64 @@ vector<Slot> Furnace::clickWindow(ClickWindowRequest request){
             altered.setOffset(0);
         }
     };
+
+    // Check if a burn must be started or cancelled
+    if(slots[0].isEmpty()){
+        cancelBurn();
+    }
+    else if(!oldBurn.typeMatch(slots[0])){
+        // Note: inputs can be swapped without affecting burn progress,
+        // which is vanilla behaviour
+
+        Crafting* crafting = Crafting::getInstance();
+        Slot expected = crafting->getSmeltingProduct(slots[0]);
+        // New input doesn't smelt
+        if(expected.isEmpty()
+                // Input changed, so check if output still matches
+                || (!slots[2].isEmpty() && expected.typeMatch(slots[2])) ){
+
+            cancelBurn();
+        }
+        else if(burnFinish == 0){
+            startBurn(tArea);
+        }
+        // else two valid inputs were swapped and no action is required
+    }
+    // input didn't change, but check if output got unblocked
+    else if(burnFinish == 0){
+        Crafting* crafting = Crafting::getInstance();
+        Slot expected = crafting->getSmeltingProduct(slots[0]);
+
+        if(slots[2].isEmpty() || expected.typeMatch(slots[2])){
+            startBurn(tArea);
+        }
+    }
+
     return dropped;
+}
+
+void Furnace::startBurn(ThreadArea* tArea){
+    if(fuelFinish == 0)
+        startNextFuel();
+
+    if(fuelFinish != 0){
+        unsigned long long tick = tArea->getTick();
+        burnFinish = tick + 200;
+        // Set callback
+        tArea->callbacks.add(burnFinish, &burnCallbackWrap, this);
+
+        // TODO: window update of some kind
+
+    }
+}
+
+void Furnace::cancelBurn(){
+    if(burnFinish != 0){
+        // TODO: window update of some kind
+    }
+
+    // Stop burn
+    burnFinish = 0;
 }
 
 vector<Slot> Furnace::clickMode2(int clicked, int btn, Inventory2* inv,

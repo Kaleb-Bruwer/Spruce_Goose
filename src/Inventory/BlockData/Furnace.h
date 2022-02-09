@@ -19,6 +19,20 @@ private:
             AlteredSlots &altered, bool creative);
     void clickMode6(int clicked, int btn, Inventory2* inv, AlteredSlots& altered);
     void mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered);
+
+    // These can be called in any order if occuring on same tick
+    void burnCallback(ThreadArea* tArea);
+    void fuelCallback(ThreadArea* tArea);
+
+    // Takes fuel source and sets fuelFinish appropriately
+    // sets fuelFinish to 0 if none available
+    void startNextFuel(ThreadArea* tArea);
+    void startBurn(ThreadArea* tArea);
+    void cancelBurn();
+
+    friend void burnCallbackWrap(void* obj, ThreadArea* tArea);
+    friend void fuelCallbackWrap(void* obj, ThreadArea* tArea);
+
 public:
     Furnace() : BlockDataS<3>(true){};
 
@@ -29,13 +43,6 @@ public:
     BlockData* clone();
     BlockDataType getType(){return FURNACE;};
 
-    // These can be called in any order if occuring on same tick
-    void burnCallback(ThreadArea* tArea);
-    void fuelCallback(ThreadArea* tArea);
-
-    // Takes fuel source and sets fuelFinish appropriately
-    // sets fuelFinish to 0 if none available
-    void startNextFuel(ThreadArea* tArea);
 
 };
 
