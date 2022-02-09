@@ -8,6 +8,8 @@
 #include "BlockDataType.h"
 #include "../../JobTickets/ProtocolToWorld/ClickWindowJob.h"
 
+#include "ClickWindowRequest.h"
+
 using namespace std;
 
 class Inventory2;
@@ -47,7 +49,7 @@ public:
     virtual BlockData* clone() = 0;
 
     //Returns vector of altered slots, which is tracked by InventoryControl
-    virtual vector<Slot> clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative) = 0;
+    virtual vector<Slot> clickWindow(ClickWindowRequest request) = 0;
 };
 
 int tryInsertHalfSlot(Slot& dest, Slot& origin, int stackSize);

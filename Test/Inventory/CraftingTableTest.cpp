@@ -12,6 +12,17 @@ protected:
     Inventory2 inventory2;
     CraftingTable craftingTable;
 
+    void callClickWindow(ClickWindowJob* job, bool creative = false){
+        ClickWindowRequest request;
+        request.job = job;
+        request.inv = &inventory2;
+        request.altered = &altered;
+        request.creative = creative;
+
+        craftingTable.clickWindow(request);
+    }
+
+
     virtual void SetUp(){
 
     };
@@ -105,7 +116,14 @@ protected:
             inventory2.slots[slot-1] = s;
 
         inventory2.hover = h;
-        craftingTable.clickWindow(job, &inventory2, altered, false);
+
+        ClickWindowRequest request;
+        request.job = job;
+        request.inv = &inventory2;
+        request.altered = &altered;
+        request.creative = false;
+
+        craftingTable.clickWindow(request);
 
         Slot sExpect = h;
         Slot hExpect = s;
@@ -145,7 +163,13 @@ protected:
 
         inventory2.hover = h;
 
-        craftingTable.clickWindow(job, &inventory2, altered, false);
+        ClickWindowRequest request;
+        request.job = job;
+        request.inv = &inventory2;
+        request.altered = &altered;
+        request.creative = false;
+
+        craftingTable.clickWindow(request);
 
         Slot sExpect;
         Slot hExpect;
@@ -240,7 +264,8 @@ TEST_F(CraftingTableTest, testMode0Btn0T7){
     craftingTable.slots[slot] = s;
     inventory2.hover = h;
 
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    // callClickWindow(job);
+    callClickWindow(job);
 
     validateInventory(vector<int>(), vector<Slot>(), h);
     validateCraftingTable(vector<int>{slot}, vector<Slot>{s});
@@ -348,7 +373,8 @@ TEST_F(CraftingTableTest, testMode1T1){
     ClickWindowJob* job = initJob(1, 1);
 
     // execute
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    // callClickWindow(job);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9}, vector<Slot>{getStone()}, Slot());
     validateCraftingTable(vector<int>(), vector<Slot>());
@@ -364,7 +390,7 @@ TEST_F(CraftingTableTest, testMode1T2){
     ClickWindowJob* job = initJob(1, 37);
 
     // execute
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9}, vector<Slot>{getStone()}, Slot());
     validateCraftingTable(vector<int>(), vector<Slot>());
@@ -381,7 +407,7 @@ TEST_F(CraftingTableTest, testMode1T3){
     ClickWindowJob* job = initJob(1, 10);
 
     // execute
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{36}, vector<Slot>{getStone()}, Slot());
     validateCraftingTable(vector<int>(), vector<Slot>());
@@ -399,7 +425,7 @@ TEST_F(CraftingTableTest, testMode1T4){
     ClickWindowJob* job = initJob(1, 1);
 
     // execute
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{21}, vector<Slot>{getStone(2)}, Slot());
     validateCraftingTable(vector<int>(), vector<Slot>());
@@ -417,7 +443,7 @@ TEST_F(CraftingTableTest, testMode1T5){
     ClickWindowJob* job = initJob(1, 1);
 
     // execute
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9, 21}, vector<Slot>{getStone(), getStone(64)}, Slot());
     validateCraftingTable(vector<int>(), vector<Slot>());
@@ -435,7 +461,7 @@ TEST_F(CraftingTableTest, testMode1T7){
     ClickWindowJob* job = initJob(1, 1);
 
     // execute
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9, 21}, vector<Slot>{getStone(), getStone(64)}, Slot());
     validateCraftingTable(vector<int>(), vector<Slot>());
@@ -455,7 +481,7 @@ TEST_F(CraftingTableTest, testMode1T8){
     ClickWindowJob* job = initJob(1, 1);
 
     // execute
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     vector<int> pos;
     vector<Slot> item;
@@ -482,7 +508,7 @@ TEST_F(CraftingTableTest, testMode1T10){
     ClickWindowJob* job = initJob(1, 1);
 
     // execute
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{14, 16}, vector<Slot>{getStone(64), getStone(64)}, Slot());
     validateCraftingTable(vector<int>(), vector<Slot>());
@@ -500,7 +526,7 @@ TEST_F(CraftingTableTest, testMode2T1){
     ClickWindowJob* job = initJob(2, 1);
     job->button = 4;
 
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{40}, vector<Slot>{getStone()}, Slot());
     validateCraftingTable(vector<int>(), vector<Slot>());
@@ -515,7 +541,7 @@ TEST_F(CraftingTableTest, testMode2T2){
     ClickWindowJob* job = initJob(2, 1);
     job->button = 1;
 
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>(), vector<Slot>(), Slot());
     validateCraftingTable(vector<int>{1}, vector<Slot>{getStone()});
@@ -531,7 +557,7 @@ TEST_F(CraftingTableTest, testMode2T3){
     ClickWindowJob* job = initJob(2, 41);
     job->button = 1;
 
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{37, 40}, vector<Slot>{getDirt(), getStone()}, Slot());
     validateCraftingTable(vector<int>(), vector<Slot>());
@@ -547,7 +573,7 @@ TEST_F(CraftingTableTest, testMode2T4){
     ClickWindowJob* job = initJob(2, 11);
     job->button = 4;
 
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{10, 40}, vector<Slot>{getDirt(), getStone()}, Slot());
     validateCraftingTable(vector<int>(), vector<Slot>());
@@ -562,7 +588,7 @@ TEST_F(CraftingTableTest, testMode3T1){
     ClickWindowJob* job = initJob(3, 10);
     job->button = 2;
 
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9}, vector<Slot>{getStone()}, Slot());
     validateCraftingTable(vector<int>(), vector<Slot>());
@@ -577,7 +603,7 @@ TEST_F(CraftingTableTest, testMode3T2){
     ClickWindowJob* job = initJob(3, 10);
     job->button = 2;
 
-    craftingTable.clickWindow(job, &inventory2, altered, true);
+    callClickWindow(job, true);
 
     validateInventory(vector<int>{9}, vector<Slot>{getStone()}, getStone(64));
     validateCraftingTable(vector<int>(), vector<Slot>());
@@ -592,7 +618,7 @@ TEST_F(CraftingTableTest, testMode3T3){
     ClickWindowJob* job = initJob(3, 1);
     job->button = 2;
 
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>(), vector<Slot>(), Slot());
     validateCraftingTable(vector<int>{1}, vector<Slot>{getStone()});
@@ -608,7 +634,7 @@ TEST_F(CraftingTableTest, testMode3T4){
     ClickWindowJob* job = initJob(3, 1);
     job->button = 2;
 
-    craftingTable.clickWindow(job, &inventory2, altered, true);
+    callClickWindow(job, true);
 
     validateInventory(vector<int>(), vector<Slot>(), getStone(64));
     validateCraftingTable(vector<int>{1}, vector<Slot>{getStone()});
@@ -626,21 +652,21 @@ TEST_F(CraftingTableTest, testMode5T1){
     // Start left drag
     ClickWindowJob* job = initJob(5, 10);
     job->button = 0;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     // Add items to left drag
     job->slotNum = 10;
     job->button = 1;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     job->slotNum = 11;
     job->button = 1;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     // end drag
     job->slotNum = 11;
     job->button = 2;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
 
     validateInventory(vector<int>{9, 10}, vector<Slot>{getStone(32), getStone(32)}, Slot());
@@ -656,19 +682,19 @@ TEST_F(CraftingTableTest, testMode5T2){
     // Start left drag
     ClickWindowJob* job = initJob(5,10);
     job->button = 0;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     // Add items to left drag
     for(int i=8; i<11; i++){
         job->slotNum = i;
         job->button = 1;
-        craftingTable.clickWindow(job, &inventory2, altered, false);
+        callClickWindow(job);
     }
 
     // end drag
     job->slotNum = 10;
     job->button = 2;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9}, vector<Slot>{getStone(21)}, getStone());
     validateCraftingTable(vector<int>{8,9}, vector<Slot>{getStone(21), getStone(21)});
@@ -684,19 +710,19 @@ TEST_F(CraftingTableTest, testMode5T3){
     // Start left drag
     ClickWindowJob* job = initJob(5,10);
     job->button = 0;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     // Add items to left drag
     for(int i=8; i<12; i++){
         job->slotNum = i;
         job->button = 1;
-        craftingTable.clickWindow(job, &inventory2, altered, false);
+        callClickWindow(job);
     }
 
     // end drag
     job->slotNum = 10;
     job->button = 2;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9, 10}, vector<Slot>{getDirt(), getStone(21)}, getStone());
     validateCraftingTable(vector<int>{8, 9}, vector<Slot>(2, getStone(21)));
@@ -711,19 +737,19 @@ TEST_F(CraftingTableTest, testMode5T4){
     // Start left drag
     ClickWindowJob* job = initJob(5,10);
     job->button = 0;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     // Add items to left drag
     for(int i=8; i<14; i++){
         job->slotNum = i;
         job->button = 1;
-        craftingTable.clickWindow(job, &inventory2, altered, false);
+        callClickWindow(job);
     }
 
     // end drag
     job->slotNum = 13;
     job->button = 2;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9, 10}, vector<Slot>{getStone(), getStone()}, Slot());
     validateCraftingTable(vector<int>{8, 9}, vector<Slot>{getStone(), getStone()});
@@ -738,21 +764,21 @@ TEST_F(CraftingTableTest, testMode5T5){
     // Start right drag
     ClickWindowJob* job = initJob(5);
     job->button = 4;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     // Add items to right drag
     job->slotNum = 9;
     job->button = 5;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     job->slotNum = 10;
     job->button = 5;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     // end drag
     job->slotNum = 10;
     job->button = 6;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9}, vector<Slot>{getStone()}, getStone(62));
     validateCraftingTable(vector<int>{9}, vector<Slot>{getStone()});
@@ -767,19 +793,19 @@ TEST_F(CraftingTableTest, testMode5T6){
     // Start right drag
     ClickWindowJob* job = initJob(5,8);
     job->button = 4;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     // Add items to right drag
     for(int i=8; i<13; i++){
         job->slotNum = i;
         job->button = 5;
-        craftingTable.clickWindow(job, &inventory2, altered, false);
+        callClickWindow(job);
     }
 
     // end drag
     job->slotNum = 12;
     job->button = 6;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9, 10, 11}, vector<Slot>(3, getStone()), getStone(59));
     validateCraftingTable(vector<int>{8, 9}, vector<Slot>{getStone(), getStone()});
@@ -794,19 +820,19 @@ TEST_F(CraftingTableTest, testMode5T7){
     // Start left drag
     ClickWindowJob* job = initJob(5,8);
     job->button = 4;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     // Add items to left drag
     for(int i=8; i<14; i++){
         job->slotNum = i;
         job->button = 5;
-        craftingTable.clickWindow(job, &inventory2, altered, false);
+        callClickWindow(job);
     }
 
     // end drag
     job->slotNum = 13;
     job->button = 6;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9, 10}, vector<Slot>{getStone(), getStone()}, Slot());
     validateCraftingTable(vector<int>{8, 9}, vector<Slot>{getStone(), getStone()});
@@ -822,19 +848,19 @@ TEST_F(CraftingTableTest, testMode5T8){
     // Start right drag
     ClickWindowJob* job = initJob(5, 8);
     job->button = 4;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     // Add items to left drag
     for(int i=8; i<14; i++){
         job->slotNum = i;
         job->button = 5;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+        callClickWindow(job);
     }
 
     // end drag
     job->slotNum = 10;
     job->button = 6;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9, 10, 11, 12}, vector<Slot>(4, getStone()), getStone(59));
     validateCraftingTable(vector<int>{8, 9}, vector<Slot>{getStone(), getDirt()});
@@ -851,10 +877,10 @@ TEST_F(CraftingTableTest, testMode6T1){
     // left click
     ClickWindowJob* job = initJob(0, 10);
     job->button = 0;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     job->mode = 6;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>(), vector<Slot>(), getStone(10));
     validateCraftingTable(vector<int>(), vector<Slot>());
@@ -873,7 +899,7 @@ TEST_F(CraftingTableTest, testCraft1){
 
     ClickWindowJob* job = initJob(0, 1);
     job->button = 1;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     Slot hExpect = Slot(5);
     hExpect.itemCount = 9;
@@ -883,7 +909,7 @@ TEST_F(CraftingTableTest, testCraft1){
     validateCraftingTable(vector<int>{1}, vector<Slot>{Slot(5)});
 
     job->slotNum = 4;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     hExpect.itemCount--;
     Slot sticks = Slot(280);
@@ -895,10 +921,10 @@ TEST_F(CraftingTableTest, testCraft1){
 
     job->slotNum = 10;
     job->button = 0;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     job->slotNum = 0;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     // Pick up result
     validateInventory(vector<int>{9}, vector<Slot>{hExpect}, sticks);
@@ -919,9 +945,9 @@ TEST_F(CraftingTableTest, testCraft2){
 
     ClickWindowJob* job = initJob(0, 5);
     job->button = 1;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
     job->slotNum = 8;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     // Intermediate
     validateInventory(vector<int>{9}, vector<Slot>{cobble}, Slot());
@@ -929,15 +955,15 @@ TEST_F(CraftingTableTest, testCraft2){
 
     job->slotNum = 10;
     job->button = 0;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     job->button = 1;
     job->slotNum = 1;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
     job->slotNum = 2;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
     job->slotNum = 3;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     Slot pickaxe = Slot(274);
 
@@ -948,7 +974,7 @@ TEST_F(CraftingTableTest, testCraft2){
 
     job->button  = 0;
     job->slotNum = 0;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>(), vector<Slot>(), pickaxe);
     validateCraftingTable(vector<int>(), vector<Slot>());
@@ -962,8 +988,8 @@ TEST_F(CraftingTableTest, testCraft3){
 
     ClickWindowJob* job = initJob(0, 1);
     job->button = 1;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
+    callClickWindow(job);
 
     Slot hExpect = Slot(5);
     hExpect.itemCount = 8;
@@ -975,7 +1001,7 @@ TEST_F(CraftingTableTest, testCraft3){
     validateCraftingTable(vector<int>{1}, vector<Slot>{sExpect});
 
     job->slotNum = 4;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     hExpect.itemCount--;
     Slot sticks = Slot(280);
@@ -987,10 +1013,10 @@ TEST_F(CraftingTableTest, testCraft3){
 
     job->slotNum = 10;
     job->button = 0;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     job->slotNum = 0;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     // Pick up result
     validateInventory(vector<int>{9}, vector<Slot>{hExpect}, sticks);
@@ -1006,8 +1032,8 @@ TEST_F(CraftingTableTest, testCraft4){
 
     ClickWindowJob* job = initJob(0, 1);
     job->button = 1;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
+    callClickWindow(job);
 
     Slot hExpect = Slot(5);
     hExpect.itemCount = 8;
@@ -1019,8 +1045,8 @@ TEST_F(CraftingTableTest, testCraft4){
     validateCraftingTable(vector<int>{1}, vector<Slot>{sExpect});
 
     job->slotNum = 4;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
+    callClickWindow(job);
 
     hExpect.itemCount -= 2;
     Slot sticks = Slot(280);
@@ -1032,16 +1058,16 @@ TEST_F(CraftingTableTest, testCraft4){
 
     job->slotNum = 10;
     job->button = 0;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     job->slotNum = 0;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     // Pick up result
     validateInventory(vector<int>{9}, vector<Slot>{hExpect}, sticks);
     validateCraftingTable(vector<int>{1, 4}, vector<Slot>{Slot(5), Slot(5)});
 
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     sticks.itemCount = 8;
     validateInventory(vector<int>{9}, vector<Slot>{hExpect}, sticks);
@@ -1064,9 +1090,9 @@ TEST_F(CraftingTableTest, testCraft5){
 
     ClickWindowJob* job = initJob(0, 5);
     job->button = 1;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
     job->slotNum = 8;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     // Intermediate
     validateInventory(vector<int>{9}, vector<Slot>{cobble}, Slot());
@@ -1074,25 +1100,25 @@ TEST_F(CraftingTableTest, testCraft5){
 
     job->slotNum = 10;
     job->button = 0;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
 
     job->mode = 5;
     job->button = 4;
     job->slotNum = -999;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     job->button = 5;
     job->slotNum = 1;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
     job->slotNum = 2;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
     job->slotNum = 3;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     job->button = 6;
     job->slotNum = -999;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     Slot pickaxe = Slot(270);
 
@@ -1107,7 +1133,7 @@ TEST_F(CraftingTableTest, testCraft5){
     job->mode = 0;
     job->button  = 0;
     job->slotNum = 0;
-    craftingTable.clickWindow(job, &inventory2, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>(), vector<Slot>(), pickaxe);
     validateCraftingTable(vector<int>(), vector<Slot>());

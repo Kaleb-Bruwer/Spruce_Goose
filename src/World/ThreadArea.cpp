@@ -10,6 +10,7 @@
 #include "Chunk/CompressedChunk.h"
 
 #include "../Inventory/BlockData/BlockData.h"
+#include "../Inventory/BlockData/ClickWindowRequest.h"
 
 #include "./Functors/BlockUpdatesF.h"
 #include "./Functors/ChunkCheckBreaksF.h"
@@ -275,11 +276,12 @@ void ThreadArea::includeChunk(JobTicket* j){
 }
 
 void ThreadArea::clickWindowHandler(JobTicket* j, PlayerEntity* player){
-    ClickWindowJob* job = (ClickWindowJob*)j;
-    bool creative = false;
-    if(player->connection->gamemode == 1)
-        creative = true;
-    vector<Slot> dropped = player->inventory.clickWindow(job, creative);
+    ClickWindowRequest request;
+    request.job = (ClickWindowJob*)j;
+    request.creative = (player->connection->gamemode == 1);
+    request.tArea = this;
+
+    vector<Slot> dropped = player->inventory.clickWindow(request);
 
     if(dropped.size() > 0){
         Coordinate<double> dropPos = player->position;

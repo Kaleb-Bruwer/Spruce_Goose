@@ -16,7 +16,7 @@ public:
 
     int getWindowID(){return 0;};
 
-    vector<Slot> clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative);
+    vector<Slot> clickWindow(ClickWindowRequest request);
 
 };
 

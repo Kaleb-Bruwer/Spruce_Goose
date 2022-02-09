@@ -75,8 +75,13 @@ void Inventory2::checkCrafting(AlteredSlots &altered){
 }
 
 
-vector<Slot> Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative){
+vector<Slot> Inventory2::clickWindow(ClickWindowRequest request){
     vector<Slot> dropped;
+
+    // Easiest retrofit after params were changed to a single request object
+    ClickWindowJob* job = request.job;
+    AlteredSlots& altered = *request.altered;
+    bool creative = request.creative;
 
     int i = job->slotNum;
 
@@ -188,11 +193,11 @@ vector<Slot> Inventory2::clickWindow(ClickWindowJob* job, Inventory2* inv, Alter
         //Either movToMain or movToHotbar
         if(i == 0){
             // Check max available space
-            int available = inv->availableSpace(slots[0], 9, 44);
+            int available = availableSpace(slots[0], 9, 44);
 
             // Craft max amount possible
             craft(true, altered, available);
-            inv->mov(slots[0], 44, 9, altered);
+            mov(slots[0], 44, 9, altered);
             altered.add(0, slots[0]);
             checkCrafting(altered);
         }

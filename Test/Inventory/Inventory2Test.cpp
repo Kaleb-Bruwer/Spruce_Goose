@@ -10,6 +10,16 @@ protected:
     AlteredSlots altered;
     Inventory2 inventory2;
 
+    void callClickWindow(ClickWindowJob* job, bool creative = false){
+        ClickWindowRequest request;
+        request.job = job;
+        request.inv = &inventory2;
+        request.altered = &altered;
+        request.creative = creative;
+
+        inventory2.clickWindow(request);
+    }
+
     virtual void SetUp(){
 
     };
@@ -54,7 +64,7 @@ protected:
         inventory2.slots[slot] = s;
         inventory2.hover = h;
 
-        inventory2.clickWindow(job, 0, altered, false);
+        callClickWindow(job);
         validateInventory(vector<int>{slot}, vector<Slot>{h}, s);
 
         delete job;
@@ -68,7 +78,7 @@ protected:
         inventory2.slots[slot] = s;
         inventory2.hover = h;
 
-        inventory2.clickWindow(job, 0, altered, false);
+        callClickWindow(job);
 
         Slot sExpect;
         Slot hExpect;
@@ -119,7 +129,7 @@ protected:
         inventory2.slots[pos] = s;
         inventory2.hover = h;
 
-        inventory2.clickWindow(job, 0, altered, false);
+        callClickWindow(job);
         validateInventory(vector<int>{pos}, vector<Slot>{h}, s);
         delete job;
     }
@@ -164,7 +174,7 @@ TEST_F(Inventory2Test, testMode0Btn0T7){
     inventory2.slots[slot] = s;
     inventory2.hover = h;
 
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
     validateInventory(vector<int>{slot}, vector<Slot>{s}, h);
     delete job;
 }
@@ -256,7 +266,7 @@ TEST_F(Inventory2Test, testMode1T1){
     ClickWindowJob* job = initJob(1);
 
     // execute
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9, 36}, vector<Slot>{Slot(), getStone()}, Slot());
     delete job;
@@ -271,7 +281,7 @@ TEST_F(Inventory2Test, testMode1T2){
     ClickWindowJob* job = initJob(1, 36);
 
     // execute
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9, 36}, vector<Slot>{getStone(), Slot()}, Slot());
     delete job;
@@ -287,7 +297,7 @@ TEST_F(Inventory2Test, testMode1T3){
     ClickWindowJob* job = initJob(1, 36);
 
     // execute
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9, 10, 36}, vector<Slot>{getDirt(), getStone(), Slot()}, Slot());
     delete job;
@@ -303,7 +313,7 @@ TEST_F(Inventory2Test, testMode1T4){
     ClickWindowJob* job = initJob(1, 36);
 
     // execute
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
     validateInventory(vector<int>{9, 14, 36}, vector<Slot>{Slot(), getStone(2), Slot()}, Slot());
     delete job;
 }
@@ -318,7 +328,7 @@ TEST_F(Inventory2Test, testMode1T5){
     ClickWindowJob* job = initJob(1, 36);
 
     // execute
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9, 14, 36}, vector<Slot>{getStone(), getStone(64), Slot()}, Slot());
     delete job;
@@ -335,7 +345,7 @@ TEST_F(Inventory2Test, testMode1T6){
     ClickWindowJob* job = initJob(1, 36);
 
     // execute
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{12, 14, 36}, vector<Slot>{getStone(5), getStone(64), Slot()}, Slot());
     delete job;
@@ -352,7 +362,7 @@ TEST_F(Inventory2Test, testMode1T7){
     ClickWindowJob* job = initJob(1, 36);
 
     // execute
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
     validateInventory(vector<int>{12, 14, 36}, vector<Slot>{getStone(64), getStone(5), Slot()}, Slot());
     delete job;
 }
@@ -369,7 +379,7 @@ TEST_F(Inventory2Test, testMode1T8){
     ClickWindowJob* job = initJob(1, 36);
 
     // execute
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     vector<int> pos;
     vector<Slot> item;
@@ -396,7 +406,7 @@ TEST_F(Inventory2Test, testMode1T9){
     ClickWindowJob* job = initJob(1, 9);
 
     // execute
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     vector<int> pos;
     vector<Slot> item;
@@ -424,7 +434,7 @@ TEST_F(Inventory2Test, testMode1T10){
     ClickWindowJob* job = initJob(1, 36);
 
     // execute
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
     validateInventory(vector<int>{14, 15}, vector<Slot>{getStone(64), getStone(64)}, Slot());
     delete job;
 }
@@ -443,7 +453,7 @@ TEST_F(Inventory2Test, testMode2T1){
     Slot sExpect1 = Slot();
     Slot sExpect2 = getStone();
 
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
     validateInventory(vector<int>{40}, vector<Slot>{getStone()}, Slot());
     delete job;
 }
@@ -460,7 +470,7 @@ TEST_F(Inventory2Test, testMode2T2){
     Slot sExpect1 = Slot();
     Slot sExpect2 = getStone();
 
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
     validateInventory(vector<int>{40}, vector<Slot>{getStone()}, Slot());
     delete job;
 }
@@ -478,7 +488,7 @@ TEST_F(Inventory2Test, testMode2T3){
     Slot sExpect1 = getDirt();
     Slot sExpect2 = getStone();
 
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
     validateInventory(vector<int>{37, 40}, vector<Slot>{getDirt(), getStone()}, Slot());
     delete job;
 }
@@ -496,7 +506,7 @@ TEST_F(Inventory2Test, testMode2T4){
     Slot sExpect1 = getDirt();
     Slot sExpect2 = getStone();
 
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
     validateInventory(vector<int>{10, 40}, vector<Slot>{getDirt(), getStone()}, Slot());
     delete job;
 }
@@ -512,7 +522,7 @@ TEST_F(Inventory2Test, testMode3T1){
     Slot hExpect = Slot();
     Slot sExpect1 = getStone();
 
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
     validateInventory(vector<int>{9}, vector<Slot>{getStone()}, Slot());
     delete job;
 }
@@ -528,7 +538,7 @@ TEST_F(Inventory2Test, testMode3T2){
     Slot hExpect = getStone(64);
     Slot sExpect1 = getStone();
 
-    inventory2.clickWindow(job, 0, altered, true);
+    callClickWindow(job, true);
     validateInventory(vector<int>{9}, vector<Slot>{getStone()}, getStone(64));
     delete job;
 }
@@ -541,21 +551,21 @@ TEST_F(Inventory2Test, testMode5T1){
     // Start left drag
     ClickWindowJob* job = initJob(5);
     job->button = 0;
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     // Add items to left drag
     job->slotNum = 9;
     job->button = 1;
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     job->slotNum = 10;
     job->button = 1;
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     // end drag
     job->slotNum = 10;
     job->button = 2;
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9, 10}, vector<Slot>{getStone(32), getStone(32)}, Slot());
     delete job;
@@ -569,19 +579,19 @@ TEST_F(Inventory2Test, testMode5T2){
     // Start left drag
     ClickWindowJob* job = initJob(5);
     job->button = 0;
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     // Add items to left drag
     for(int i=9; i<12; i++){
         job->slotNum = i;
         job->button = 1;
-        inventory2.clickWindow(job, 0, altered, false);
+        callClickWindow(job);
     }
 
     // end drag
     job->slotNum = 10;
     job->button = 2;
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9, 10, 11}, vector<Slot>{getStone(21), getStone(21), getStone(21)}, getStone());
     delete job;
@@ -596,19 +606,19 @@ TEST_F(Inventory2Test, testMode5T3){
     // Start left drag
     ClickWindowJob* job = initJob(5);
     job->button = 0;
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     // Add items to left drag
     for(int i=9; i<12; i++){
         job->slotNum = i;
         job->button = 1;
-        inventory2.clickWindow(job, 0, altered, false);
+        callClickWindow(job);
     }
 
     // end drag
     job->slotNum = 10;
     job->button = 2;
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9, 10, 11}, vector<Slot>{getStone(32), getDirt(), getStone(32)}, Slot());
     delete job;
@@ -622,20 +632,20 @@ TEST_F(Inventory2Test, testMode5T4){
     // Start left drag
     ClickWindowJob* job = initJob(5);
     job->button = 0;
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     // Add items to left drag
     for(int i=9; i<14; i++){
         job->slotNum = i;
         job->button = 1;
-        inventory2.clickWindow(job, 0, altered, false);
+        callClickWindow(job);
     }
 
     // end drag
     job->slotNum = 10;
     job->button = 2;
 
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9, 10, 11},
         vector<Slot>{getStone(), getStone(), getStone()}, Slot());
@@ -650,21 +660,21 @@ TEST_F(Inventory2Test, testMode5T5){
     // Start left drag
     ClickWindowJob* job = initJob(5);
     job->button = 4;
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     // Add items to left drag
     job->slotNum = 9;
     job->button = 5;
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     job->slotNum = 10;
     job->button = 5;
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     // end drag
     job->slotNum = 10;
     job->button = 6;
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9, 10}, vector<Slot>{getStone(1), getStone(1)}, getStone(62));
     delete job;
@@ -678,19 +688,19 @@ TEST_F(Inventory2Test, testMode5T6){
     // Start left drag
     ClickWindowJob* job = initJob(5);
     job->button = 4;
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     // Add items to left drag
     for(int i=9; i<14; i++){
         job->slotNum = i;
         job->button = 5;
-        inventory2.clickWindow(job, 0, altered, false);
+        callClickWindow(job);
     }
 
     // end drag
     job->slotNum = 10;
     job->button = 6;
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9, 10, 11, 12, 13},
         vector<Slot>{getStone(), getStone(), getStone(), getStone(), getStone()}, getStone(59));
@@ -706,19 +716,19 @@ TEST_F(Inventory2Test, testMode5T7){
     // Start left drag
     ClickWindowJob* job = initJob(5);
     job->button = 4;
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     // Add items to left drag
     for(int i=9; i<14; i++){
         job->slotNum = i;
         job->button = 5;
-        inventory2.clickWindow(job, 0, altered, false);
+        callClickWindow(job);
     }
 
     // end drag
     job->slotNum = 10;
     job->button = 6;
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9, 10, 11, 12},
         vector<Slot>{getStone(), getStone(), getStone(), getStone()}, Slot());
@@ -734,19 +744,19 @@ TEST_F(Inventory2Test, testMode5T8){
     // Start left drag
     ClickWindowJob* job = initJob(5);
     job->button = 4;
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     // Add items to left drag
     for(int i=9; i<14; i++){
         job->slotNum = i;
         job->button = 5;
-        inventory2.clickWindow(job, 0, altered, false);
+        callClickWindow(job);
     }
 
     // end drag
     job->slotNum = 10;
     job->button = 6;
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>{9, 10, 11, 12, 13},
         vector<Slot>{getStone(), getDirt(), getStone(), getStone(), getStone()}, getStone(60));
@@ -763,10 +773,10 @@ TEST_F(Inventory2Test, testMode6T1){
     // left click
     ClickWindowJob* job = initJob(0, 9);
     job->button = 0;
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     job->mode = 6;
-    inventory2.clickWindow(job, 0, altered, false);
+    callClickWindow(job);
 
     validateInventory(vector<int>(), vector<Slot>(), getStone(10));
     delete job;

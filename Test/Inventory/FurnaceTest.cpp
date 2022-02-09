@@ -39,7 +39,13 @@ protected:
         }
 
         AlteredSlots altered;
-        furnace.clickWindow(job, &inventory, altered, false);
+        ClickWindowRequest request;
+        request.job = job;
+        request.inv = &inventory;
+        request.altered = &altered;
+        request.creative = false;
+
+        furnace.clickWindow(request);
         if(slot < 3){
             validateFurnace(furnace, vector<int>{slot}, vector<Slot>{sExpect});
             validateInventory(inventory, vector<int>(), vector<Slot>(), hExpect);
@@ -68,7 +74,13 @@ protected:
         job->slotNum = slot;
 
         AlteredSlots altered;
-        furnace.clickWindow(job, &inventory, altered, false);
+        ClickWindowRequest request;
+        request.job = job;
+        request.inv = &inventory;
+        request.altered = &altered;
+        request.creative = false;
+
+        furnace.clickWindow(request);
 
         Slot sExpect;
         Slot hExpect;

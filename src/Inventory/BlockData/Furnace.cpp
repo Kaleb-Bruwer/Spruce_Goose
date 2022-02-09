@@ -15,12 +15,19 @@ BlockData* Furnace::clone(){
 
 }
 
-vector<Slot> Furnace::clickWindow(ClickWindowJob* job, Inventory2* inv,
-        AlteredSlots &altered, bool creative){
+vector<Slot> Furnace::clickWindow(ClickWindowRequest request){
     // 0: input
     // 1: fuel
     // 2: output
     vector<Slot> dropped;
+
+    // Easiest retrofit after params were changed to a single request object
+    ClickWindowJob* job = request.job;
+    Inventory2* inv = request.inv;
+    AlteredSlots& altered = *request.altered;
+    bool creative = request.creative;
+    ThreadArea* tArea = request.tArea;
+
 
     int clicked = job->slotNum;
     int btn = job->button;
@@ -58,7 +65,7 @@ vector<Slot> Furnace::clickWindow(ClickWindowJob* job, Inventory2* inv,
                 // Between inventory and hotbar
                 altered.setOffset(-6);
                 job->slotNum += 6;
-                inv->clickWindow(job, 0, altered, creative);
+                inv->clickWindow(request);
                 altered.setOffset(0);
                 break;
             }
@@ -226,7 +233,7 @@ vector<Slot> Furnace::clickWindow(ClickWindowJob* job, Inventory2* inv,
         else{
             altered.setOffset(-6);
             job->slotNum += 6;
-            dropped = inv->clickWindow(job, 0, altered, creative);
+            dropped = inv->clickWindow(request);
             altered.setOffset(0);
         }
     };

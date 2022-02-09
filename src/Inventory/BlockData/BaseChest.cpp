@@ -30,10 +30,17 @@ void ChestDouble::splitChest(ChestSingle& c1, ChestSingle& c2){
 }
 
 template <int nSlots>
-vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative){
+vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowRequest request){
     // 0 to nSlots-1 is the chest
     // nSlots to nSlots + 26 is the main inventory
     // nSlots + 27 to nSlots + 35 is the hotbar
+
+    // Easiest retrofit after params were changed to a single request object
+    ClickWindowJob* job = request.job;
+    Inventory2* inv = request.inv;
+    AlteredSlots& altered = *request.altered;
+    bool creative = request.creative;
+
     vector<Slot> dropped;
 
     const int invOffset = nSlots - 9;
@@ -385,7 +392,7 @@ vector<Slot> BaseChest<nSlots>::clickWindow(ClickWindowJob* job, Inventory2* inv
             // Within inventory
             altered.setOffset(invOffset);
             job->slotNum -= invOffset;
-            dropped = inv->clickWindow(job, inv, altered, creative);
+            dropped = inv->clickWindow(request);
             altered.setOffset(0);
         }
         break;

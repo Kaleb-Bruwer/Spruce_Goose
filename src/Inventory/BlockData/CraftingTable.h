@@ -24,8 +24,7 @@ public:
 
     vector<Slot> close(InventoryControl*, AlteredSlots&, Inventory2*);
 
-    // void clickWindow(ClickWindowJob* job, Inventory* inv, bool creative);
-    vector<Slot> clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative);
+    vector<Slot> clickWindow(ClickWindowRequest request);
 
     BlockDataType getType(){return CRAFTINGTABLE;};
 };

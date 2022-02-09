@@ -53,8 +53,14 @@ protected:
                 hExpect.makeEmpty();
         }
 
+        ClickWindowRequest request;
+        request.job = job;
+        request.inv = &inventory;
+        request.altered = &altered;
+        request.creative = false;
 
-        chest.clickWindow(job, &inventory, altered, false);
+        chest.clickWindow(request);
+
         if(slot < 27){
             validateChestSingle(chest, vector<int>{slot}, vector<Slot>{sExpect});
             validateInventory(inventory, vector<int>(), vector<Slot>(), hExpect);
@@ -83,7 +89,13 @@ protected:
         job->button = 1;
         job->slotNum = slot;
 
-        chest.clickWindow(job, &inventory, altered, false);
+        ClickWindowRequest request;
+        request.job = job;
+        request.inv = &inventory;
+        request.altered = &altered;
+        request.creative = false;
+
+        chest.clickWindow(request);
 
         Slot sExpect;
         Slot hExpect;
@@ -313,7 +325,13 @@ protected:
             }
         }
 
-        chest.clickWindow(job, &inventory, altered, false);
+        ClickWindowRequest request;
+        request.job = job;
+        request.inv = &inventory;
+        request.altered = &altered;
+        request.creative = false;
+
+        chest.clickWindow(request);
 
         validateInventory(inventory, invSlots, invItems, hExpect);
         validateChestSingle(chest, chestSlots, chestItems);
@@ -592,7 +610,13 @@ protected:
 
         }
 
-        chest.clickWindow(job, &inv, altered, false);
+        ClickWindowRequest request;
+        request.job = job;
+        request.inv = &inv;
+        request.altered = &altered;
+        request.creative = false;
+
+        chest.clickWindow(request);
         delete job;
 
         validateInventory(inv, invSlots, invItems, hExpect);
@@ -639,7 +663,13 @@ protected:
             }
         }
 
-        vector<Slot> dropped = chest.clickWindow(job, &inv, altered, false);
+        ClickWindowRequest request;
+        request.job = job;
+        request.inv = &inv;
+        request.altered = &altered;
+        request.creative = false;
+
+        vector<Slot> dropped = chest.clickWindow(request);
         delete job;
 
         // Assume there's only one drop
@@ -668,39 +698,45 @@ protected:
         ClickWindowJob* job = new ClickWindowJob();
         AlteredSlots altered;
 
+        ClickWindowRequest request;
+        request.job = job;
+        request.inv = &inv;
+        request.altered = &altered;
+        request.creative = false;
+
         if(!mode){
             // Left mouse drag
             job->mode = 5;
             job->button = 0;
             job->slotNum = -999;
-            chest.clickWindow(job, &inv, altered, false);
+            chest.clickWindow(request);
 
             job->button = 1;
             for(int slot : slots){
                 job->slotNum = slot;
-                chest.clickWindow(job, &inv, altered, false);
+                chest.clickWindow(request);
             }
 
             job->button = 2;
             job->slotNum = -999;
-            chest.clickWindow(job, &inv, altered, false);
+            chest.clickWindow(request);
         }
         else{
             // Right mouse drag
             job->mode = 5;
             job->button = 4;
             job->slotNum = -999;
-            chest.clickWindow(job, &inv, altered, false);
+            chest.clickWindow(request);
 
             job->button = 5;
             for(int slot : slots){
                 job->slotNum = slot;
-                chest.clickWindow(job, &inv, altered, false);
+                chest.clickWindow(request);
             }
 
             job->button = 6;
             job->slotNum = -999;
-            chest.clickWindow(job, &inv, altered, false);
+            chest.clickWindow(request);
         }
         delete job;
     }
@@ -1006,7 +1042,13 @@ TEST_F(BaseChestTest, mode3Test1){
     job->slotNum = 9;
 
     AlteredSlots altered;
-    chest.clickWindow(job, &inv, altered, false);
+    ClickWindowRequest request;
+    request.job = job;
+    request.inv = &inv;
+    request.altered = &altered;
+    request.creative = false;
+
+    chest.clickWindow(request);
 
     validateChestSingle(chest, vector<int>{9}, vector<Slot>{Slot(1)});
     validateInventory(inv, vector<int>(), vector<Slot>(), Slot());
@@ -1027,7 +1069,13 @@ TEST_F(BaseChestTest, mode3Test2){
     job->slotNum = 27;
 
     AlteredSlots altered;
-    chest.clickWindow(job, &inv, altered, false);
+    ClickWindowRequest request;
+    request.job = job;
+    request.inv = &inv;
+    request.altered = &altered;
+    request.creative = false;
+
+    chest.clickWindow(request);
 
     validateChestSingle(chest, vector<int>(), vector<Slot>());
     validateInventory(inv, vector<int>{9}, vector<Slot>{Slot(1)}, Slot());
@@ -1048,7 +1096,13 @@ TEST_F(BaseChestTest, mode3Test3){
     job->slotNum = 9;
 
     AlteredSlots altered;
-    chest.clickWindow(job, &inv, altered, true);
+    ClickWindowRequest request;
+    request.job = job;
+    request.inv = &inv;
+    request.altered = &altered;
+    request.creative = true;
+
+    chest.clickWindow(request);
 
     Slot stoneStack = Slot(1);
     stoneStack.itemCount = 64;
@@ -1072,7 +1126,13 @@ TEST_F(BaseChestTest, mode3Test4){
     job->slotNum = 27;
 
     AlteredSlots altered;
-    chest.clickWindow(job, &inv, altered, true);
+    ClickWindowRequest request;
+    request.job = job;
+    request.inv = &inv;
+    request.altered = &altered;
+    request.creative = true;
+
+    chest.clickWindow(request);
 
     Slot stoneStack = Slot(1);
     stoneStack.itemCount = 64;
@@ -1224,7 +1284,13 @@ TEST_F(BaseChestTest, mode6Test1){
     job->button = 0;
     job->slotNum = 21;
 
-    chest.clickWindow(job, &inv, altered, false);
+    ClickWindowRequest request;
+    request.job = job;
+    request.inv = &inv;
+    request.altered = &altered;
+    request.creative = false;
+
+    chest.clickWindow(request);
 
     Slot stone12 = Slot(1);
     stone12.itemCount = 12;
@@ -1253,7 +1319,13 @@ TEST_F(BaseChestTest, mode6Test2){
     job->button = 0;
     job->slotNum = 21;
 
-    chest.clickWindow(job, &inv, altered, false);
+    ClickWindowRequest request;
+    request.job = job;
+    request.inv = &inv;
+    request.altered = &altered;
+    request.creative = false;
+
+    chest.clickWindow(request);
 
     Slot stone = Slot(1);
     stone.itemCount = 22;
@@ -1285,7 +1357,13 @@ TEST_F(BaseChestTest, mode6Test3){
     job->button = 0;
     job->slotNum = 21;
 
-    chest.clickWindow(job, &inv, altered, false);
+    ClickWindowRequest request;
+    request.job = job;
+    request.inv = &inv;
+    request.altered = &altered;
+    request.creative = false;
+
+    chest.clickWindow(request);
 
     Slot stone = Slot(1);
     stone.itemCount = 64;
@@ -1326,7 +1404,13 @@ TEST_F(BaseChestTest, mode6Test4){
     job->button = 0;
     job->slotNum = 21;
 
-    chest.clickWindow(job, &inv, altered, false);
+    ClickWindowRequest request;
+    request.job = job;
+    request.inv = &inv;
+    request.altered = &altered;
+    request.creative = false;
+
+    chest.clickWindow(request);
 
     Slot stone = Slot(1);
     stone.itemCount = 64;
@@ -1361,7 +1445,13 @@ TEST_F(BaseChestTest, mode6Test5){
     job->button = 0;
     job->slotNum = 21;
 
-    chest.clickWindow(job, &inv, altered, false);
+    ClickWindowRequest request;
+    request.job = job;
+    request.inv = &inv;
+    request.altered = &altered;
+    request.creative = false;
+
+    chest.clickWindow(request);
 
     Slot stone = Slot(1);
     stone.itemCount = 64;
@@ -1396,7 +1486,13 @@ TEST_F(BaseChestTest, mode6Test6){
     job->button = 0;
     job->slotNum = 21;
 
-    chest.clickWindow(job, &inv, altered, false);
+    ClickWindowRequest request;
+    request.job = job;
+    request.inv = &inv;
+    request.altered = &altered;
+    request.creative = false;
+
+    chest.clickWindow(request);
 
     Slot stone = Slot(1);
     stone.itemCount = 64;

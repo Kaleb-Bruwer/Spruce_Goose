@@ -88,9 +88,14 @@ vector<Slot> CraftingTable::close(InventoryControl* invCon, AlteredSlots& altere
 }
 
 
-// void CraftingTable::clickWindow(ClickWindowJob* job, Inventory* inv, bool creative){
-vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative){
+vector<Slot> CraftingTable::clickWindow(ClickWindowRequest request){
     vector<Slot> dropped;
+
+    // Easiest retrofit after params were changed to a single request object
+    ClickWindowJob* job = request.job;
+    Inventory2* inv = request.inv;
+    AlteredSlots& altered = *request.altered;
+    bool creative = request.creative;
 
     int clicked = job->slotNum;
     Slot& hover = inv->hover;
@@ -332,7 +337,7 @@ vector<Slot> CraftingTable::clickWindow(ClickWindowJob* job, Inventory2* inv, Al
         //For some reason, only hotbar changes are recognized from the Crafting table
         altered.hotbarOnly = true;
         job->slotNum--;
-        dropped = inv->clickWindow(job, inv, altered, creative);
+        dropped = inv->clickWindow(request);
         altered.hotbarOnly = false;
     }
 

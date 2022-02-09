@@ -13,21 +13,23 @@
 
 using namespace std;
 
-vector<Slot> InventoryControl::clickWindow(ClickWindowJob* job, bool creative){
+vector<Slot> InventoryControl::clickWindow(ClickWindowRequest request){
+    request.inv = &inventory;
+    request.altered = &alteredSlots;
+
     vector<Slot> dropped;
     if(activeBlock){
-        dropped = activeBlock->clickWindow(job, &inventory, alteredSlots, creative);
+        dropped = activeBlock->clickWindow(request);
     }
     else{
-        dropped = inventory.clickWindow(job, &inventory, alteredSlots, creative);
+        dropped = inventory.clickWindow(request);
     }
 
     ConfirmTransaction* job2 = new ConfirmTransaction();
-    job2->windowID = job->windowID;
-    job2->actionNum = job->actionNum;
+    job2->windowID = request.job->windowID;
+    job2->actionNum = request.job->actionNum;
 
     conn->pushJobToPlayer(job2);
-
     return dropped;
 }
 

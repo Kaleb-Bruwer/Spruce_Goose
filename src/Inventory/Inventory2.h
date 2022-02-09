@@ -45,8 +45,7 @@ public:
     int getWindowID(){return 0;};
     BlockData* clone();
 
-    //Inventory parameter not used, only there for polymorphism
-    vector<Slot> clickWindow(ClickWindowJob*, Inventory2* inv, AlteredSlots &altered, bool creative);
+    vector<Slot> clickWindow(ClickWindowRequest request);
 
     int tryPickup(Item* item, AlteredSlots& altered);
 
