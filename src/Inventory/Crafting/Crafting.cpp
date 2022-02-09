@@ -35,10 +35,12 @@ void Crafting::readFromFile(){
 
     char* array = new char[64000];
     file.read(array, 64000);
+    file.close();
 
     int index =0;
     Tag_Compound tc(array+1,index);
-    file.close();
+    delete [] array;
+
 
     // Populate craftIDToSlot
     Tag_List* items = (Tag_List*) tc.getItem("items");
