@@ -274,30 +274,6 @@ vector<Slot> Furnace::clickWindow(ClickWindowRequest request){
     return dropped;
 }
 
-void Furnace::startBurn(ThreadArea* tArea){
-    if(fuelFinish == 0)
-        startNextFuel();
-
-    if(fuelFinish != 0){
-        unsigned long long tick = tArea->getTick();
-        burnFinish = tick + 200;
-        // Set callback
-        tArea->callbacks.add(burnFinish, &burnCallbackWrap, this);
-
-        // TODO: window update of some kind
-
-    }
-}
-
-void Furnace::cancelBurn(){
-    if(burnFinish != 0){
-        // TODO: window update of some kind
-    }
-
-    // Stop burn
-    burnFinish = 0;
-}
-
 vector<Slot> Furnace::clickMode2(int clicked, int btn, Inventory2* inv,
         AlteredSlots &altered, bool creative){
     // Can assume clicked < 3
@@ -593,6 +569,30 @@ void Furnace::clickMode6(int clicked, int btn, Inventory2* inv, AlteredSlots& al
     }
 }
 
+void Furnace::startBurn(ThreadArea* tArea){
+    if(fuelFinish == 0)
+        startNextFuel();
+
+    if(fuelFinish != 0){
+        unsigned long long tick = tArea->getTick();
+        burnFinish = tick + 200;
+        // Set callback
+        tArea->callbacks.add(burnFinish, &burnCallbackWrap, this);
+
+        // TODO: window update of some kind
+
+    }
+}
+
+void Furnace::cancelBurn(){
+    if(burnFinish != 0){
+        // TODO: window update of some kind
+    }
+
+    // Stop burn
+    burnFinish = 0;
+}
+
 void Furnace::startNextFuel(ThreadArea* tArea){
     // If no more fuel, just finish
     if(slots[1].isEmpty()){
@@ -616,11 +616,12 @@ void Furnace::startNextFuel(ThreadArea* tArea){
 
 
 void Furnace::burnCallback(ThreadArea* tArea){
-    // Failed burn case (if fuel ran out)
+    // Failed burn case (if fuel ran out), dead callback
     if(burnFinish == 0)
         return;
 
     //Add item to result
+    // if output didn't match we wouldn't get this far
     if(slots[2].isEmpty()){
         Crafting* crafting = Crafting::getInstance();
         slots[2] = crafting->getSmeltingProduct(slots[0]);
@@ -631,20 +632,12 @@ void Furnace::burnCallback(ThreadArea* tArea){
     }
     slots[0].itemCount--;
 
-    // if not burning, start next fuel and if no fuel, stop here
-    if(fuelFinish != 0){
-        startNextFuel(tArea);
-    }
-    if(fuelFinish == 0)
-        return;
-
     // If more input, start next smelting
     if(!slots[0].isEmpty()){
-        burnFinish += 200;
-        tArea->callbacks.add(burnFinish, &burnCallbackWrap, this);
+        startBurn(tArea);
     }
     else{
-        slots[0].makeEmpty();
+        slots[0].makeEmpty(); //reminiscent of a bad design choice a long time ago...
         burnFinish = 0;
     }
 
@@ -655,7 +648,7 @@ void Furnace::fuelCallback(ThreadArea* tArea){
 
     // If burn incomplete, start next fuel.
         // if no next fuel, cancel burn instead
-    if(burnFinish != currTick){
+    if(burnFinish > currTick){
         startNextFuel(tArea);
         if(fuelFinish == 0)
             burnFinish = 0;
@@ -664,6 +657,8 @@ void Furnace::fuelCallback(ThreadArea* tArea){
     else{
         fuelFinish = 0;
     }
+    // NOTE: if burnFinish == currTick, there will be another callback to
+    //       burnCallback to handle the rest
 }
 
 void burnCallbackWrap(void* obj, ThreadArea* tArea){
