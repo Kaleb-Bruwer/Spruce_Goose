@@ -6,6 +6,8 @@
 #include "../Crafting/Crafting.h"
 #include "../../General/FuelTable.h"
 
+#include "../../World/ThreadArea.h"
+
 
 using namespace std;
 
@@ -526,7 +528,7 @@ void Furnace::clickMode6(int clicked, int btn, Inventory2* inv, AlteredSlots& al
     }
 }
 
-void Furnace::startNextFuel(unsigned long long currTick){
+void Furnace::startNextFuel(ThreadArea* tArea){
     // If no more fuel, just finish
     if(slots[1].isEmpty()){
         fuelFinish = 0;
@@ -540,20 +542,21 @@ void Furnace::startNextFuel(unsigned long long currTick){
     // fuelFinish = currTick + duration
     if(duration == 0)
         fuelFinish = 0;
-    else
-        fuelFinish = currTick + duration;
-
-    // TODO: Set new fuelCallback
-
+    else{
+        fuelFinish = tArea->getTick() + duration;
+        tArea->callbacks.add(fuelFinish, &fuelCallbackWrap, this);
+    }
 
 }
 
 
-void Furnace::burnCallback(unsigned long long currTick){
-    // TODO: handle failed burn case (if fuel ran out)
+void Furnace::burnCallback(ThreadArea* tArea){
+    // Failed burn case (if fuel ran out)
+    if(burnFinish == 0)
+        return;
 
     //Add item to result
-        if(slots[2].isEmpty()){
+    if(slots[2].isEmpty()){
         Crafting* crafting = Crafting::getInstance();
         slots[2] = crafting->getSmeltingProduct(slots[0]);
         slots[2].itemCount = 1;
@@ -567,7 +570,7 @@ void Furnace::burnCallback(unsigned long long currTick){
 
     // if not burning, start next fuel and if no fuel, stop here
     if(fuelFinish != 0){
-        startNextFuel(currTick);
+        startNextFuel(tArea);
     }
     if(fuelFinish == 0)
         return;
@@ -575,18 +578,20 @@ void Furnace::burnCallback(unsigned long long currTick){
     // If more input, start next smelting
     if(!slots[0].isEmpty()){
         burnFinish += 200;
-        // TODO: Set new burnCallback
+        tArea->callbacks.add(burnFinish, &burnCallbackWrap, this);
     }
     else
         burnFinish = 0;
 
 }
 
-void Furnace::fuelCallback(unsigned long long currTick){
+void Furnace::fuelCallback(ThreadArea* tArea){
+    unsigned long long currTick = tArea->getTick();
+
     // If burn incomplete, start next fuel.
         // if no next fuel, cancel burn instead
     if(burnFinish != currTick){
-        startNextFuel(currTick);
+        startNextFuel(tArea);
         if(fuelFinish == 0)
             burnFinish = 0;
     }
@@ -596,12 +601,12 @@ void Furnace::fuelCallback(unsigned long long currTick){
     }
 }
 
-void burnCallbackWrap(void* obj, unsigned long long currTick){
+void burnCallbackWrap(void* obj, ThreadArea* tArea){
     Furnace* furnace = (Furnace*) obj;
-    furnace->burnCallback(currTick);
+    furnace->burnCallback(tArea);
 }
 
-void fuelCallbackWrap(void* obj, unsigned long long currTick){
+void fuelCallbackWrap(void* obj, ThreadArea* tArea){
     Furnace* furnace = (Furnace*) obj;
-    furnace->fuelCallback(currTick);
+    furnace->fuelCallback(tArea);
 }

@@ -14,7 +14,7 @@ namespace callback_tests{
     // a bool vector wouldn't reveal if a callback was repeatedly called
     std::vector<int> callback_flags;
 
-    void testing_callback(void* obj, unsigned long long _){
+    void testing_callback(void* obj, ThreadArea* _){
         // In reality obj would be the object the method should be executed on,
         // but here I 'hijacked' it for the test to be simpler since that's not
         // what's being tested here
@@ -63,7 +63,7 @@ TEST_F(ThreadAreaCallbacksTest, test1){
 
     memcpy(&obj, &val, 4);
     tArea.callbacks.add(1, &callback_tests::testing_callback, obj);
-    tArea.callbacks.exec_tick(1);
+    tArea.callbacks.exec_tick(1, &tArea);
 
 
     vector<int> expected(5,0);
@@ -81,14 +81,14 @@ TEST_F(ThreadAreaCallbacksTest, test2){
     memcpy(&obj, &val, 4);
     tArea.callbacks.add(1, &callback_tests::testing_callback, obj);
     tArea.callbacks.add(3, &callback_tests::testing_callback, obj);
-    tArea.callbacks.exec_tick(1);
-    tArea.callbacks.exec_tick(2);
+    tArea.callbacks.exec_tick(1, &tArea);
+    tArea.callbacks.exec_tick(2, &tArea);
 
     vector<int> expected(5,0);
     expected[2] = 1;
     assert_flags(expected);
 
-    tArea.callbacks.exec_tick(3);
+    tArea.callbacks.exec_tick(3, &tArea);
     expected[2] = 2;
     assert_flags(expected);
 
@@ -106,13 +106,13 @@ TEST_F(ThreadAreaCallbacksTest, test3){
     val = 3;
     memcpy(&obj, &val, 4);
     tArea.callbacks.add(2, &callback_tests::testing_callback, obj);
-    tArea.callbacks.exec_tick(2);
+    tArea.callbacks.exec_tick(2, &tArea);
 
     vector<int> expected(5,0);
     expected[3] = 1;
     assert_flags(expected);
 
-    tArea.callbacks.exec_tick(5);
+    tArea.callbacks.exec_tick(5, &tArea);
     expected[2] = 1;
     assert_flags(expected);
 
@@ -143,28 +143,28 @@ TEST_F(ThreadAreaCallbacksTest, test4){
     memcpy(&obj, &val, 4);
     tArea.callbacks.add(1, &callback_tests::testing_callback, obj);
 
-    tArea.callbacks.exec_tick(1);
+    tArea.callbacks.exec_tick(1, &tArea);
     vector<int> expected(5,0);
     expected[4] = 1;
     assert_flags(expected);
 
-    tArea.callbacks.exec_tick(2);
+    tArea.callbacks.exec_tick(2, &tArea);
     expected[1] = 1;
     assert_flags(expected);
 
-    tArea.callbacks.exec_tick(3);
+    tArea.callbacks.exec_tick(3, &tArea);
     expected[0] = 1;
     assert_flags(expected);
 
-    tArea.callbacks.exec_tick(4);
+    tArea.callbacks.exec_tick(4, &tArea);
     assert_flags(expected);
 
 
-    tArea.callbacks.exec_tick(5);
+    tArea.callbacks.exec_tick(5, &tArea);
     expected[3] = 1;
     assert_flags(expected);
 
-    tArea.callbacks.exec_tick(6);
+    tArea.callbacks.exec_tick(6, &tArea);
     expected[2] = 1;
     assert_flags(expected);
 
@@ -173,7 +173,7 @@ TEST_F(ThreadAreaCallbacksTest, test4){
 TEST_F(ThreadAreaCallbacksTest, test5){
     ThreadArea tArea = ThreadArea(false);
 
-    tArea.callbacks.exec_tick(2);
+    tArea.callbacks.exec_tick(2, &tArea);
     assert_flags(vector<int>(5,0));
 
 };

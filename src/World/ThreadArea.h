@@ -25,10 +25,10 @@ using namespace std;
 
 // Callback functions used for timed events (i.e. do this in 10 ticks)
 // param 1: object pointer (a wrapper function will have to convert it back from void)
-// param 2: current tick
+// param 2: ThreadArea ptr (to calling ThreadArea)
 // NOTE: if any more parameters become neccesary it would be better to create a
 //       struct and pass it as a void ptr
-typedef void (*Callback)(void*, unsigned long long);
+typedef void (*Callback)(void*, ThreadArea*);
 
 class World;
 class PlayerCheckBreaksF;
@@ -144,6 +144,7 @@ public:
     void addEntity(Entity* e);
     Entity* getEntity(int eid);
 
+    unsigned long long getTick(){return tickNum;};
 
     class {
         vector<tuple<unsigned long long, Callback, void*>> queue;
@@ -183,7 +184,7 @@ public:
         }
 
         // This class doesn't track ticks, instead it's passed from ThreadArea
-        void exec_tick(unsigned long long tick){
+        void exec_tick(unsigned long long tick, ThreadArea* tA){
             int i = 0;
 
             for(; i<queue.size(); i++){
@@ -194,8 +195,8 @@ public:
 
                     // callback executed here
                     // param 1: void ptr (object)
-                    // param 2: current tick
-                    std::get<1>(queue[i])(std::get<2>(queue[i]), tick);
+                    // param 2: this
+                    std::get<1>(queue[i])(std::get<2>(queue[i]), tA);
                 }
                 else break;
             }
