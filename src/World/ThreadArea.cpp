@@ -167,6 +167,7 @@ void ThreadArea::run(){
         entities.sendPlayerPos();
 
         inventoryUpdates();
+        callbacks.exec_tick(tickNum, this);
         //Physics happens here
 
         //Send data
