@@ -146,6 +146,11 @@ public:
 
     unsigned long long getTick(){return tickNum;};
 
+    void setTick(unsigned long long t){
+        cout << "WARNING: testing function ThreadArea::setTick in use\n";
+        tickNum  = t;
+    };
+
     class {
         vector<tuple<unsigned long long, Callback, void*>> queue;
     public:

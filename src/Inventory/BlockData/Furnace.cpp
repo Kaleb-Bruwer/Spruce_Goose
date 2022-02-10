@@ -610,6 +610,9 @@ void Furnace::startNextFuel(ThreadArea* tArea){
     else{
         fuelFinish = tArea->getTick() + duration;
         tArea->callbacks.add(fuelFinish, &fuelCallbackWrap, this);
+        slots[1].itemCount--;
+        if(slots[1].isEmpty())
+            slots[1].makeEmpty();
     }
 
 }
@@ -620,15 +623,20 @@ void Furnace::burnCallback(ThreadArea* tArea){
     if(burnFinish == 0)
         return;
 
+    Crafting* crafting = Crafting::getInstance();
+    Slot expected = crafting->getSmeltingProduct(slots[0]);
+
     //Add item to result
-    // if output didn't match we wouldn't get this far
     if(slots[2].isEmpty()){
-        Crafting* crafting = Crafting::getInstance();
-        slots[2] = crafting->getSmeltingProduct(slots[0]);
+        slots[2] = expected;
         slots[2].itemCount = 1;
     }
-    else{
+    else if(expected.typeMatch(slots[2])){
         slots[2].itemCount++;
+    }
+    else{
+        burnFinish = 0;
+        return;
     }
     slots[0].itemCount--;
 

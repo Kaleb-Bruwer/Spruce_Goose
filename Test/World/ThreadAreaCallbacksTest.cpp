@@ -30,7 +30,7 @@ namespace callback_tests{
 }
 
 class ThreadAreaCallbacksTest : public ::testing::Test{
-    private:
+private:
     virtual void SetUp(){
         callback_tests::callback_flags = vector<int>(5,0);
     };
