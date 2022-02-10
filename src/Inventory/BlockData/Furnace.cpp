@@ -623,6 +623,7 @@ void Furnace::burnCallback(ThreadArea* tArea){
     if(burnFinish == 0)
         return;
 
+    altered = true;
     Crafting* crafting = Crafting::getInstance();
     Slot expected = crafting->getSmeltingProduct(slots[0]);
 
@@ -653,6 +654,8 @@ void Furnace::burnCallback(ThreadArea* tArea){
 
 void Furnace::fuelCallback(ThreadArea* tArea){
     unsigned long long currTick = tArea->getTick();
+
+    altered = true;
 
     // If burn incomplete, start next fuel.
         // if no next fuel, cancel burn instead

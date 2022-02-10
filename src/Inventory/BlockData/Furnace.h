@@ -36,6 +36,10 @@ private:
 public:
     Furnace() : BlockDataS<3>(true){};
 
+    // Used for EntityStore to know when to send window updates
+    // This is only for callbacks, clickWindow handles its own updates
+    bool altered = false;
+
     int getWindowID(){return 2;};
 
     vector<Slot> clickWindow(ClickWindowRequest request);

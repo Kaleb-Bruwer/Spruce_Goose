@@ -2,6 +2,7 @@
 
 #include "../JobTickets/WorldToProtocol/EntityMove.h"
 #include "../JobTickets/WorldToProtocol/DestroyEntityJob.h"
+#include "../JobTickets/WorldToProtocol/SendWindowItem.h"
 
 #include "../JobTickets/SendPacket.h"
 
@@ -389,6 +390,8 @@ void EntityStore::sendPlayerPos(){
 }
 
 void EntityStore::windowPropertyUpdate(unsigned long long tick){
+    set<Furnace*> resetAltered;
+
     for(int i=0; i<players.size(); i++){
         BlockData* b = players[i]->inventory.getActiveBlock();
         if(!b)
@@ -401,13 +404,30 @@ void EntityStore::windowPropertyUpdate(unsigned long long tick){
             unsigned long long burnFinish = furnace->getBurnFinish();
             unsigned long long fuelFinish = furnace->getFuelFinish();
 
-            if(burnFinish != 0){
+            if(furnace->altered){
+                // Send a full update
                 writer.writeWindowProperty(0, 0, burnFinish - tick);
+                writer.writeWindowProperty(0, 1, min((int) (fuelFinish - tick), 200));
+
+                SendWindowItem* job = new SendWindowItem();
+                job->addSlot(0, furnace->slots[0]);
+                job->addSlot(1, furnace->slots[1]);
+                job->addSlot(2, furnace->slots[2]);
+                players[i]->pushJobToProtocol(new SendPacket(&writer));
+
+                resetAltered.insert(furnace);
+            }
+            else{
+                // might need update on ui elements
+                if(burnFinish != 0){
+                    writer.writeWindowProperty(0, 0, burnFinish - tick);
+                }
+
+                if(fuelFinish != 0){
+                    writer.writeWindowProperty(0, 1, min((int) (fuelFinish - tick), 200));
+                }
             }
 
-            if(fuelFinish != 0){
-                writer.writeWindowProperty(0, 1, min((int) (fuelFinish - tick), 200));
-            }
 
             if(writer.getIndex() > 0){
                 players[i]->pushJobToProtocol(new SendPacket(&writer));
@@ -415,6 +435,11 @@ void EntityStore::windowPropertyUpdate(unsigned long long tick){
 
             break;
         }
+    }
+
+    // This is neccesary for in case multiple players have the same furnace open
+    for(auto it = resetAltered.begin(); it != resetAltered.end(); it++){
+        (*it)->altered = false;
     }
 }
 
