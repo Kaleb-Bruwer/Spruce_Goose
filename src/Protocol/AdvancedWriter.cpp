@@ -411,3 +411,13 @@ void AdvancedWriter::writeCloseWindow(short windowID){
 
     addMsgLen();
 }
+
+void AdvancedWriter::writeWindowProperty(short windowID, short property, short value){
+    writePacketID(0x31);
+
+    baseThis << (unsigned char) windowID;
+    baseThis << (short) property;
+    baseThis << (short) value;
+
+    addMsgLen();
+}

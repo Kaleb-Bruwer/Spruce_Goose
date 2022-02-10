@@ -25,6 +25,7 @@ public:
     void openBlock(BlockData* b);
     vector<Slot> closeBlock(bool byPlayer = true);
 
+    BlockData* getActiveBlock(){return activeBlock;};
 
     void create(PlayerConnection* c){
         conn = c;

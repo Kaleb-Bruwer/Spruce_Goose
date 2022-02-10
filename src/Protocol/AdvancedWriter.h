@@ -60,4 +60,6 @@ public:
     void writeOpenWindow(short windowID, short invType, string title, int numSlots, bool useTitle, int eid = -1);
     bool writeWindowItems(Inventory2* inv, BlockData* b, short windowID);
     void writeCloseWindow(short windowID);
+    void writeWindowProperty(short windowID, short property, short value);
+
 };

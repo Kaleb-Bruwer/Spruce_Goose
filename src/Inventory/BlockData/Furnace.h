@@ -43,6 +43,9 @@ public:
     BlockData* clone();
     BlockDataType getType(){return FURNACE;};
 
+    unsigned long long getBurnFinish(){return burnFinish;};
+    unsigned long long getFuelFinish(){return fuelFinish;};
+
 
 };
 

@@ -60,6 +60,9 @@ public:
     //updates about external players will be sent from their thread
     void sendPlayerPos();
 
+    // Sends window property updates to players where needed (i.e. furnace UI)
+    void windowPropertyUpdate(unsigned long long tick);
+
     //Execute functor on all contained Entities (excludes outside players)
     void executeFunctorAll(Functor<Entity*> &f);
     //Execute functor on all contained players
