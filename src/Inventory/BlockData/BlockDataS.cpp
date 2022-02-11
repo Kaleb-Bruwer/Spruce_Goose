@@ -4,44 +4,11 @@
 
 using namespace std;
 
+template class BlockDataS<3>;  //Furnace
 template class BlockDataS<10>; //Crafting table
 template class BlockDataS<27>; //Single chest
 template class BlockDataS<45>; //Inventory
-
-template <int nSlots>
-int BlockDataS<nSlots>::tryInsertHalfSlot(Slot& dest, Slot& origin, int stackSize){
-    if(origin.isEmpty() || dest.isEmpty())
-        return 0;
-
-    if(!origin.typeMatch(&dest))
-        return 0;
-
-    int canTake = stackSize = dest.itemCount;
-    if(canTake <= 0)
-        return 0;
-
-    int willTake = min(canTake, (int) origin.itemCount);
-    dest.itemCount += willTake;
-    origin.itemCount -= willTake;
-
-    if(origin.itemCount == 0)
-        origin.makeEmpty();
-
-    return willTake;
-}
-
-template <int nSlots>
-int BlockDataS<nSlots>::tryInsertEmptySlot(Slot& dest, Slot& origin, int stackSize){
-    if(!dest.isEmpty() || origin.isEmpty())
-        return 0;
-
-    int willTake = min(stackSize, (int)origin.itemCount);
-    dest = origin;
-    dest.itemCount = willTake;
-    origin.itemCount -= willTake;
-
-    return willTake;
-}
+template class BlockDataS<54>; //Double chest
 
 // template <int nSlots>
 // bool BlockDataS<nSlots>::mov(Slot& origin, Inventory2* inv, int slotOffset){
@@ -72,7 +39,15 @@ int BlockDataS<nSlots>::mov(Slot& origin, int start, int end, AlteredSlots &alte
     int startCount = origin.itemCount;
 
     movHalf(origin, start, end, altered);
-    movEmpty(origin, start, end, altered);
+
+    if(origin.isEmpty())
+        origin.makeEmpty();
+    else{
+        movEmpty(origin, start, end, altered);
+        if(origin.isEmpty())
+            origin.makeEmpty();
+    }
+
 
     return startCount - origin.itemCount;
 }
@@ -126,4 +101,26 @@ int BlockDataS<nSlots>::movEmpty(Slot& origin, int start, int end, AlteredSlots 
     }
 
     return startCount - origin.itemCount;
+}
+
+template <int nSlots>
+int BlockDataS<nSlots>::availableSpace(Slot in, int start, int end){
+    int total = 0;
+
+    int m = in.maxStackSize();
+    if(end < start){
+        int temp = start;
+        start = end;
+        end = temp;
+    }
+
+    for(int i= start; i<=end; i++){
+        if(slots[i].isEmpty()){
+            total += m;
+        }
+        else if(slots[i].typeMatch(in)){
+            total += m - slots[i].itemCount;
+        }
+    }
+    return total;
 }

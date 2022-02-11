@@ -10,6 +10,7 @@
 #include "Chunk/CompressedChunk.h"
 
 #include "../Inventory/BlockData/BlockData.h"
+#include "../Inventory/BlockData/ClickWindowRequest.h"
 
 #include "./Functors/BlockUpdatesF.h"
 #include "./Functors/ChunkCheckBreaksF.h"
@@ -138,8 +139,6 @@ void ThreadArea::join(){
 void ThreadArea::run(){
     synchedArea->addThreadArea();
 
-    int tick = 0;
-
     int uspt = 0;
     int usptI = 0;
 
@@ -168,6 +167,10 @@ void ThreadArea::run(){
         entities.sendPlayerPos();
 
         inventoryUpdates();
+        callbacks.exec_tick(tickNum, this);
+
+        // Furnace UI updates
+        entities.windowPropertyUpdate(tickNum);
         //Physics happens here
 
         //Send data
@@ -184,11 +187,13 @@ void ThreadArea::run(){
         }
 
         synchronize();
-        //synchedArea->sync();
+        tickNum++;
     }
 }
 
 void ThreadArea::loop(){
+    // I don't think this is being used, but I'll leave it alone for now
+
     //includeChunks();
     synchronize();
 }
@@ -275,17 +280,32 @@ void ThreadArea::includeChunk(JobTicket* j){
 }
 
 void ThreadArea::clickWindowHandler(JobTicket* j, PlayerEntity* player){
-    ClickWindowJob* job = (ClickWindowJob*)j;
-    bool creative = false;
-    if(player->connection->gamemode == 1)
-        creative = true;
-    player->inventory.clickWindow(job, creative);
+    ClickWindowRequest request;
+    request.job = (ClickWindowJob*)j;
+    request.creative = (player->connection->gamemode == 1);
+    request.tArea = this;
+
+    vector<Slot> dropped = player->inventory.clickWindow(request);
+
+    if(dropped.size() > 0){
+        Coordinate<double> dropPos = player->position;
+        dropPos.y += 1;
+        for(Slot s : dropped){
+            dropSlot(s, dropPos);
+        }
+    }
 }
 
 void ThreadArea::closeWindowHandler(JobTicket* j, PlayerEntity* player){
     CloseWindowJob* job = (CloseWindowJob*) j;
-    if(job->windowID == 0){
-        player->inventory.closeBlock();
+
+    vector<Slot> dropped = player->inventory.closeBlock();
+    if(dropped.size() > 0){
+        Coordinate<double> dropPos = player->position;
+        dropPos.y += 1;
+        for(Slot s : dropped){
+            dropSlot(s, dropPos);
+        }
     }
 }
 
@@ -839,6 +859,18 @@ Coordinate<int> ThreadArea::getTargetBlock(Coordinate<double> head, int pitch, i
 
 }
 
+void ThreadArea::dropSlot(Slot slot, Coordinate<double> pos){
+    if(slot.isEmpty())
+        return;
+
+    Item* item = new Item(slot);
+    item->setPos(pos);
+
+    newItemToPlayers(item);
+    entities.addEntity(item);
+}
+
+
 void ThreadArea::startDigging(PlayerEntity* player, Coordinate<int> pos){
     //Meant for survival mode
 
@@ -851,7 +883,7 @@ void ThreadArea::startDigging(PlayerEntity* player, Coordinate<int> pos){
     if(block.id == 0)
         return;
 
-    Slot* tool = player->inventory.getHeldItem();
+    Slot tool = player->inventory.getHeldItem();
     //breakSpeed is fraction of block broke per tick
     float breakSpeed = block.getBreakSpeed(tool);
 
@@ -864,10 +896,18 @@ void ThreadArea::startDigging(PlayerEntity* player, Coordinate<int> pos){
     if(player->breakCooldown == 0){
         if(numTicks <= 1){//instamine
             //Drop item
-            Item* drop = new Item(block, pos);
-            newItemToPlayers(drop);
-            entities.addEntity(drop);
-            c->setBlock(pos, Block(0));
+            // Item* drop = new Item(block, pos);
+            // newItemToPlayers(drop);
+            // entities.addEntity(drop);
+
+            vector<Item*> drops = c->breakBlock(pos, player->inventory.getHeldItem());
+            for(int i=0; i<drops.size(); i++){
+                newItemToPlayers(drops[i]);
+                entities.addEntity(drops[i]);
+            }
+
+            // c->setBlock(pos, Block(0));
+
         }
         else{ //normal mine
             player->isBreaking = true;
@@ -928,18 +968,15 @@ void ThreadArea::handlePlayerDigging(JobTicket* j){
 
     case 3: //Drop item stack
     {
-        Slot* slot = player->inventory.getHeldItem();
-        if(!slot)
+        Slot slot = player->inventory.getHeldItem();
+        if(slot.isEmpty())
             return;
-        Item* item = new Item(*slot);
 
-        item->setPos(player->position);
-        item->position.y += 1;
+        Coordinate<double> dropPos = player->position;
+        dropPos.y += 1;
+        dropSlot(slot, dropPos);
+
         player->inventory.clearSlot(player->inventory.inventory.cursor);
-        // player->inventory.setSlot(player->inventory.inventory.cursor, 0);
-
-        newItemToPlayers(item);
-        entities.addEntity(item);
 
         //respond to player
         SendWindowItem* inventoryJob = new SendWindowItem();
@@ -951,25 +988,26 @@ void ThreadArea::handlePlayerDigging(JobTicket* j){
     }
     case 4: //Drop item
     {
-        Slot* slot = player->inventory.getHeldItem();
-        if(!slot)
+        Slot slot = player->inventory.getHeldItem();
+        if(slot.isEmpty())
             return;
-        Item* item = new Item(*slot);
 
-        item->setPos(player->position);
-        item->position.y += 1;
-        item->count = 1;
-        slot->itemCount--;
-        if(slot->itemCount == 0)
-            player->inventory.clearSlot(player->inventory.inventory.cursor);
-            // player->inventory.setSlot(player->inventory.inventory.cursor, 0);
+        Coordinate<double> dropPos = player->position;
+        dropPos.y += 1;
 
-        newItemToPlayers(item);
-        entities.addEntity(item);
+        int itemCount = slot.itemCount;
+        slot.itemCount = 1;
+        dropSlot(slot, dropPos);
+        slot.itemCount = itemCount - 1;
+
+        if(slot.isEmpty())
+            slot.makeEmpty();
+
+        player->inventory.setSlot(player->inventory.inventory.cursor, slot);
 
         //respond to player
         SendWindowItem* inventoryJob = new SendWindowItem();
-        Slot tempSlot = *player->inventory.getHeldItem();
+        Slot tempSlot = player->inventory.getHeldItem();
         inventoryJob->addSlot(player->inventory.inventory.cursor, tempSlot);
         player->connection->pushJobToPlayer(inventoryJob);
 
@@ -985,11 +1023,11 @@ void ThreadArea::handleplayerBlock(JobTicket* j, PlayerEntity* player){
     PlayerBlockPlace* job = (PlayerBlockPlace*)j;
 
     // Check if player is holding a placeable block
-    Slot* s = player->inventory.getHeldItem();
-    if(!s)
+    Slot s = player->inventory.getHeldItem();
+    if(s.isEmpty())
         return;
 
-    Block block(*s);
+    Block block(s);
     if(block.id == 0)
         return;
 
@@ -997,7 +1035,8 @@ void ThreadArea::handleplayerBlock(JobTicket* j, PlayerEntity* player){
     if(!player->crouching && getBlockData(job->pos))
         return;
 
-
+    // Check if current block is replacable (i.e. snow)
+    // This also depends on what is being placed (snow compounds on snow)
 
     switch(job->direction){
     case -1:

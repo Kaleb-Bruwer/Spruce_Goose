@@ -5,25 +5,32 @@
 #include "../JobTickets/WorldToProtocol/SendWindowItem.h"
 #include "../JobTickets/WorldToProtocol/ConfirmTransaction.h"
 #include "../JobTickets/WorldToProtocol/OpenCloseWindow.h"
+#include "../JobTickets/SendPacket.h"
+
+#include "../Protocol/AdvancedWriter.h"
 
 #include <algorithm>
 
 using namespace std;
 
-void InventoryControl::clickWindow(ClickWindowJob* job, bool creative){
+vector<Slot> InventoryControl::clickWindow(ClickWindowRequest request){
+    request.inv = &inventory;
+    request.altered = &alteredSlots;
+
+    vector<Slot> dropped;
     if(activeBlock){
-        activeBlock->clickWindow(job, &inventory, alteredSlots, creative);
+        dropped = activeBlock->clickWindow(request);
     }
     else{
-        inventory.clickWindow(job, &inventory, alteredSlots, creative);
+        dropped = inventory.clickWindow(request);
     }
 
     ConfirmTransaction* job2 = new ConfirmTransaction();
-    job2->windowID = job->windowID;
-    job2->actionNum = job->actionNum;
+    job2->windowID = request.job->windowID;
+    job2->actionNum = request.job->actionNum;
 
     conn->pushJobToPlayer(job2);
-
+    return dropped;
 }
 
 
@@ -46,49 +53,70 @@ void InventoryControl::openBlock(BlockData* b){
     if(activeBlock)
         closeBlock();
 
-    activeBlock = b;
-    b->open(this);
-    windowID = b->getWindowID();
+    // Non-sharable blocks like crafting tables get their own copy for each player
+    if(b->getSharable())
+        activeBlock = b;
+    else
+        activeBlock = b->clone();
 
-    OpenCloseWindow* job = new OpenCloseWindow();
-    job->open = true;
-    job->windowID = windowID;
+    activeBlock->open(this);
+    windowID = activeBlock->getWindowID();
 
-    switch(job->windowID){
-    case 0:
-        job->name = "Chest";
-        job->numSlots = 27;
+    string title;
+    short int numSlots = 0;
+
+    switch(activeBlock->getType()){
+    case CHESTSINGLE:
+        title = "Chest";
+        numSlots = 27;
         break;
-
-    case 1:
-        job->name = "Crafting Table";
-        job->numSlots = 10;
+    case CHESTDOUBLE:
+        title = "Chest";
+        numSlots = 54;
         break;
-
+    case CRAFTINGTABLE:
+        title = "Crafting table";
+        numSlots = 10;
     }
 
-    conn->pushJobToPlayer(job);
+    // If applicable, send contents of block
+    AdvancedWriter writer;
+
+
+    // OpenWindow and Window Items must have the same window ID, not to be
+    // confused with the window type
+    short winID = 1;
+    writer.writeOpenWindow(winID, windowID, title, numSlots, false);
+    bool didWrite = writer.writeWindowItems(&inventory, b, winID);
+
+    conn->pushJobToPlayer(new SendPacket(&writer));
+    // // conn->pushJobToPlayer(job);
+    // if(didWrite){
+    //     cout << "Sending window items\n";
+    // }
+
 }
 
-
-
-void InventoryControl::closeBlock(bool byPlayer){
+vector<Slot> InventoryControl::closeBlock(bool byPlayer){
+    vector<Slot> dropped;
     if(!activeBlock){
         //inventory
-        inventory.close(alteredSlots);
+        dropped = inventory.close(this, alteredSlots, &inventory);
         sendWindowUpdate();
-        return;
-    }
-
-    // In old Inventory, I sent an OpenCloseWindow job if !byPlayer
-
-    if(byPlayer){
+        return dropped;
+    } // In old Inventory, I sent an OpenCloseWindow job if !byPlayer
+    else if(byPlayer){
         //In the other case, this gets called from BlockData's destructor
-    //So it isn't explicitly closed since it's already getting deleted
-    //and currently using the vector it keeps Inventories in
-        activeBlock->close(this);
+        //So it isn't explicitly closed since it's already getting deleted
+        //and currently using the vector it keeps Inventories in
+        dropped = activeBlock->close(this, alteredSlots, &inventory);
+        sendWindowUpdate();
     }
+    if(!activeBlock->getSharable())
+        delete activeBlock;
+
     activeBlock = 0;
     windowID = -1;
 
+    return dropped;
 }

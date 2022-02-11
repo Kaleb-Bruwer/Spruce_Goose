@@ -11,14 +11,22 @@ class Inventory2;
 class CraftingTable : public BlockDataS<10>{
 protected:
     //uses inv for addAlteredSlot
-    void craft(bool max, AlteredSlots &altered);
+    void craft(bool max, AlteredSlots &altered, int m = 0);
     void checkCrafting(AlteredSlots &altered);
+
+    void mouseDrag(ClickWindowJob* job, Inventory2* inv, AlteredSlots & altered);
 public:
+    CraftingTable() : BlockDataS<10>(false){};
+
+
     int getWindowID(){return 1;};
     BlockData* clone();
 
-    // void clickWindow(ClickWindowJob* job, Inventory* inv, bool creative);
-    void clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative);
+    vector<Slot> close(InventoryControl*, AlteredSlots&, Inventory2*);
+
+    vector<Slot> clickWindow(ClickWindowRequest request);
+
+    BlockDataType getType(){return CRAFTINGTABLE;};
 };
 
 #endif

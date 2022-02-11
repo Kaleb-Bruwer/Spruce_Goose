@@ -4,12 +4,10 @@
 #include <mutex>
 #include <map>
 
-using namespace std;
-
 class ToolSpeedTable{
 private:
 
-    map<int, float> table = {
+    std::map<int, float> table = {
         {269, 2}, //wood tools
         {270, 2},
         {271, 2},
@@ -47,7 +45,7 @@ private:
     ToolSpeedTable(){};
 
     inline static ToolSpeedTable* instance = 0;
-    inline static mutex constructMutex;
+    inline static std::mutex constructMutex;
 public:
     static ToolSpeedTable* getInstance();
 

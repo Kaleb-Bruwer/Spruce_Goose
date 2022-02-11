@@ -13,12 +13,12 @@
 #include "ChunkSection.h"
 #include "ChunkChangeTracker.h"
 #include "../../Inventory/BlockData/BlockData.h"
-#include "../../Inventory/BlockData/Chest.h"
-#include "../../Inventory/BlockData/CraftingTable.h"
 
-using namespace std;
+#include "ChestDoubleWrapper.h"
 
 class ThreadArea;
+class Item;
+class ChestSingle;
 
 //IMPORTANT: if logChanges==false, then players will not see each other's
 //block changes.
@@ -42,34 +42,16 @@ protected:
     ChunkChangeTracker changes;
     list<pair<int, Coordinate<int>>> pendingBreaks;
     map<Coordinate<int>, BlockData*> blockData;
+    map<Coordinate<int>, ChestDoubleWrapper*> doubleChests;
 
     void commonConstructor();
 
-    //Creates the appropriate BlockData object for provided block
-    //returns 0 if none needed
-    BlockData* makeBlockData(Block b){
-        switch(b.id){
-            case 54:
-            case 146:
-                return new Chest();
-            case 58:
-                return new CraftingTable();
-            case 61:
-            case 62:
-                //furnace
-            case 23:
-            case 158:
-                //Dispenser / dropper
-            case 116:
-                //enchantment table
-                break;
-        }
-        //Most cases will be a 0
-        return 0;
-    };
     //Handles entire deal
+    void makeChest(Coordinate<int> coord, ChestSingle* chest);
     void makeBlockData(Coordinate<int>, Block b);
     void makeBlockData(Coordinate<int>, BlockData* bd);
+
+    void combineDoubleChests();
 
     friend class ThreadArea;
 public:
@@ -86,6 +68,11 @@ public:
 
     Block getBlock(Coordinate<int> coord);
     void setBlock(Coordinate<int> coord, Block block);
+
+    vector<Item*> breakBlock(Coordinate<int> coord, Slot tool);
+
+    // Was originally intended for use in world generation, back when I thought
+    // world generation was a good idea
     void setBlockRange(Coordinate<int> coord1, Coordinate<int> coord2, Block block);
 
     void activateChangeLog();

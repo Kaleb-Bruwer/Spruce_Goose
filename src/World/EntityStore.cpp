@@ -2,10 +2,14 @@
 
 #include "../JobTickets/WorldToProtocol/EntityMove.h"
 #include "../JobTickets/WorldToProtocol/DestroyEntityJob.h"
+#include "../JobTickets/WorldToProtocol/SendWindowItem.h"
 
 #include "../JobTickets/SendPacket.h"
 
 #include "../Protocol/PacketWriterOld.h"
+#include "../Protocol/AdvancedWriter.h"
+
+#include "../Inventory/BlockData/Furnace.h"
 
 #include "./Functors/GetAllF.h"
 
@@ -384,6 +388,61 @@ void EntityStore::sendPlayerPos(){
     }
 
 }
+
+void EntityStore::windowPropertyUpdate(unsigned long long tick){
+    set<Furnace*> resetAltered;
+
+    for(int i=0; i<players.size(); i++){
+        BlockData* b = players[i]->inventory.getActiveBlock();
+        if(!b)
+            continue;
+
+        switch(b->getType()){
+        case FURNACE:
+            Furnace* furnace = (Furnace*) b;
+            AdvancedWriter writer;
+            unsigned long long burnFinish = furnace->getBurnFinish();
+            unsigned long long fuelFinish = furnace->getFuelFinish();
+
+            if(furnace->altered){
+                // Send a full update
+                writer.writeWindowProperty(0, 0, burnFinish - tick);
+                writer.writeWindowProperty(0, 1, min((int) (fuelFinish - tick), 200));
+
+                SendWindowItem* job = new SendWindowItem();
+                job->addSlot(0, furnace->slots[0]);
+                job->addSlot(1, furnace->slots[1]);
+                job->addSlot(2, furnace->slots[2]);
+                players[i]->pushJobToProtocol(new SendPacket(&writer));
+
+                resetAltered.insert(furnace);
+            }
+            else{
+                // might need update on ui elements
+                if(burnFinish != 0){
+                    writer.writeWindowProperty(0, 0, burnFinish - tick);
+                }
+
+                if(fuelFinish != 0){
+                    writer.writeWindowProperty(0, 1, min((int) (fuelFinish - tick), 200));
+                }
+            }
+
+
+            if(writer.getIndex() > 0){
+                players[i]->pushJobToProtocol(new SendPacket(&writer));
+            }
+
+            break;
+        }
+    }
+
+    // This is neccesary for in case multiple players have the same furnace open
+    for(auto it = resetAltered.begin(); it != resetAltered.end(); it++){
+        (*it)->altered = false;
+    }
+}
+
 
 void EntityStore::executeFunctorAll(Functor<Entity*> &f){
     FunctorAdapter<Entity*> f2(f);

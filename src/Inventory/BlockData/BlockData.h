@@ -4,8 +4,11 @@
 #include <vector>
 
 #include "../Slot.h"
-#include "../../JobTickets/ProtocolToWorld/ClickWindowJob.h"
 #include "../AlteredSlots.h"
+#include "BlockDataType.h"
+#include "../../JobTickets/ProtocolToWorld/ClickWindowJob.h"
+
+#include "ClickWindowRequest.h"
 
 using namespace std;
 
@@ -20,21 +23,36 @@ private:
 
     //This vector doesn't get, and shouldn't be, cloned
     vector<InventoryControl*> inventories;
+
+    // Specifies if two players will see the same items in a block
+    // for example a chest is true while a crafting table is false
+    bool sharable;
 protected:
+    BlockData(bool s){
+        sharable = s;
+    };
 public:
 
     //Destructor ensures that BlockData is safely disconnected from inventories
     virtual ~BlockData();
 
+    bool getSharable(){
+        return sharable;
+    }
+
     //Called from Inventory
     void open(InventoryControl*);
-    void close(InventoryControl*);
+    virtual vector<Slot> close(InventoryControl*, AlteredSlots&, Inventory2*);
 
     virtual int getWindowID() = 0;
+    virtual BlockDataType getType() = 0;
     virtual BlockData* clone() = 0;
 
     //Returns vector of altered slots, which is tracked by InventoryControl
-    virtual void clickWindow(ClickWindowJob* job, Inventory2* inv, AlteredSlots &altered, bool creative) = 0;
+    virtual vector<Slot> clickWindow(ClickWindowRequest request) = 0;
 };
+
+int tryInsertHalfSlot(Slot& dest, Slot& origin, int stackSize);
+int tryInsertEmptySlot(Slot& dest, Slot& origin, int stackSize);
 
 #endif

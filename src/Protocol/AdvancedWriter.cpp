@@ -3,7 +3,9 @@
 #include "../General/GameSettings.h"
 
 #include "../Inventory/Crafting/Crafting.h"
-#include "../Inventory/Crafting/ShapedRecipe.h"
+
+#include "../Inventory/BlockData/BaseChest.h"
+#include "../Inventory/Inventory2.h"
 
 AdvancedWriter::AdvancedWriter(unsigned int size) :PacketWriter(size){};
 
@@ -352,10 +354,70 @@ void AdvancedWriter::writeOpenWindow(short windowID, short invType, string title
     addMsgLen();
 }
 
+bool AdvancedWriter::writeWindowItems(Inventory2* inv, BlockData* b, short int windowID){
+    // Return indicates if anything has been written
+
+    short numSlots;
+    switch(b->getType()){
+    case CHESTSINGLE:
+        numSlots = 27;
+        break;
+    case CHESTDOUBLE:
+        numSlots = 54;
+        break;
+    default: //Either unknown or doesn't need a packet
+        return false;
+    }
+
+    numSlots += 36; //For player's inventory
+
+    writePacketID(0x30);
+
+    baseThis << (unsigned char) windowID;
+    baseThis << (short) numSlots;
+
+    switch(b->getType()){
+    case CHESTSINGLE:{
+        ChestSingle* chest = (ChestSingle*) b;
+
+        for(int i=0; i<27; i++){
+            baseThis << chest->slots[i];
+        }
+        break;
+    }
+    case CHESTDOUBLE:{
+        ChestDouble* chest = (ChestDouble*) b;
+
+        for(int i=0; i<54; i++){
+            baseThis << chest->slots[i];
+        }
+        break;
+    }
+    }
+
+    for(int i=9; i<45; i++){
+        baseThis << inv->slots[i];
+    }
+
+    addMsgLen();
+    return true;
+}
+
+
 void AdvancedWriter::writeCloseWindow(short windowID){
     writePacketID(0x2e);
 
     baseThis << (unsigned char) windowID;
+
+    addMsgLen();
+}
+
+void AdvancedWriter::writeWindowProperty(short windowID, short property, short value){
+    writePacketID(0x31);
+
+    baseThis << (unsigned char) windowID;
+    baseThis << (short) property;
+    baseThis << (short) value;
 
     addMsgLen();
 }

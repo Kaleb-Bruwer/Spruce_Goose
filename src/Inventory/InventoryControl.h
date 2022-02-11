@@ -17,14 +17,15 @@ public:
     AlteredSlots alteredSlots;
     Inventory2 inventory;
 
-    void clickWindow(ClickWindowJob* job, bool creative);
+    vector<Slot> clickWindow(ClickWindowRequest request);
 
     //only sends if neccesary
     void sendWindowUpdate();
 
     void openBlock(BlockData* b);
-    void closeBlock(bool byPlayer = true);
+    vector<Slot> closeBlock(bool byPlayer = true);
 
+    BlockData* getActiveBlock(){return activeBlock;};
 
     void create(PlayerConnection* c){
         conn = c;
@@ -41,11 +42,13 @@ public:
         inventory.slots[i] = s;
     };
 
-    Slot* getHeldItem(){
-        return &inventory.slots[inventory.cursor];
+    Slot getHeldItem(){
+        return inventory.slots[inventory.cursor];
     };
 
     short getHeldItemID(){
+        if(inventory.slots[inventory.cursor].isEmpty())
+            return 0;
         return inventory.slots[inventory.cursor].itemID;
     };
 

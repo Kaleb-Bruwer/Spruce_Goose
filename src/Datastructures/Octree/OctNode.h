@@ -23,6 +23,8 @@ public:
     OctNode* parent = 0;
 
     virtual bool isInside(Coordinate<double> pos);
+
+    // Returns true if there is ANY overlap
     virtual bool withinBounds(Coordinate<double> lc, Coordinate<double> hc);
 
     friend class OctRoot;

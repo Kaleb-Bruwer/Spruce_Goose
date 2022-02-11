@@ -151,8 +151,8 @@ string Tag_List::printableStr(unsigned int nTabs){
 }
 
 int Tag_List::getTransmitSize(){
-    // 4 (for size), type already included in sizeNoData()
-    int result = sizeNoData() + 4;
+    // 4 (for size), 1 for child type
+    int result = sizeNoData() + 5;
     for(int i=0; i<size; i++){
         result += value[i]->getTransmitSize();
     }

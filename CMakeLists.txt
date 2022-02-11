@@ -32,6 +32,8 @@ SET (SRCS
     ./src/General/BlockStrengths.cpp
     ./src/General/ToolTable.h
     ./src/General/ToolTable.cpp
+    ./src/General/FuelTable.h
+    ./src/General/FuelTable.cpp
     ./src/General/ToolSpeedTable.h
     ./src/General/ToolSpeedTable.cpp
     ./src/General/StackSizeTable.h
@@ -52,17 +54,19 @@ SET (SRCS
     ./src/Inventory/Crafting/Crafting.cpp
     ./src/Inventory/Crafting/Recipe.h
     ./src/Inventory/Crafting/Recipe.cpp
-    ./src/Inventory/Crafting/ShapedRecipe.h
-    ./src/Inventory/Crafting/ShapedRecipe.cpp
+    ./src/Inventory/Crafting/CraftingFrame.h
+    ./src/Inventory/Crafting/CraftingFrame.cpp
 
     ./src/Inventory/BlockData/BlockData.h
     ./src/Inventory/BlockData/BlockData.cpp
     ./src/Inventory/BlockData/BlockDataS.h
     ./src/Inventory/BlockData/BlockDataS.cpp
-    ./src/Inventory/BlockData/Chest.h
-    ./src/Inventory/BlockData/Chest.cpp
+    ./src/Inventory/BlockData/BaseChest.h
+    ./src/Inventory/BlockData/BaseChest.cpp
     ./src/Inventory/BlockData/CraftingTable.h
     ./src/Inventory/BlockData/CraftingTable.cpp
+    ./src/Inventory/BlockData/Furnace.h
+    ./src/Inventory/BlockData/Furnace.cpp
 
     ./src/Protocol/Protocol.h
     ./src/Protocol/Protocol.cpp
@@ -146,6 +150,8 @@ SET (SRCS
     ./src/World/Chunk/PlayerToken.cpp
     ./src/World/Chunk/BlockChanges.h
     ./src/World/Chunk/BlockChanges.cpp
+    ./src/World/Chunk/ChestDoubleWrapper.h
+    ./src/World/Chunk/ChestDoubleWrapper.cpp
 
     ./src/World/Functors/BlockUpdatesF.h
     ./src/World/Functors/ChunkCheckBreaksF.h

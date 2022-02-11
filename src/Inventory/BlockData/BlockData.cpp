@@ -6,6 +6,7 @@
 using namespace std;
 
 BlockData::~BlockData(){
+    // Notifies all players that have block open that it has been closed
     for(auto it = inventories.begin(); it != inventories.end(); it++){
         //false means not closed by player
         (*it)->closeBlock(false);
@@ -16,11 +17,44 @@ void BlockData::open(InventoryControl* inv){
     inventories.push_back(inv);
 }
 
-void BlockData::close(InventoryControl* inv){
+vector<Slot> BlockData::close(InventoryControl* invCont, AlteredSlots& altered, Inventory2* inv){
     for(auto it = inventories.begin(); it != inventories.end(); it++){
-        if(*it == inv){
+        if(*it == invCont){
             inventories.erase(it);
-            return;
+            return vector<Slot>();
         }
     }
+}
+
+int tryInsertHalfSlot(Slot& dest, Slot& origin, int stackSize){
+    if(origin.isEmpty() || dest.isEmpty())
+        return 0;
+
+    if(!origin.typeMatch(&dest))
+        return 0;
+
+    int canTake = stackSize - dest.itemCount;
+    if(canTake <= 0)
+        return 0;
+
+    int willTake = min(canTake, (int) origin.itemCount);
+    dest.itemCount += willTake;
+    origin.itemCount -= willTake;
+
+    if(origin.itemCount == 0)
+        origin.makeEmpty();
+
+    return willTake;
+}
+
+int tryInsertEmptySlot(Slot& dest, Slot& origin, int stackSize){
+    if(!dest.isEmpty() || origin.isEmpty())
+        return 0;
+
+    int willTake = min(stackSize, (int)origin.itemCount);
+    dest = origin;
+    dest.itemCount = willTake;
+    origin.itemCount -= willTake;
+
+    return willTake;
 }

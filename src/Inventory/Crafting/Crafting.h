@@ -3,18 +3,35 @@
 
 #include <mutex>
 #include <vector>
-#include <set>
+#include <unordered_map>
+#include <map>
 
 #include "Recipe.h"
+#include "CraftingFrame.h"
 #include "../Slot.h"
 
-using namespace std;
+
+class Tag_List;
+
+// NOTE: hashPartitionIDs() declared and defined in Recipe.h and Recipe.cpp
 
 class Crafting{
 private:
 
     //vector<Recipe*> recipes;
-    multiset<Recipe> recipes;
+    // multiset<Recipe> recipes;
+
+    unordered_map<short, Slot> craftIDToSlot;
+    unordered_map<short, short> craftIDToPartitionID;
+
+    map<Slot, short> SlotToPartitionID;
+    unordered_map<short, std::vector<Slot>> tagToSlots;
+
+    // Use hashPartitionIDs() to get key
+    unordered_map<long long, vector<Recipe>> recipes;
+
+    // Maps ingredient to result
+    map<Slot,Slot> smeltingRecipes;
 
     inline static Crafting* instance;
     inline static mutex constructMutex;
@@ -22,12 +39,18 @@ private:
     ~Crafting();
 
     void readFromFile();
+    void generateShapeless(Tag_List* shapeless);
+    void generateShaped(Tag_List* shaped);
+    void generateSmelting(Tag_List* smelting);
+
+    vector<Slot> getValidSlots(short craftID);
+    long long hashCraftingFrame(CraftingFrame &frame);
 
 public:
     static Crafting* getInstance();
 
-    vector<Recipe> getAllRecipes();
-    Slot getProduct(ShapedRecipe* c);
+    Slot getProduct(CraftingFrame frame);
+    Slot getSmeltingProduct(Slot input);
 
 };
 

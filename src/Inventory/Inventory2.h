@@ -25,28 +25,34 @@ struct DragData{
 // the inventory system
 class Inventory2 : public BlockDataS<45>{
 protected:
-    DragData dragData;
 
     //0: only craft 1 unit. 1:craft maximum possible
-    void craft(bool max, AlteredSlots &altered);
+    void craft(bool max, AlteredSlots &altered, int m = 0);
 
     //Calls Crafting class and sets slots[0] to the appropriate product
     //Returns true if crafting product is altered
     void checkCrafting(AlteredSlots &altered);
 
 public:
+    Inventory2() : BlockDataS<45>(true){};
+
     static const int numSlots = 45;
     Slot hover;
     short cursor = 36; //range: [36,44] held item
 
+    DragData dragData;
+
     int getWindowID(){return 0;};
     BlockData* clone();
 
-    //Inventory parameter not used, only there for polymorphism
-    void clickWindow(ClickWindowJob*, Inventory2* inv, AlteredSlots &altered, bool creative);
+    vector<Slot> clickWindow(ClickWindowRequest request);
 
     int tryPickup(Item* item, AlteredSlots& altered);
 
-    void close(AlteredSlots& altered);
+    //most parameters not used, only there for polymorphism
+    vector<Slot> close(InventoryControl*, AlteredSlots&, Inventory2*);
 
+    void moveIn(Slot& origin, AlteredSlots&);
+
+    BlockDataType getType(){return INVENTORY2;};
 };

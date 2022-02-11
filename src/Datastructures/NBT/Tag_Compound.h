@@ -27,7 +27,7 @@ public:
     void addItem(NBT* item); //Shallow copy
     NBT* getItem(string name);
 
-    int getTransmitSize();
+    int getTransmitSize(); //Add 1 to result
     void getTransmittable(char* buffer, int &index);
 };
 
