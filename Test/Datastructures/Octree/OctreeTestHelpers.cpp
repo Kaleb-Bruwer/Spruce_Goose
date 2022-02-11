@@ -22,6 +22,47 @@ namespace ns_oc{
         };
     };
 
+    class FuncPosChange : public Functor<Positional*>{
+    public:
+        vector<Positional*> target;
+        vector<Coordinate<double>> destination;
+
+        void operator()(Positional* p){
+            int size = target.size();
+            for(int i=0; i<size; i++)
+                if(p == target[i]){
+                    p->position = destination[i];
+                    break;
+                }
+        };
+    };
+
+    class FuncPosRemove : public Functor<Positional*>{
+    public:
+        vector<Positional*> target;
+
+        void operator()(Positional* p){
+            int size = target.size();
+            for(int i=0; i<size; i++)
+                if(p == target[i]){
+                    p->mustRemove = true;
+                }
+        };
+    };
+
+    class FuncPosDelete : public Functor<Positional*>{
+    public:
+        vector<Positional*> target;
+
+        void operator()(Positional* p){
+            int size = target.size();
+            for(int i=0; i<size; i++)
+                if(p == target[i]){
+                    p->mustDelete = true;
+                }
+        };
+    };
+
     class DummyParent : public OctNode{
     public:
         vector<Positional*> pos;
