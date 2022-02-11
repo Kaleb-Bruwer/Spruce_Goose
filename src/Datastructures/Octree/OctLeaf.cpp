@@ -30,6 +30,13 @@ OctNode* OctLeaf::insert(Positional* val, bool flag){
             break;
         }
     }
+    // The system for determining when to split is a bit weird, but it's a
+    // (logically and computationally) simple solution that avoids 2 problems:
+        // 1. Splitting forever when there's enough entities at
+        //    the exact same position (fatal infinite loop)
+        // 2. Never splitting when all entities are in the
+        //    same sub-node, but at different positions (needlessly inefficient)
+
     if(unique){
         if(size < threshold){
             elements.push_back(make_pair(val, flag));
@@ -79,6 +86,8 @@ void OctLeaf::execFunc(Functor<Positional*> &f, bool flag){
             it = elements.erase(it);
         }
         else if(!isInside(it->first->position)){
+            // This insert can't come back to this node, so still using the same
+            // iterator is safe
             parent->insert(it->first, !it->second);
             it = elements.erase(it);
         }

@@ -13,7 +13,7 @@ using namespace std;
 class OctLeaf : public OctNode{
 private:
     vector<pair<Positional*, bool>> elements;
-    
+
     //Return value is node that now stands in this one's place
     //This method also deletes its object, it must be the last thing you call
     OctNode* split();
@@ -34,6 +34,8 @@ public:
 
     void deepDelete();
 
+    // Removes p if oldPos is outside this node
+    // TODO: figure out what this is for
     bool fixPos(Positional* p, Coordinate<double> oldPos, bool flag);
 
 
