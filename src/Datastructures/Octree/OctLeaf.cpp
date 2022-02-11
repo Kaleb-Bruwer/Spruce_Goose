@@ -202,7 +202,7 @@ void OctLeaf::resetFlagsInBounds(Coordinate<double> lc, Coordinate<double> hc, b
 
     //Setting all of them is cheaper than the comparasons it would take to
     //only set some
-    int size = 0;
+    int size = elements.size();
     for(int i=0; i<size; i++){
         elements[i].second = val;
     }
