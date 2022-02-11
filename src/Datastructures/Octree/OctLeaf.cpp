@@ -73,8 +73,10 @@ void OctLeaf::execFunc(Functor<Positional*> &f, bool flag){
     for(auto it = elements.begin(); it != elements.end();){
         if(it->second == flag)
             f(it->first);
-        else
+        else{
+            it++;
             continue;
+        }
 
         if(it->first->mustDelete){
             delete it->first;

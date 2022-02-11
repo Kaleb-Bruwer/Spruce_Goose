@@ -24,10 +24,15 @@ namespace ns_oc{
 
     class DummyParent : public OctNode{
     public:
+        vector<Positional*> pos;
+        vector<bool> flags;
+
         DummyParent(Coordinate<double> lc, Coordinate<double> hc) : OctNode(lc, hc){};
 
         virtual OctNode* insert(Positional* val, bool flag){
             // TODO: log calls to this
+            pos.push_back(val);
+            flags.push_back(flag);
             return 0;
         };
 
