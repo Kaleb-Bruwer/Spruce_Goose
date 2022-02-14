@@ -9,9 +9,8 @@ using namespace std;
 
 class OctLeafTest : public ::testing::Test{
 protected:
-    ns_oc::DummyParent *parent = 0;
-    OctNode *leaf = new OctLeaf(Coordinate<double>(0.0,0.0,0.0),
-            Coordinate<double>(8.0,8.0,8.0), parent);
+    ns_oc::DummyNode *parent = 0;
+    OctNode *leaf = 0;
 
     // Get threshold in an easily accessible variable
     inline static int threshold;
@@ -21,7 +20,7 @@ protected:
     };
 
     virtual void SetUp(){
-        parent = new ns_oc::DummyParent(
+        parent = new ns_oc::DummyNode(
             Coordinate<double>(0.0,0.0,0.0), Coordinate<double>(16.0,16.0,16.0));
 
         leaf = new OctLeaf(Coordinate<double>(0.0,0.0,0.0),
