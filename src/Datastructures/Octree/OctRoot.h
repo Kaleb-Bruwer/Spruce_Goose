@@ -26,6 +26,13 @@ public:
 
     bool fixPos(Positional* p, Coordinate<double> oldPos, bool flag);
 
+    void addChild(OctNode* c){
+        cout << "DON'T USE addChild ON ROOT NODE\n";
+    };
+
+
+    // Tests with private access
+    FRIEND_TEST(OctRootInsertTest, insert2);
 };
 
 #endif

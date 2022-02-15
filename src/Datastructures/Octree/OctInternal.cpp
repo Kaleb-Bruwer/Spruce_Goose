@@ -151,6 +151,20 @@ OctInternal::execInBounds(Coordinate<double> lc, Coordinate<double> hc, Functor<
     for(int i=0; i<8; i++){
         if(!children[i])
             continue;
+
+        Coordinate<double> low = children[i]->lowCorner;
+        Coordinate<double> high = children[i]->highCorner;
+
+        // Check for no bounding box overlap
+        if( lc.x >= high.x ||
+            lc.y >= high.y ||
+            lc.z >= high.z ||
+            hc.x < low.x ||
+            hc.y < low.y ||
+            hc.z < low.z)
+            continue;
+
+
         pair<Coordinate<double>, Coordinate<double>> result;
         result = children[i]->execInBounds(lc, hc, f, flag);
 
@@ -181,7 +195,7 @@ void OctInternal::resetFlagsInBounds(Coordinate<double> lc, Coordinate<double> h
         return;
     for(int i=0; i<8; i++){
         if(children[i])
-            resetFlagsInBounds(lc, hc, val);
+            children[i]->resetFlagsInBounds(lc, hc, val);
     }
 }
 
@@ -213,6 +227,6 @@ bool OctInternal::fixPos(Positional* p, Coordinate<double> oldPos, bool flag){
     }
 
     if(children[i]->fixPos(p, oldPos, flag)){
-        insert(p, flag);
+        // insert(p, flag);
     }
 }

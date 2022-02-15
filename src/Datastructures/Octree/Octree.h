@@ -2,6 +2,7 @@
 #define OCTREE_H
 
 #include "OctNode.h"
+#include "OctRoot.h"
 #include "Positional.h"
 
 using namespace std;
@@ -10,11 +11,11 @@ class Octree{
 private:
     const double baseWidth = 256;
 
-    OctNode* root = 0;
+    OctRoot root;
     bool currFlag = false;
 
 public:
-    Octree(){};
+    Octree();
     ~Octree();
 
     void insert(Positional* val);

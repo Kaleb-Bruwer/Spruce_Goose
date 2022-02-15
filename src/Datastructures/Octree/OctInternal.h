@@ -3,6 +3,8 @@
 
 #include "OctNode.h"
 
+#include <gtest/gtest.h>
+
 using namespace std;
 
 class OctInternal : public OctNode{
@@ -26,6 +28,8 @@ public:
     virtual ~OctInternal(){};
 
     virtual OctNode* insert(Positional* p, bool flag);
+
+    // ASSUMED WITHIN BOUNDS
     virtual OctNode* remove(Positional* p);
     void execFunc(Functor<Positional*> &f, bool flag);
     double execFuncInRadius(Coordinate<double> pos, double r, Functor<Positional*> &f, bool flag);
@@ -38,9 +42,18 @@ public:
     void deepDelete();
 
     //Only to be used on new nodes
+    // returns true if Pos has to move nodes
     void addChild(OctNode* c);
 
     virtual bool fixPos(Positional* p, Coordinate<double> oldPos, bool flag);
+
+    // Tests with private access
+    FRIEND_TEST(OctInternalTest, insert1);
+    FRIEND_TEST(OctInternalInsertTest, insert);
+    FRIEND_TEST(OctInternalTest, remove1);
+    FRIEND_TEST(OctInternalTest, remove2);
+    FRIEND_TEST(OctInternalTest, remove3);
+    FRIEND_TEST(OctInternalTest, exec1);
 
 };
 

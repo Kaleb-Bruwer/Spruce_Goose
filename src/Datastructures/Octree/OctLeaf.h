@@ -35,7 +35,7 @@ public:
     void deepDelete();
 
     // Removes p if oldPos is outside this node
-    // TODO: figure out what this is for
+    // See notes on this in other Octree headers
     bool fixPos(Positional* p, Coordinate<double> oldPos, bool flag);
 
 

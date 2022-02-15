@@ -161,7 +161,7 @@ OctLeaf::execInBounds(Coordinate<double> lc, Coordinate<double> hc, Functor<Posi
                 it->first->mustRemove = false;
                 it = elements.erase(it);
             }
-            else{
+            else if(pos != it->first->position){
                 pos = it->first->position;
 
                 retLow.x = min(pos.x, retLow.x);
@@ -180,6 +180,9 @@ OctLeaf::execInBounds(Coordinate<double> lc, Coordinate<double> hc, Functor<Posi
                 else{
                     it++;
                 }
+            }
+            else{
+                it++;
             }
         }
         else{
@@ -218,7 +221,7 @@ void OctLeaf::deepDelete(){
 }
 
 bool OctLeaf::fixPos(Positional* p, Coordinate<double> oldPos, bool flag){
-    if(isInside(oldPos))
+    if(isInside(p->position))
         return false;
 
     int size = elements.size();
