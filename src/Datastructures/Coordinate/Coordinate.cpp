@@ -180,5 +180,12 @@ Coordinate<T> Coordinate<T>::operator-(const Coordinate<T> &rhs){
     return result;
 }
 
+template <class T>
+Coordinate<T> Coordinate<T>::operator*(const double &rhs){
+    Coordinate<T> result(x*rhs, y*rhs, z*rhs);
+
+    return result;
+}
+
 template class Coordinate<int>;
 template class Coordinate<double>;

@@ -46,7 +46,7 @@ public:
 
     virtual bool fixPos(Positional* p, Coordinate<double> oldPos, bool flag);
 
-// Tests with private access
+    // Tests with private access
     FRIEND_TEST(OctInternalTest, insert1);
     FRIEND_TEST(OctInternalInsertTest, insert);
     FRIEND_TEST(OctInternalTest, remove1);

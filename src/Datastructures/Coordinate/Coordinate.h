@@ -39,6 +39,7 @@ public:
     bool operator==(const Coordinate<T> &rhs);
     Coordinate<T> operator+(const Coordinate<T> &rhs);
     Coordinate<T> operator-(const Coordinate<T> &rhs);
+    Coordinate<T> operator*(const double &rhs);
 
     friend ostream& operator<< (ostream &out, const Coordinate<T> &rhs){
         out << "(" << rhs.x << ", " << rhs.y << ", " << rhs.z << ")";

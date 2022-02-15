@@ -76,11 +76,9 @@ OctNode* OctRoot::insert(Positional* val, bool flag){
         //Make new node with wider bounds
         expandChild(i);
     }
-    OctNode* temp = children[i];
 
     children[i] = children[i]->insert(val, flag);
     return this;
-
 }
 
 OctNode* OctRoot::remove(Positional* val){
@@ -88,6 +86,7 @@ OctNode* OctRoot::remove(Positional* val){
 
     if(children[i])
         children[i] = children[i]->remove(val);
+    return this;
 }
 
 bool OctRoot::fixPos(Positional* p, Coordinate<double> oldPos, bool flag){
