@@ -42,6 +42,7 @@ public:
     void deepDelete();
 
     //Only to be used on new nodes
+    // returns true if Pos has to move nodes
     void addChild(OctNode* c);
 
     virtual bool fixPos(Positional* p, Coordinate<double> oldPos, bool flag);

@@ -221,7 +221,7 @@ void OctLeaf::deepDelete(){
 }
 
 bool OctLeaf::fixPos(Positional* p, Coordinate<double> oldPos, bool flag){
-    if(isInside(oldPos))
+    if(isInside(p->position))
         return false;
 
     int size = elements.size();
