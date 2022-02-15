@@ -15,10 +15,10 @@
 
 #include "./General/FuelTableTest.cpp"
 
-#include "./Datastructures/Octree/OctreeTest.cpp"
 #include "./Datastructures/Octree/OctLeafTest.cpp"
 #include "./Datastructures/Octree/OctInternalTest.cpp"
 #include "./Datastructures/Octree/OctRootTest.cpp"
+#include "./Datastructures/Octree/OctreeTest.cpp"
 
 int main(int argc, char **argv){
     testing::InitGoogleTest(&argc, argv);
