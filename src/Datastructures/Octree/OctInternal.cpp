@@ -195,7 +195,7 @@ void OctInternal::resetFlagsInBounds(Coordinate<double> lc, Coordinate<double> h
         return;
     for(int i=0; i<8; i++){
         if(children[i])
-            resetFlagsInBounds(lc, hc, val);
+            children[i]->resetFlagsInBounds(lc, hc, val);
     }
 }
 

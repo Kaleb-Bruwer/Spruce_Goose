@@ -161,7 +161,7 @@ OctLeaf::execInBounds(Coordinate<double> lc, Coordinate<double> hc, Functor<Posi
                 it->first->mustRemove = false;
                 it = elements.erase(it);
             }
-            else{
+            else if(pos != it->first->position){
                 pos = it->first->position;
 
                 retLow.x = min(pos.x, retLow.x);
@@ -180,6 +180,9 @@ OctLeaf::execInBounds(Coordinate<double> lc, Coordinate<double> hc, Functor<Posi
                 else{
                     it++;
                 }
+            }
+            else{
+                it++;
             }
         }
         else{
