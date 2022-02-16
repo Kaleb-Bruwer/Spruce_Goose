@@ -17,7 +17,16 @@ class ItemPickupF;
 class AddPlayersToChunkF;
 class AddChunksToPlayerF;
 
+namespace ns_es{class DummyPlayer;};
+
 class PlayerEntity : public Entity{
+private:
+
+    // Constructor used in testing only
+    PlayerEntity(int eid) : Entity(eid){
+        
+    };
+
 protected:
     PlayerConnection* connection = 0;
     bool hasSpawned = false;
@@ -35,6 +44,8 @@ protected:
     friend class ItemPickupF;
     friend class AddPlayersToChunkF;
     friend class AddChunksToPlayerF;
+
+    friend class ns_es::DummyPlayer;
 
 public:
     bool sprinting = false;
