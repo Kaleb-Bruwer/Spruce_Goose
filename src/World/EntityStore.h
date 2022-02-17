@@ -22,10 +22,10 @@ class EntityStore{
 private:
     const double tileW = 16;
     Octree tree;
-    vector<Entity*> allEnts;
+    // vector<Entity*> allEnts;
+    map<int, Entity*> eidLookup;
     vector<PlayerEntity*> players; //Players are also in tree
     vector<PlayerEntity*> outsidePlayers;
-    map<int, Entity*> eidLookup;
 
     //Called after f has been executed to check if any players must be removed
     template <class T>
@@ -58,6 +58,7 @@ public:
 
     //Sends updates to external players, no updates about them
     //updates about external players will be sent from their thread
+    //UNTESTED: it's scheduled for a complete rework anyway
     void sendPlayerPos();
 
     // Sends window property updates to players where needed (i.e. furnace UI)
@@ -71,7 +72,9 @@ public:
     void executeFunctorOutsidePlayers(Functor<PlayerEntity*> &f);
     //Execute functor on all Entities within radius
     void execFuncInRadius(Coordinate<double> center, double r, Functor<Entity*> &f);
+
     //Execute functor on all Entities currently within specified chunk
+    // Covers y in [0,256)
     void execFuncInChunk(ChunkCoord cCoord, Functor<Entity*> &f);
     //Execute functor on all Entities within bounds, ignores outside players
     void execFuncInBounds(Coordinate<double> lc, Coordinate<double> rc, Functor<Entity*> &f);

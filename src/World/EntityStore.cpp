@@ -24,79 +24,91 @@ EntityStore::~EntityStore(){
 
 void EntityStore::insertInAllEnts(Entity* e){
     int eid = e->eid;
+    eidLookup[eid] = e;
 
-    //Do binary search
-    int low = 0;
-    int high = allEnts.size() - 1;
-    int mid = (high + low) / 2;
 
-    if(high < 0){
-        allEnts.push_back(e);
-        return;
-    }
-
-    if(allEnts[high]->eid < eid){
-        allEnts.push_back(e);
-        return;
-    }
-
-    if(allEnts[0]->eid > eid){
-        allEnts.insert(allEnts.begin(), e);
-        return;
-    }
-
-    //Since eids must be unique, it can be assumed there won't be matches
-    while(true){
-        if(allEnts[mid]->eid < eid){
-            if(low == mid){
-                //Can't narrow down further, insert here
-                //will always be on lower since c++ rounds down
-                allEnts.insert(allEnts.begin() + low + 1, e);
-                return;
-            }
-            else
-                low = mid;
-        }
-        else{
-            high = mid;
-        }
-        mid = (high + low) / 2;
-    }
+    // int eid = e->eid;
+    //
+    // //Do binary search
+    // int low = 0;
+    // int high = allEnts.size() - 1;
+    // int mid = (high + low) / 2;
+    //
+    // if(high < 0){
+    //     allEnts.push_back(e);
+    //     return;
+    // }
+    //
+    // if(allEnts[high]->eid < eid){
+    //     allEnts.push_back(e);
+    //     return;
+    // }
+    //
+    // if(allEnts[0]->eid > eid){
+    //     allEnts.insert(allEnts.begin(), e);
+    //     return;
+    // }
+    //
+    // //Since eids must be unique, it can be assumed there won't be matches
+    // while(true){
+    //     if(allEnts[mid]->eid < eid){
+    //         if(low == mid){
+    //             //Can't narrow down further, insert here
+    //             //will always be on lower since c++ rounds down
+    //             allEnts.insert(allEnts.begin() + low + 1, e);
+    //             return;
+    //         }
+    //         else
+    //             low = mid;
+    //     }
+    //     else{
+    //         high = mid;
+    //     }
+    //     mid = (high + low) / 2;
+    // }
 
 }
 
 void EntityStore::remFromAllEnts(Entity* e){
     int eid = e->eid;
 
-    //Do binary search
-    int low = 0;
-    int high = allEnts.size() - 1;
-    int mid = (high + low) / 2;
-
-    if(high < 0)
-        return;
-
-    if(eid < allEnts[0]->eid)
-        return;
-
-    //Since eids must be unique, it can be assumed there won't be matches
-    while(true){
-        if(allEnts[mid]->eid < eid){
-            if(low == mid){
-                return;
-            }
-            else
-                low = mid;
-        }
-        else if(allEnts[mid]->eid > eid){
-            high = mid;
-        }
-        else{
-            allEnts.erase(allEnts.begin() + mid);
-            return;
-        }
-        mid = (high + low) / 2;
+    auto it = eidLookup.find(eid);
+    if(it != eidLookup.end()){
+        eidLookup.erase(it);
     }
+
+
+    // int eid = e->eid;
+    //
+    // //Do binary search
+    // int low = 0;
+    // int high = allEnts.size() - 1;
+    // int mid = (high + low) / 2;
+    //
+    // if(high < 0)
+    //     return;
+    //
+    // if(eid < allEnts[0]->eid)
+    //     return;
+    //
+    // //Since eids must be unique, it can be assumed there won't be matches
+    // while(true){
+    //     if(allEnts[mid]->eid < eid){
+    //         if(low == mid){
+    //             return;
+    //         }
+    //         else
+    //             low = mid;
+    //     }
+    //     else if(allEnts[mid]->eid > eid){
+    //         high = mid;
+    //     }
+    //     else{
+    //         allEnts.erase(allEnts.begin() + mid);
+    //         return;
+    //     }
+    //     mid = (high + low) / 2;
+    // }
 }
 
 void EntityStore::addEntity(Entity* e){
@@ -118,37 +130,43 @@ bool EntityStore::addExternalPlayer(PlayerEntity* p){
 }
 
 Entity* EntityStore::getByEid(int eid){
-    int low = 0;
-    int high = allEnts.size() - 1;
-    int mid = (high + low) / 2;
-
-    if(high < 0)
-        return 0;
-
-    if(allEnts[0]->eid > eid){
-        return 0;
+    auto it = eidLookup.find(eid);
+    if(it != eidLookup.end()){
+        return it->second;
     }
+    return 0;
 
-    while(true){
-        if(allEnts[mid]->eid < eid){
-            if(low == mid){
-                if(allEnts[mid+1]->eid != eid)
-                    return 0;
-                else{
-                    return allEnts[mid+1];
-                }
-            }
-            else
-                low = mid;
-        }
-        else if (allEnts[mid]->eid > eid){
-            high = mid;
-        }
-        else{
-            return allEnts[mid];
-        }
-        mid = (high + low) / 2;
-    }
+    // int low = 0;
+    // int high = allEnts.size() - 1;
+    // int mid = (high + low) / 2;
+    //
+    // if(high < 0)
+    //     return 0;
+    //
+    // if(allEnts[0]->eid > eid){
+    //     return 0;
+    // }
+    //
+    // while(true){
+    //     if(allEnts[mid]->eid < eid){
+    //         if(low == mid){
+    //             if(allEnts[mid+1]->eid != eid)
+    //                 return 0;
+    //             else{
+    //                 return allEnts[mid+1];
+    //             }
+    //         }
+    //         else
+    //             low = mid;
+    //     }
+    //     else if (allEnts[mid]->eid > eid){
+    //         high = mid;
+    //     }
+    //     else{
+    //         return allEnts[mid];
+    //     }
+    //     mid = (high + low) / 2;
+    // }
 
 }
 
@@ -461,12 +479,12 @@ void EntityStore::executeFunctorPlayers(Functor<PlayerEntity*> &f){
         if(players[i]->mustDelete){
             delete players[i];
             removed.push_back(players[i]);
-            removed.erase(removed.begin() + i);
+            players.erase(players.begin() + i);
             i--;
         }
         else if(players[i]->mustRemove){
             removed.push_back(players[i]);
-            removed.erase(removed.begin() + i);
+            players.erase(players.begin() + i);
             i--;
         }
         else if(players[i]->position != pos){
@@ -494,6 +512,7 @@ void EntityStore::executeFunctorPlayers(Functor<PlayerEntity*> &f){
 
     for(Positional* p : removed){
         tree.remove(p);
+        remFromAllEnts((Entity*) p);
     }
 
     int size = moved.size();
@@ -505,6 +524,7 @@ void EntityStore::executeFunctorPlayers(Functor<PlayerEntity*> &f){
 void EntityStore::executeFunctorOutsidePlayers(Functor<PlayerEntity*> &f){
     for(auto it = outsidePlayers.begin(); it != outsidePlayers.end();){
         f(*it);
+        // mustDelete is supported, but NOT recommended for outsidePlayers
         if((*it)->mustDelete){
             delete *it;
             it = outsidePlayers.erase(it);

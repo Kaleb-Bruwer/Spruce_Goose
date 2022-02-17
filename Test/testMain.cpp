@@ -20,6 +20,12 @@
 #include "./Datastructures/Octree/OctRootTest.cpp"
 #include "./Datastructures/Octree/OctreeTest.cpp"
 
+#include "./World/EntityStore/EntityStoreAddTest.cpp"
+#include "./World/EntityStore/EntityStoreOutsideTest.cpp"
+#include "./World/EntityStore/EntityStoreRemoveTest.cpp"
+#include "./World/EntityStore/EntityStoreGetTest.cpp"
+#include "./World/EntityStore/EntityStoreRemoveFunctorTest.cpp"
+
 int main(int argc, char **argv){
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

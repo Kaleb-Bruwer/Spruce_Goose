@@ -8,7 +8,11 @@ using namespace std;
 
 class PlayerEntity;
 
-enum EntityType {ITEM, PLAYERENTITY};
+enum EntityType {
+    ITEM,
+    PLAYERENTITY,
+    DUMMYENTITY //Only used in testing
+};
 
 class Entity : public Positional{
 private:
@@ -28,9 +32,10 @@ public:
     Entity(Entity* rhs); //Sets copy to true, do not use for unique items
     ~Entity();
 
-    Entity& operator=(Entity &rhs); //Sents copy to true on this
+    Entity& operator=(Entity &rhs); //Sets copy to true on this
 
     virtual EntityType getType() = 0;
+    int getEid(){return eid;};
 
     //Entity::sendToPlayer must be called at start of every overload in children
     //classes
