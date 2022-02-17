@@ -512,8 +512,7 @@ void EntityStore::executeFunctorPlayers(Functor<PlayerEntity*> &f){
 
     for(Positional* p : removed){
         tree.remove(p);
-        // TODO:
-        // remFromAllEnts((Entity*) p);
+        remFromAllEnts((Entity*) p);
     }
 
     int size = moved.size();

@@ -6,7 +6,7 @@
 
 using namespace std;
 
-class EntityStoreRemoveTest :public ::testing::TestWithParam<tuple<
+class EntityStoreRemoveFunctorTest :public ::testing::TestWithParam<tuple<
         int,
         int,
         vector<int>, //entities to remove by index
@@ -22,6 +22,9 @@ public:
     int e = 0;
     int p = 0;
 
+    vector<int> mustRemoveE;
+    vector<int> mustRemoveP;
+
     int numRemovedE = 0;
     int numRemovedP = 0;
 
@@ -29,8 +32,8 @@ public:
         auto params = GetParam();
         e = get<0>(params);
         p = get<1>(params);
-        vector<int> mustRemoveE = get<2>(params);
-        vector<int> mustRemoveP = get<3>(params);
+        mustRemoveE = get<2>(params);
+        mustRemoveP = get<3>(params);
 
         numRemovedE = mustRemoveE.size();
         numRemovedP = mustRemoveP.size();
@@ -49,16 +52,11 @@ public:
             store.addEntity(players[i]);
         }
 
-        for(int i=0; i<mustRemoveE.size(); i++){
+        for(int i=0; i<mustRemoveE.size(); i++)
             eFlags[mustRemoveE[i]] = true;
-            store.deleteEntity(entities[mustRemoveE[i]]);
-        }
 
-        for(int i=0; i<mustRemoveP.size(); i++){
+        for(int i=0; i<mustRemoveP.size(); i++)
             pFlags[mustRemoveP[i]] = true;
-            store.deleteEntity(players[mustRemoveP[i]]);
-        }
-
     };
 
     virtual void TearDown(){
@@ -82,9 +80,36 @@ public:
         return result;
     }
 
+    void execRemFunc(){
+        ns_es::FuncRemove functor;
+
+        for(int i=0; i<entities.size(); i++){
+            if(eFlags[i])
+                functor.hitlist.push_back(entities[i]);
+        }
+
+        for(int i=0; i<players.size(); i++){
+            if(pFlags[i])
+                functor.hitlist.push_back(players[i]);
+        }
+
+        store.executeFunctorAll(functor);
+    }
+
+    void execRemFuncPlayers(){
+        ns_es::FuncRemovePlayers functor;
+
+        for(int i=0; i<players.size(); i++){
+            if(pFlags[i])
+                functor.hitlist.push_back(players[i]);
+        }
+
+        store.executeFunctorPlayers(functor);
+    }
+
 };
 
-class EntityStoreRemoveOutsideTest :public ::testing::TestWithParam<tuple<
+class EntityStoreRemoveOutsideFunctorTest :public ::testing::TestWithParam<tuple<
         int,
         vector<int>  //players to remove by index
     >>{
@@ -96,11 +121,12 @@ public:
     int p = 0;
 
     int numRemovedP = 0;
+    vector<int> mustRemoveP;
 
     virtual void SetUp(){
         auto params = GetParam();
         p = get<0>(params);
-        vector<int> mustRemoveP = get<1>(params);
+        mustRemoveP = get<1>(params);
 
         numRemovedP = mustRemoveP.size();
 
@@ -135,29 +161,55 @@ public:
         return result;
     }
 
+    void execRemFunc(){
+        ns_es::FuncRemovePlayers functor;
+
+        for(int i=0; i<players.size(); i++){
+            if(pFlags[i])
+                functor.hitlist.push_back(players[i]);
+        }
+
+        store.executeFunctorOutsidePlayers(functor);
+    }
+
 };
 
+TEST_P(EntityStoreRemoveFunctorTest, getByEid1){
+    execRemFunc();
 
-TEST_P(EntityStoreRemoveTest, getByEid){
     // Check that getByEid returns correct value
-
     for(int i=0; i<e; i++){
         if(eFlags[i]){
-            int eid = i*2; //same eqn as in makeEntity
-            Entity* result = store.getByEid(eid);
-            ASSERT_TRUE(result == 0) << "Deleted entity still returned";
+            int eid = i * 2;
+            Entity* val = store.getByEid(eid);
+            ASSERT_TRUE(val == 0) << "Removed entity returned";
         }
     }
     for(int i=0; i<p; i++){
         if(pFlags[i]){
-            int eid = i*2 + 1; //same eqn as in makePlayerEntity
-            Entity* result = store.getByEid(eid);
-            ASSERT_TRUE(result == 0) << "Deleted entity still returned";
+            int eid = i * 2 + 1;
+            Entity* val = store.getByEid(eid);
+            ASSERT_TRUE(val == 0) << "Removed player returned";
         }
     }
 }
 
-TEST_P(EntityStoreRemoveTest, execAll){
+TEST_P(EntityStoreRemoveFunctorTest, getByEid2){
+    execRemFuncPlayers();
+
+    // Check that getByEid returns correct value
+    for(int i=0; i<p; i++){
+        if(pFlags[i]){
+            int eid = i * 2 + 1;
+            Entity* val = store.getByEid(eid);
+            ASSERT_TRUE(val == 0) << "Removed player returned";
+        }
+    }
+}
+
+TEST_P(EntityStoreRemoveFunctorTest, execAll1){
+    execRemFunc();
+
     ns_es::FuncCounterEntity functor;
     store.executeFunctorAll(functor);
 
@@ -168,7 +220,22 @@ TEST_P(EntityStoreRemoveTest, execAll){
     ASSERT_TRUE(functor.counter == expected) << "Total number of executions wrong";
 }
 
-TEST_P(EntityStoreRemoveTest, execPlayers){
+TEST_P(EntityStoreRemoveFunctorTest, execAll2){
+    execRemFuncPlayers();
+
+    ns_es::FuncCounterEntity functor;
+    store.executeFunctorAll(functor);
+
+    int expected = e + p - numRemovedP;
+
+    // EntityStoreAddTest already assures that nothing is skipped, so we can
+    // assume that is the total matches, the right ones are executed
+    ASSERT_TRUE(functor.counter == expected) << "Total number of executions wrong";
+}
+
+TEST_P(EntityStoreRemoveFunctorTest, execPlayers1){
+    execRemFunc();
+
     ns_es::FuncCounterPlayer functor;
     store.executeFunctorPlayers(functor);
 
@@ -177,8 +244,18 @@ TEST_P(EntityStoreRemoveTest, execPlayers){
     ASSERT_TRUE(functor.counter == expected) << "Total number of executions wrong";
 }
 
+TEST_P(EntityStoreRemoveFunctorTest, execPlayers2){
+    execRemFuncPlayers();
 
-INSTANTIATE_TEST_CASE_P(EntityStoreRemove1, EntityStoreRemoveTest,
+    ns_es::FuncCounterPlayer functor;
+    store.executeFunctorPlayers(functor);
+
+    int expected = p - numRemovedP;
+
+    ASSERT_TRUE(functor.counter == expected) << "Total number of executions wrong";
+}
+
+INSTANTIATE_TEST_CASE_P(EntityStoreRemoveFunctor1, EntityStoreRemoveFunctorTest,
     ::testing::Values(
         make_tuple(1,0,
             vector<int>{0},
@@ -206,7 +283,7 @@ INSTANTIATE_TEST_CASE_P(EntityStoreRemove1, EntityStoreRemoveTest,
         )
     ));
 
-TEST_P(EntityStoreRemoveOutsideTest, execOutside){
+TEST_P(EntityStoreRemoveOutsideFunctorTest, execOutside){
     ns_es::FuncCounterPlayer functor;
 
     store.executeFunctorOutsidePlayers(functor);
@@ -214,7 +291,7 @@ TEST_P(EntityStoreRemoveOutsideTest, execOutside){
     ASSERT_TRUE(functor.counter == p - numRemovedP) << "Wrong total execution count";
 }
 
-INSTANTIATE_TEST_CASE_P(EntityStoreRemoveOutside, EntityStoreRemoveOutsideTest,
+INSTANTIATE_TEST_CASE_P(EntityStoreRemoveOutsideFunctor1, EntityStoreRemoveOutsideFunctorTest,
     ::testing::Values(
         make_tuple(1,
             vector<int>{0}

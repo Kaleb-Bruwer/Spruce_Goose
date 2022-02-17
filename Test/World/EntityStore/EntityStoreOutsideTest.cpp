@@ -33,10 +33,12 @@ public:
 
     ns_es::DummyEntity* makeEntity(int n){
         ns_es::DummyEntity* result = new ns_es::DummyEntity(n*2);
+        return result;
     }
 
     ns_es::DummyPlayer* makePlayerEntity(int n){
         ns_es::DummyPlayer* result = new ns_es::DummyPlayer(n*2 + 1);
+        return result;
     }
 
 };

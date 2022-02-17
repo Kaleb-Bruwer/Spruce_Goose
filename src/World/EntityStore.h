@@ -58,6 +58,7 @@ public:
 
     //Sends updates to external players, no updates about them
     //updates about external players will be sent from their thread
+    //UNTESTED: it's scheduled for a complete rework anyway
     void sendPlayerPos();
 
     // Sends window property updates to players where needed (i.e. furnace UI)

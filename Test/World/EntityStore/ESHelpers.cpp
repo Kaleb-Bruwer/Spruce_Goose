@@ -12,6 +12,9 @@ namespace ns_es{
     class DummyEntity : public Entity, public Counter{
     public:
         DummyEntity(int eid) : Entity(eid){};
+        DummyEntity(Coordinate<double> pos, int eid) : Entity(eid){
+            position = pos;
+        };
 
         EntityType getType(){return DUMMYENTITY;};
 
@@ -20,6 +23,9 @@ namespace ns_es{
     class DummyPlayer : public PlayerEntity, public Counter{
     public:
         DummyPlayer(int eid) : PlayerEntity(eid){};
+        DummyPlayer(Coordinate<double> pos, int eid) : PlayerEntity(eid){
+            position = pos;
+        };
 
         EntityType getType(){return PLAYERENTITY;};
     };
@@ -51,6 +57,34 @@ namespace ns_es{
 
             dummy->counter++;
             counter++;
+        };
+    };
+
+    class FuncRemove : public Functor<Entity*>{
+    public:
+        vector<Entity*> hitlist;
+
+        void operator()(Entity* p){
+            for(int i=0; i<hitlist.size(); i++){
+                if(hitlist[i] == p){
+                    p->mustRemove = true;
+                    break;
+                }
+            }
+        };
+    };
+
+    class FuncRemovePlayers : public Functor<PlayerEntity*>{
+    public:
+        vector<Entity*> hitlist;
+
+        void operator()(PlayerEntity* p){
+            for(int i=0; i<hitlist.size(); i++){
+                if(hitlist[i] == p){
+                    p->mustRemove = true;
+                    break;
+                }
+            }
         };
     };
 
