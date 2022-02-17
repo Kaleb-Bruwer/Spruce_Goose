@@ -16,7 +16,7 @@ class OctNode{
 public:
     //Point at which a leaf node gets split
     //This is not in OctLeaf so that OctInternal can also know it
-    const int threshold = 4;
+    const int threshold = 12;
 
     Coordinate<double> lowCorner;
     Coordinate<double> highCorner;
