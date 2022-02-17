@@ -77,6 +77,9 @@ void InventoryControl::openBlock(BlockData* b){
     case CRAFTINGTABLE:
         title = "Crafting table";
         numSlots = 10;
+    case FURNACE:
+        title = "Furnace";
+        numSlots = 3;
     }
 
     // If applicable, send contents of block
