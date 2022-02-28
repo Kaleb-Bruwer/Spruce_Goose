@@ -49,6 +49,10 @@ void InventoryControl::sendWindowUpdate(){
     alteredSlots.clear();
 }
 
+void InventoryControl::sendJobToPlayer(JobTicket* job){
+    conn->pushJobToPlayer(job);
+}
+
 void InventoryControl::openBlock(BlockData* b){
     if(activeBlock)
         closeBlock();
@@ -88,9 +92,12 @@ void InventoryControl::openBlock(BlockData* b){
 
     // OpenWindow and Window Items must have the same window ID, not to be
     // confused with the window type
-    short winID = 1;
-    writer.writeOpenWindow(winID, windowID, title, numSlots, false);
-    bool didWrite = writer.writeWindowItems(&inventory, b, winID);
+    // Window type specifies the kind of window (crafting table, furnace...)
+    // I had these confused at the start but since window id doesn't matter much
+    // it's okay as long as they match where they need to
+    short winType = windowID;
+    writer.writeOpenWindow(windowID, winType, title, numSlots, false);
+    bool didWrite = writer.writeWindowItems(&inventory, b, windowID);
 
     conn->pushJobToPlayer(new SendPacket(&writer));
     // // conn->pushJobToPlayer(job);

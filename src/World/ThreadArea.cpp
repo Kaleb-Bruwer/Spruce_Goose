@@ -170,7 +170,7 @@ void ThreadArea::run(){
         callbacks.exec_tick(tickNum, this);
 
         // Furnace UI updates
-        entities.windowPropertyUpdate(tickNum);
+        // entities.windowPropertyUpdate(tickNum);
         //Physics happens here
 
         //Send data

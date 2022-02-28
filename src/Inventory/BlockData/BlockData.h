@@ -50,6 +50,14 @@ public:
 
     //Returns vector of altered slots, which is tracked by InventoryControl
     virtual vector<Slot> clickWindow(ClickWindowRequest request) = 0;
+
+    int getNumPlayers(){
+        return inventories.size();
+    };
+
+    // Returns false if there were zero (JobTicket wasn't picked up)
+    // Deleting JobTicket will be your responsibility if it's never picked up
+    bool sendJobToAllOpenPlayers(JobTicket* job);
 };
 
 int tryInsertHalfSlot(Slot& dest, Slot& origin, int stackSize);

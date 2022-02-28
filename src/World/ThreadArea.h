@@ -36,7 +36,7 @@ class PlayerCheckBreaksF;
 //this class
 
 class ThreadArea{
-private:
+protected:
     chrono::high_resolution_clock::time_point tickStart;
     const chrono::milliseconds tickLen{50}; //In milliseconds
     chrono::high_resolution_clock::time_point nextTick;
@@ -145,11 +145,6 @@ public:
     Entity* getEntity(int eid);
 
     unsigned long long getTick(){return tickNum;};
-
-    void setTick(unsigned long long t){
-        cout << "WARNING: testing function ThreadArea::setTick in use\n";
-        tickNum  = t;
-    };
 
     class {
         vector<tuple<unsigned long long, Callback, void*>> queue;

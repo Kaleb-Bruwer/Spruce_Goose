@@ -26,6 +26,18 @@ vector<Slot> BlockData::close(InventoryControl* invCont, AlteredSlots& altered, 
     }
 }
 
+
+bool BlockData::sendJobToAllOpenPlayers(JobTicket* job){
+    if(inventories.empty())
+        return false;
+
+    for(int i=0; i<inventories.size();i++){
+        inventories[i]->sendJobToPlayer(job);
+    }
+
+    return true;
+}
+
 int tryInsertHalfSlot(Slot& dest, Slot& origin, int stackSize){
     if(origin.isEmpty() || dest.isEmpty())
         return 0;
