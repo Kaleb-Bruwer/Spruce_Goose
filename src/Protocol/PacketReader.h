@@ -4,6 +4,8 @@
 #include <iostream>
 #include <gtest/gtest.h>
 
+#include "ReadFromBuffer.h"
+
 #include "../Datastructures/Varint.h"
 #include "../Datastructures/Coordinate/Coordinate.h"
 #include "../Datastructures/NBT/Tag_Compound.h"
@@ -15,26 +17,35 @@ using namespace std;
 //in order to read 1.4 packets. Its compatibility has been stripped out
 //since it is no longer needed
 
+// There is a child class called PacketReaderSub whose only difference is that it
+// doesn't delete the buffer. This is for creating a PacketReader per packet while
+// the PacketReader object holds multiple
+
 class MapChunkBulkReader;
 
 class PacketReader{
 protected:
+    bool ownsBuffer = true;
+
     int size; //useful data
     int bufferSize; //actual buffer
     int index = 0;
     char* buffer = 0;
 
     friend class MapChunkBulkReader;
+    friend class PacketReaderSub;
     FRIEND_TEST(PacketReader, append);
     PacketReader(){};
 
 public:
-    //Will automatically read length from start of packet
     PacketReader(char* start, int size);
+    PacketReader(unsigned int bufferSize); //No data, but has a buffer ready
     virtual ~PacketReader();
 
     // Returns change to index, either 0 or negative (moved to left)
     int append(char* start, int size);
+    int append(PacketReader &rhs);
+    void swapGuts(PacketReader &rhs);
 
     bool reachedEnd();
 
@@ -48,7 +59,7 @@ public:
     int getIndex(){
         return index;
     };
-    void setIndex(int a){
+    void setIndex(int a){ //enough rope to hang yourself, be careful
         index = a;
     }
     void skip(int numBytes){
@@ -56,17 +67,19 @@ public:
     }
 
     int readPacketID(){return readVarint().getInt();};
-    short readShort();
-    unsigned short readUShort();
-    char readChar();
-    unsigned char readUChar();
-    bool readBool();
+    short readShort(){return ReadFromBuffer::read<short>(buffer, index, bufferSize);};
+    unsigned short readUShort(){return ReadFromBuffer::read<unsigned short>(buffer, index, bufferSize);};
+    char readChar(){return ReadFromBuffer::read<char>(buffer, index, bufferSize);};
+    unsigned char readUChar(){return ReadFromBuffer::read<unsigned char>(buffer, index, bufferSize);};
+    bool readBool(){return ReadFromBuffer::read<bool>(buffer, index, bufferSize);};
+    int readInt(){return ReadFromBuffer::read<int>(buffer, index, bufferSize);};
+    long long readLongLong(){return ReadFromBuffer::read<long long>(buffer, index, bufferSize);};
+    float readFloat(){return ReadFromBuffer::read<float>(buffer, index, bufferSize);};
+    double readDouble(){return ReadFromBuffer::read<double>(buffer, index, bufferSize);};
+
+    // special cases
     Varint readVarint();
     string readString();
-    int readInt();
-    long long readLongLong();
-    float readFloat();
-    double readDouble();
     Tag_Compound* readNBT();
     Coordinate<int> readPosition();
     Slot readSlot();

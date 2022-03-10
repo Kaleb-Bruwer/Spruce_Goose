@@ -6,8 +6,8 @@ Tag_Double::Tag_Double(double val) : NBT_Primitive<double>(val){
     typeID = 6;
 }
 
-Tag_Double::Tag_Double(char* iterator, int &index, bool hasName)
-        : NBT_Primitive<double>(iterator, index, hasName){
+Tag_Double::Tag_Double(char* iterator, int &index, int bufferSize, bool hasName)
+        : NBT_Primitive<double>(iterator, index, bufferSize, hasName){
     typeID = 6;
 }
 

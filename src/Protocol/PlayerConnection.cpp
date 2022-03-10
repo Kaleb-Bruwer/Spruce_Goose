@@ -63,24 +63,71 @@ void PlayerConnection::sendMessage(const char* start, int length){
         //     cout << "Sending large packet with [0] = " <<(int) (unsigned char)start[0] << "\n\n";
         // }
 
-        write(mySocket, start, length);
+        bool bufferEmpty = false;
+
+        if(end != 0){
+            int ret = write(mySocket, buffer, end);
+
+            if(ret == end){
+                bufferEmpty = true;
+                end = 0;
+                size = 0;
+                delete [] buffer;
+                buffer = 0;
+            }
+            if(ret == -1)
+                quit = true;
+            else if(ret < end && ret > 0){
+                // Not all was sent
+                int remain = end - ret;
+                memmove(buffer, &(buffer[ret]), remain);
+                end -= ret;
+            }
+        }
+
+        int ret;
+        if(bufferEmpty)
+            ret = write(mySocket, start, length);
+        else
+            ret = 0; //Will add to buffer in this case
+
+        if(ret == -1){
+            // An error has occured
+            quit = true;
+        }
+        else if(ret < length){
+            // Not all data was sent, move to buffer
+            // 0 means no data was sent, but not due to an error
+            int remain = length - ret;
+            if(size - end >= remain){ //enough space in buffer
+                memcpy(&(buffer[end]), &(start[ret]), remain);
+                end += remain;
+            }
+            else if(buffer == 0){
+                // There is no buffer
+                size = max(1024, remain * 2);
+                buffer = new char[size];
+                memcpy(buffer, &(start[ret]), remain);
+                end = remain;
+            }
+            else{
+                // there is a buffer, but it's too small
+                size = max(1024, end + remain * 2);
+                char* oldBuffer = buffer;
+                buffer = new char[size];
+                memcpy(buffer, oldBuffer, end);
+                memcpy(&(buffer[end]), &(start[ret]), remain);
+                end += remain;
+
+                delete [] oldBuffer;
+            }
+        }
+        //else everything was fine
+
     }
 }
 
 void PlayerConnection::sendMessage(PacketWriter &p){
-
-    /*
-    if(p.getIndex() < 128){
-        cout << "To " << username << " ";
-        p.print();
-        cout << "\n";
-    }
-    else{
-        cout << "Sending large packet with [0] = " ;
-        cout << (int)(unsigned char)p.getBuffer()[0] << "\n\n";
-    }
-    */
-
     sendMessage(p.getBuffer(), p.getIndex());
 }
 

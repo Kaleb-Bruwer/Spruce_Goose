@@ -131,7 +131,7 @@ void ConnectionHandler::removeConnections(){
     }
 }
 
-void ConnectionHandler::loop(){
+void ConnectionHandler::loopBody(){
     includeNewPlayers();
     handleJobTickets();
     removeConnections();
@@ -166,16 +166,19 @@ void ConnectionHandler::readForPlayer(int sock){
 
     int lenRead = read(sock, buffer, bufferSize);
 
-    if(lenRead <=0)
-        return;
-
     //Get correct player
     //Using [] operator because player is supposed to be there
     PlayerConnection* p = players[sock];
 
+    if(lenRead <=0){
+        // Close connection (this is a long process, has to be removed from world first)
+        p->quit = true;
+        return;
+    }
+
     if(!p){
         //Doubt this will ever happen
-        cout << "Weid case in ConnectionHandler::readForPlayer()\n";
+        cout << "Weird case in ConnectionHandler::readForPlayer()\n";
         return;
     }
 
@@ -195,8 +198,14 @@ void ConnectionHandler::readNoVersion(int sock){
 
     int lenRead = read(sock, buffer, bufferSize);
 
-    if(lenRead <= 0)
+    if(lenRead <= 0){
+        // must close socket
+        playersNoVersion.erase(sock);
+        currSize--;
+        close(sock);
         return;
+    }
+    // After this it is known that at least 1 byte was read
 
     int state = 0;
     int protocolVersion;
@@ -295,6 +304,6 @@ void ConnectionHandler::sendOldMOTD(int sock){
 
 void ConnectionHandler::run(){
     while(true){
-        loop();
+        loopBody();
     }
 }

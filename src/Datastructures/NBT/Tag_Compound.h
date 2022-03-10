@@ -2,6 +2,7 @@
 #define TAG_COMPOUND_H
 
 #include <vector>
+#include <limits.h>
 
 #include "NBT.h"
 
@@ -11,10 +12,13 @@ class Tag_Compound : public NBT{
 private:
     vector<NBT*> children;
 
-    void addItem(char* iterator, int &index, unsigned short int type);
+    void addItem(char* iterator, int &index, unsigned short int type, int bufferSize);
 public:
     Tag_Compound();
-    Tag_Compound(char* start, int &index, bool hasName = true);
+
+    // throws (int) 0 if buffer limit must be exceeded
+    // To prevent memory leaks, root node must still be deleted.
+    Tag_Compound(char* start, int &index, int bufferSize = INT_MAX, bool hasName = true);
     Tag_Compound(Tag_Compound* rhs);
     ~Tag_Compound();
 

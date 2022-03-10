@@ -8,7 +8,7 @@ using namespace std;
 class Tag_Int_Array : public NBT_Array<int>{
 public:
     Tag_Int_Array(){typeID = 11;};
-    Tag_Int_Array(char* iterator, int &index, bool hasName = true);
+    Tag_Int_Array(char* iterator, int &index, int bufferSize, bool hasName = true);
     Tag_Int_Array(Tag_Int_Array* rhs);
     NBT* clone();
 

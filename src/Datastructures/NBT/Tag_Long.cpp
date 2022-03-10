@@ -6,8 +6,8 @@ Tag_Long::Tag_Long(long long val) : NBT_Primitive<long long>(val){
     typeID = 4;
 }
 
-Tag_Long::Tag_Long(char* iterator, int &index, bool hasName)
-        : NBT_Primitive<long long>(iterator, index, hasName){
+Tag_Long::Tag_Long(char* iterator, int &index, int bufferSize, bool hasName)
+        : NBT_Primitive<long long>(iterator, index, bufferSize, hasName){
     typeID = 4;
 }
 

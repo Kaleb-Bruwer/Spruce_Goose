@@ -8,7 +8,7 @@ using namespace std;
 class Tag_Long_Array : public NBT_Array<long long>{
 public:
     Tag_Long_Array(){typeID = 12;};
-    Tag_Long_Array(char* iterator, int &index, bool hasName = true);
+    Tag_Long_Array(char* iterator, int &index, int bufferSize, bool hasName = true);
     Tag_Long_Array(Tag_Long_Array* rhs);
     NBT* clone();
 
