@@ -63,18 +63,21 @@ public:
         index = a;
     }
     void skip(int numBytes){
+        if(index + numBytes > size){
+            throw 0;
+        }
         index += numBytes;
     }
 
-    short readShort(){return ReadFromBuffer::read<short>(buffer, index, bufferSize);};
-    unsigned short readUShort(){return ReadFromBuffer::read<unsigned short>(buffer, index, bufferSize);};
-    char readChar(){return ReadFromBuffer::read<char>(buffer, index, bufferSize);};
-    unsigned char readUChar(){return ReadFromBuffer::read<unsigned char>(buffer, index, bufferSize);};
-    bool readBool(){return ReadFromBuffer::read<bool>(buffer, index, bufferSize);};
-    int readInt(){return ReadFromBuffer::read<int>(buffer, index, bufferSize);};
-    long long readLongLong(){return ReadFromBuffer::read<long long>(buffer, index, bufferSize);};
-    float readFloat(){return ReadFromBuffer::read<float>(buffer, index, bufferSize);};
-    double readDouble(){return ReadFromBuffer::read<double>(buffer, index, bufferSize);};
+    short readShort(){return ReadFromBuffer::read<short>(buffer, index, size);};
+    unsigned short readUShort(){return ReadFromBuffer::read<unsigned short>(buffer, index, size);};
+    char readChar(){return ReadFromBuffer::read<char>(buffer, index, size);};
+    unsigned char readUChar(){return ReadFromBuffer::read<unsigned char>(buffer, index, size);};
+    bool readBool(){return ReadFromBuffer::read<bool>(buffer, index, size);};
+    int readInt(){return ReadFromBuffer::read<int>(buffer, index, size);};
+    long long readLongLong(){return ReadFromBuffer::read<long long>(buffer, index, size);};
+    float readFloat(){return ReadFromBuffer::read<float>(buffer, index, size);};
+    double readDouble(){return ReadFromBuffer::read<double>(buffer, index, size);};
 
     // special cases
     int readPacketID(){return readVarint().getInt();};

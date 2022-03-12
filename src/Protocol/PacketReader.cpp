@@ -219,8 +219,7 @@ Slot PacketReader::readSlot(){
 
 void PacketReader::readSegment(unsigned short numBytes, char* start){
     if(index + numBytes > size){
-        cout << "Can't read segment\n";
-        return;
+        throw 0;
     }
 
     memcpy(start, &(buffer[index]), numBytes);
