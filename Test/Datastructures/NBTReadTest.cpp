@@ -40,7 +40,6 @@ TEST_F(NBTReadTest, test0){
     char* array2 = new char[size];
     int index2 = 0;
     tc.getTransmittable(array2,index2);
-    cout << "DimensionCodec.nbt:" << size << endl;
 
     bool match = true;
     for(int i=0; i<size; i++){
@@ -76,7 +75,6 @@ TEST_F(NBTReadTest, test1){
     file.close();
 
     int size = tc.getTransmitSize() + 1;
-    cout << "recipes.nbt:" << size << endl;
     char* array2 = new char[size];
     int index2 = 0;
     tc.getTransmittable(array2,index2);

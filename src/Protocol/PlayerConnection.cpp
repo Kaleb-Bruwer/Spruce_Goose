@@ -32,11 +32,11 @@ PlayerConnection::PlayerConnection(int sock, World* w){
 }
 
 PlayerConnection::~PlayerConnection(){
+    cout << "Disconnect: " << username << endl;
     if(getUUIDObject)
         delete getUUIDObject;
 
     if(mySocket >= 0){
-        cout << "Closing socket " << mySocket << endl;
         close(mySocket);
     }
 }

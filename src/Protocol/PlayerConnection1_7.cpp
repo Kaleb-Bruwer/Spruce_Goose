@@ -312,6 +312,7 @@ void PlayerConnection1_7::handleMessage(PacketReader &p){
         if(len > 8 *1024*1024){ //8mb packet limit
             // kick player: packet too big
             // Having no upper limit would cause some vulnerabilities
+            cout << "Packet size limit exceeded by " << username << "\n";
             quit = true;
             return;
         }
@@ -384,11 +385,13 @@ void PlayerConnection1_7::handleMessage(PacketReader &p){
                     break;
                 case 9:
                     readClientSlotChange(sub);
+                    break;
                 case 0xa:
                     readAnimation(sub);
                     break;
                 case 0xb:
                     readEntityAction(sub);
+                    break;
 
                 case 0x0d:
                     readCloseWindow(sub);

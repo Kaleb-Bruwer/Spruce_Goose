@@ -66,7 +66,6 @@ public:
         index += numBytes;
     }
 
-    int readPacketID(){return readVarint().getInt();};
     short readShort(){return ReadFromBuffer::read<short>(buffer, index, bufferSize);};
     unsigned short readUShort(){return ReadFromBuffer::read<unsigned short>(buffer, index, bufferSize);};
     char readChar(){return ReadFromBuffer::read<char>(buffer, index, bufferSize);};
@@ -78,6 +77,7 @@ public:
     double readDouble(){return ReadFromBuffer::read<double>(buffer, index, bufferSize);};
 
     // special cases
+    int readPacketID(){return readVarint().getInt();};
     Varint readVarint();
     string readString();
     Tag_Compound* readNBT();
