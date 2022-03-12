@@ -27,7 +27,7 @@ Tag_Compound::Tag_Compound(char* iterator, int &index, int bufferSize, bool hasN
         readRawName(iterator, index, bufferSize);
 
     while(true){
-        if(index + 1 >= bufferSize){
+        if(index + 1 > bufferSize){
             throw 0;
         }
         //Breaks loop when a Tag_End shows up

@@ -11,7 +11,7 @@ template <class T>
 NBT_Array<T>::NBT_Array(char* iterator, int &index, int bufferSize, bool hasName)
         : NBT(hasName){
     if(hasName){
-        readRawName(iterator, bufferSize, index);
+        readRawName(iterator, index, bufferSize);
     }
 
     if(index + 4 > bufferSize){
