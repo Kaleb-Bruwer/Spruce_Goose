@@ -10,9 +10,6 @@
 #include "./Protocol/PacketReaderTest.cpp"
 #include "./Datastructures/NBTReadTest.cpp"
 
-#include "./World/ThreadAreaCallbacksTest.cpp"
-#include "./World/Chunk/ChunkTest.cpp"
-
 #include "./General/FuelTableTest.cpp"
 
 #include "./Datastructures/Octree/OctLeafTest.cpp"
@@ -25,6 +22,11 @@
 #include "./World/EntityStore/EntityStoreRemoveTest.cpp"
 #include "./World/EntityStore/EntityStoreGetTest.cpp"
 #include "./World/EntityStore/EntityStoreRemoveFunctorTest.cpp"
+
+#include "./World/ThreadAreaCallbacksTest.cpp"
+#include "./World/Chunk/ChunkTest.cpp"
+#include "./World/Chunk/ChunkChangeTrackerTest.cpp"
+
 
 int main(int argc, char **argv){
     testing::InitGoogleTest(&argc, argv);

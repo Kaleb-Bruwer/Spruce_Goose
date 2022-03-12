@@ -18,13 +18,14 @@ class AddPlayersToChunkF;
 class AddChunksToPlayerF;
 
 namespace ns_es{class DummyPlayer;};
+namespace ns_cct{class MockPlayer;};
 
 class PlayerEntity : public Entity{
 private:
 
     // Constructor used in testing only
     PlayerEntity(int eid) : Entity(eid){
-        
+
     };
 
 protected:
@@ -46,6 +47,7 @@ protected:
     friend class AddChunksToPlayerF;
 
     friend class ns_es::DummyPlayer;
+    friend class ns_cct::MockPlayer;
 
 public:
     bool sprinting = false;

@@ -2,14 +2,13 @@
 #define CHUNKCHANGETRACKER_H
 
 #include <list>
+#include <thread>
 
 #include "../../Datastructures/Coordinate/Coordinate.h"
 #include "../../Datastructures/Coordinate/ChunkCoord.h"
 
 #include "Block.h"
 #include "ChunkChangeToken.h"
-
-#include <thread>
 
 class Chunk; //Can't include here, is component of Chunk
 class PlayerEntity;
@@ -24,6 +23,10 @@ private:
 
     bool casePlayerToken( std::list<ChunkChangeToken*>::iterator it, bool &passedData,
         int &newCompChunk, int index);
+
+protected:
+    // Testing only:
+    ChunkChangeTracker(ChunkCoord coord, ChunkChangeToken* chunk);
 
 public:
     ChunkChangeTracker(){};

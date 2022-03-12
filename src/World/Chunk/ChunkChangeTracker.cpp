@@ -8,6 +8,13 @@
 
 using namespace std;
 
+// Testing constructor
+ChunkChangeTracker::ChunkChangeTracker(ChunkCoord coord, ChunkChangeToken* chunk){
+    cCoord = coord;
+    changes.push_back(chunk);
+}
+
+
 ChunkChangeTracker::ChunkChangeTracker(Chunk* c){
     create(c);
 }
