@@ -11,8 +11,6 @@
 
 #include <thread>
 
-using namespace std;
-
 class Chunk; //Can't include here, is component of Chunk
 class PlayerEntity;
 
@@ -20,9 +18,12 @@ class ChunkChangeTracker{
 private:
     ChunkCoord cCoord;
     int numBlockChanges = 0;
-    list<ChunkChangeToken*> changes;
+    std::list<ChunkChangeToken*> changes;
 
     thread::id owner;
+
+    bool casePlayerToken( std::list<ChunkChangeToken*>::iterator it, bool &passedData,
+        int &newCompChunk, int index);
 
 public:
     ChunkChangeTracker(){};
