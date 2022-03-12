@@ -62,6 +62,7 @@ public:
     void sendPlayerPos();
 
     // Sends window property updates to players where needed (i.e. furnace UI)
+    // CURRENTLY UNUSED, in favour of callbacks
     void windowPropertyUpdate(unsigned long long tick);
 
     //Execute functor on all contained Entities (excludes outside players)

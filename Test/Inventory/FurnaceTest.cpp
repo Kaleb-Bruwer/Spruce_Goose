@@ -4,12 +4,27 @@
 #include "../../src/Inventory/Crafting/Crafting.h"
 #include "../../src/World/ThreadArea.h"
 
+namespace ns_fur{
+    class ThreadAreaDummy : public ThreadArea{
+    public:
+        ThreadAreaDummy() : ThreadArea(false){};
+
+        void setTick(unsigned long long t){tickNum = t;};
+
+        void exec_tick(unsigned long long t){
+            setTick(t);
+            callbacks.exec_tick(t, this);
+        }
+    };
+
+};
+
 class FurnaceTest : public ::testing::Test{
 protected:
     Furnace furnace;
     Inventory2 inventory;
     AlteredSlots altered;
-    ThreadArea tArea = ThreadArea(false);
+    ns_fur::ThreadAreaDummy* tArea = new ns_fur::ThreadAreaDummy();
 
 
     void callClickWindow(ClickWindowJob* job, bool creative = false){
@@ -18,7 +33,7 @@ protected:
         request.inv = &inventory;
         request.altered = &altered;
         request.creative = creative;
-        request.tArea = &tArea;
+        request.tArea = tArea;
 
         furnace.clickWindow(request);
     }
@@ -29,7 +44,8 @@ protected:
     };
 
     virtual void TearDown(){
-
+        if(tArea)
+            delete tArea;
     };
 
     void testMode0Btn0(Slot s, Slot h, int slot){
@@ -71,6 +87,7 @@ protected:
         request.inv = &inventory;
         request.altered = &altered;
         request.creative = false;
+        request.tArea = tArea;
 
         furnace.clickWindow(request);
         if(slot < 3){
@@ -106,6 +123,7 @@ protected:
         request.inv = &inventory;
         request.altered = &altered;
         request.creative = false;
+        request.tArea = tArea;
 
         furnace.clickWindow(request);
 
@@ -221,8 +239,8 @@ TEST_F(FurnaceTest, burn1){
     validateFurnace(furnace, vector<int>{0}, vector<Slot>{Slot(15)});
 
     // Skip to end of smelting
-    int endTick = tArea.getTick() + 200;
-    tArea.callbacks.exec_tick(endTick, &tArea);
+    int endTick = tArea->getTick() + 200;
+    tArea->exec_tick(endTick);
 
     // iron ingot in slot[2]
     validateFurnace(furnace, vector<int>{2}, vector<Slot>{Slot(265)});
@@ -259,8 +277,8 @@ TEST_F(FurnaceTest, burn2){
     validateFurnace(furnace, vector<int>{0, 1}, vector<Slot>{Slot(307), Slot(263)});
 
     // Skip to end of smelting
-    int endTick = tArea.getTick() + 200;
-    tArea.callbacks.exec_tick(endTick, &tArea);
+    int endTick = tArea->getTick() + 200;
+    tArea->exec_tick(endTick);
 
     // Nothing changed since nothing smelted
     validateFurnace(furnace, vector<int>{0, 1}, vector<Slot>{Slot(307), Slot(263)});
@@ -297,8 +315,8 @@ TEST_F(FurnaceTest, burn3){
     validateFurnace(furnace, vector<int>{0, 1}, vector<Slot>{Slot(15), Slot(1)});
 
     // Skip to end of smelting
-    int endTick = tArea.getTick() + 200;
-    tArea.callbacks.exec_tick(endTick, &tArea);
+    int endTick = tArea->getTick() + 200;
+    tArea->exec_tick(endTick);
 
     validateFurnace(furnace, vector<int>{0, 1}, vector<Slot>{Slot(15), Slot(1)});
 
@@ -335,9 +353,8 @@ TEST_F(FurnaceTest, burn4){
     validateFurnace(furnace, vector<int>{0}, vector<Slot>{Slot(15)});
 
     // Skip to middle of smelting
-    int endTick = tArea.getTick() + 100;
-    tArea.setTick(endTick);
-    tArea.callbacks.exec_tick(endTick, &tArea);
+    int endTick = tArea->getTick() + 100;
+    tArea->exec_tick(endTick);
 
     // swap smelting input
 
@@ -350,9 +367,8 @@ TEST_F(FurnaceTest, burn4){
     callClickWindow(job);
 
     //skip  to end of smelting
-    endTick = tArea.getTick() + 100;
-    tArea.setTick(endTick);
-    tArea.callbacks.exec_tick(endTick, &tArea);
+    endTick = tArea->getTick() + 100;
+    tArea->exec_tick(endTick);
 
     // iron ingot in slot[2]
     validateFurnace(furnace, vector<int>{2}, vector<Slot>{Slot(266)});
@@ -390,9 +406,8 @@ TEST_F(FurnaceTest, burn5){
     validateFurnace(furnace, vector<int>{0}, vector<Slot>{Slot(15)});
 
     // Skip to middle of smelting
-    int endTick = tArea.getTick() + 100;
-    tArea.setTick(endTick);
-    tArea.callbacks.exec_tick(endTick, &tArea);
+    int endTick = tArea->getTick() + 100;
+    tArea->exec_tick(endTick);
 
     // swap smelting input
 
@@ -405,9 +420,8 @@ TEST_F(FurnaceTest, burn5){
     callClickWindow(job);
 
     //skip  to end of smelting
-    endTick = tArea.getTick() + 100;
-    tArea.setTick(endTick);
-    tArea.callbacks.exec_tick(endTick, &tArea);
+    endTick = tArea->getTick() + 100;
+    tArea->exec_tick(endTick);
 
     // iron ingot in slot[2]
     validateFurnace(furnace, vector<int>{0}, vector<Slot>{Slot(3)});
@@ -444,9 +458,8 @@ TEST_F(FurnaceTest, burn6){
     validateFurnace(furnace, vector<int>{0}, vector<Slot>{Slot(15)});
 
     // Skip to end of smelting
-    int endTick = tArea.getTick() + 200;
-    tArea.setTick(endTick);
-    tArea.callbacks.exec_tick(endTick, &tArea);
+    int endTick = tArea->getTick() + 200;
+    tArea->exec_tick(endTick);
 
     // iron ingot in slot[2]
     validateFurnace(furnace, vector<int>{2}, vector<Slot>{Slot(265)});
@@ -463,9 +476,8 @@ TEST_F(FurnaceTest, burn6){
     validateFurnace(furnace, vector<int>{0, 2}, vector<Slot>{Slot(14), Slot(265)});
 
     // Skip to end of smelting
-    endTick = tArea.getTick() + 200;
-    tArea.setTick(endTick);
-    tArea.callbacks.exec_tick(endTick, &tArea);
+    endTick = tArea->getTick() + 200;
+    tArea->exec_tick(endTick);
 
     // validateFurnace(furnace, vector<int>{0, 2}, vector<Slot>{Slot(14), Slot(265)});
 
@@ -485,7 +497,7 @@ TEST_F(FurnaceTest, burn7){
 
     callClickWindow(job);
 
-    // Place coal in fuel slot
+    // Place stick in fuel slot
     job->slotNum = 1;
     callClickWindow(job);
 
@@ -503,11 +515,76 @@ TEST_F(FurnaceTest, burn7){
     validateFurnace(furnace, vector<int>{0}, vector<Slot>{Slot(15)});
 
     // Skip to end of smelting
-    int endTick = tArea.getTick() + 200;
-    tArea.callbacks.exec_tick(endTick, &tArea);
+    int endTick = tArea->getTick() + 100;
+    tArea->exec_tick(endTick);
+    endTick += 100;
+    tArea->exec_tick(endTick);
 
     // couldn't smelt since fuel ran out
     validateFurnace(furnace, vector<int>{0}, vector<Slot>{Slot(15)});
+
+    job->drop();
+}
+
+
+TEST_F(FurnaceTest, burn8){
+    // burn multiple items
+    inventory.slots[9] = Slot(263);
+
+    // Pick up coal
+    ClickWindowJob* job = new ClickWindowJob();
+    job->pickup();
+    job->slotNum = 3;
+
+    callClickWindow(job);
+
+    // Place coal in fuel slot
+    job->slotNum = 1;
+    callClickWindow(job);
+
+    // Pick up iron ore
+    inventory.slots[9] = Slot(15);
+    inventory.slots[9].itemCount = 3;
+    job->slotNum = 3;
+    callClickWindow(job);
+
+    // Place iron ore in input
+    job->slotNum = 0;
+    callClickWindow(job);
+
+    // At this point smelting should start
+    // iron ore still in input, but coal is on fire
+    Slot inExpect = Slot(15);
+    inExpect.itemCount = 3;
+    validateFurnace(furnace, vector<int>{0}, vector<Slot>{inExpect});
+
+    // Skip to end of 1st smelt
+    int endTick = tArea->getTick() + 200;
+    tArea->exec_tick(endTick);
+
+    Slot outExpect = Slot(265);
+
+    inExpect.itemCount--;
+    // iron ingot in slot[2]
+    validateFurnace(furnace, vector<int>{0,2}, vector<Slot>{inExpect, outExpect});
+
+
+    // Skip to end of 2nd smelt
+    endTick += 200;
+    tArea->exec_tick(endTick);
+
+    inExpect.itemCount--;
+    outExpect.itemCount++;
+    // iron ingot in slot[2]
+    validateFurnace(furnace, vector<int>{0,2}, vector<Slot>{inExpect, outExpect});
+
+    // Skip to end
+    endTick += 200;
+    tArea->exec_tick(endTick);
+
+    outExpect.itemCount++;
+    // iron ingot in slot[2]
+    validateFurnace(furnace, vector<int>{2}, vector<Slot>{outExpect});
 
     job->drop();
 }

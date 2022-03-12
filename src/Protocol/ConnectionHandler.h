@@ -65,7 +65,7 @@ public:
     bool addPlayer(PlayerConnection* p);//false if it couldn't be added
     bool addPlayer(int sock);
 
-    void loop(); //Used for singleTreaded mode
+    void loopBody(); //Used for singleTreaded mode
 };
 
 #endif

@@ -12,7 +12,7 @@ protected:
 public:
     NBT_Primitive(){};
     NBT_Primitive(T);
-    NBT_Primitive(char* iterator, int &index, bool hasName = true);
+    NBT_Primitive(char* iterator, int &index, int bufferSize, bool hasName = true);
     NBT_Primitive<T>& operator=(const NBT_Primitive<T>& rhs);
 
     T getVal(){return value;};

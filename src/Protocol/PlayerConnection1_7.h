@@ -5,6 +5,8 @@ class PlayerConnection1_7 : public PlayerConnection{
 private:
     bool keepAliveSafe = false; //Sending a keepAlive too soon crashes client
 
+    PacketReader* unread = 0;
+
 protected:
 
     void handleJobTickets();

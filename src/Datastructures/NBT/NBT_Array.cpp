@@ -3,26 +3,38 @@
 #include <cstring>
 #include <iostream>
 
+#include "../../Protocol/ReadFromBuffer.h"
+
 using namespace std;
 
 template <class T>
-NBT_Array<T>::NBT_Array(char* iterator, int &index, bool hasName) : NBT(hasName){
+NBT_Array<T>::NBT_Array(char* iterator, int &index, int bufferSize, bool hasName)
+        : NBT(hasName){
     if(hasName){
-        readRawName(iterator, index);
+        readRawName(iterator, index, bufferSize);
     }
-    iterator += index;
 
+    if(index + 4 > bufferSize){
+        throw 0; //can't read length
+    }
+
+
+    iterator += index;
     memcpy((void*)&size, iterator, 4);
     switchEndian((void*)&size, 4);
     iterator += 4;
     index += 4;
+
+    if(index + size * sizeof(T) > bufferSize)
+        throw 0; //Can't read full array
 
     array = new T[size];
     memcpy(array, iterator, sizeof(T) * size);
     index += sizeof(T) * size;
 
     for(int i=0; i<size; i++){
-        switchEndian((void*)&(array[size]), sizeof(T));
+        ReadFromBuffer::switchEndian<T>((void*)&(array[size]));
+        // switchEndian((void*)&(array[size]), sizeof(T));
     }
 }
 

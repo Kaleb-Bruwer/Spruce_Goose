@@ -6,8 +6,8 @@ Tag_Byte::Tag_Byte(char val) : NBT_Primitive<char>(val){
     typeID = 1;
 }
 
-Tag_Byte::Tag_Byte(char* iterator, int &index, bool hasName)
-        : NBT_Primitive<char>(iterator, index, hasName){
+Tag_Byte::Tag_Byte(char* iterator, int &index, int bufferSize, bool hasName)
+        : NBT_Primitive<char>(iterator, index, bufferSize, hasName){
     typeID = 1;
 }
 

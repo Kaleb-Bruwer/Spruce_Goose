@@ -12,11 +12,11 @@ private:
     unsigned int size = 0;
     NBT** value = 0;
 
-    void addItem(char* iterator, int &index, int pos);
+    void addItem(char* iterator, int &index, int bufferSize, int pos);
 public:
     Tag_List(){typeID = 9;};
     Tag_List(int type, int size);
-    Tag_List(char* iterator, int &index, bool hasName = true);
+    Tag_List(char* iterator, int &index, int bufferSize, bool hasName = true);
     Tag_List(Tag_List* rhs);
     ~Tag_List();
     NBT* clone();

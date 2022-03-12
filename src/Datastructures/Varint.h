@@ -1,10 +1,7 @@
-#ifndef VARINT_H
-#define VARINT_H
+#pragma once
 
 #include <limits.h>
 #include <string>
-
-using namespace std;
 
 class Varint{
 private:
@@ -13,7 +10,7 @@ private:
     char* charVersion = 0; //null terminated for string's assignment operator
 public:
     Varint(long long value);
-    Varint(char* start, int &size, int sizeLim = INT_MAX);
+    Varint(char* start, int &size, int sizeLim = INT_MAX); //throws 0 if sizeLim is exceeded
     Varint(const Varint &rhs);
     ~Varint();
 
@@ -22,8 +19,6 @@ public:
     unsigned long long getInt() {return value;};
     char* getVarint(){return charVersion;};
     void writeToBuffer(char* buffer, int &index);
-    string getVarintAsString();
+    std::string getVarintAsString();
     int getNBytes(){return nBytes;}; //Length of Varint version in bytes
 };
-
-#endif

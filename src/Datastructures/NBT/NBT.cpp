@@ -3,6 +3,7 @@
 #include <cstring>
 
 #include "../Varint.h"
+#include "../../Protocol/ReadFromBuffer.h"
 
 using namespace std;
 
@@ -12,8 +13,11 @@ NBT& NBT::operator=(const NBT& rhs){
     name = rhs.name;
 }
 
-void NBT::readRawName(char* iterator, int &index){
-    int len = readShort(iterator, index);
+void NBT::readRawName(char* iterator, int &index, int bufferSize){
+    int len = readShort(iterator, index, bufferSize);
+
+    if(index + len > bufferSize)
+        throw 0;
 
     char save = iterator[len+index];
     iterator[len+index] = 0;
@@ -41,15 +45,8 @@ void NBT::switchEndian(void* iterator, int size){
     }
 }
 
-short int NBT::readShort(char* iterator, int &index){
-    iterator += index;
-    switchEndian(iterator,2);
-    void* a = iterator;
-    unsigned short int* b = (unsigned short int*)a;
-    short int val = *b;
-    index+=2;
-    switchEndian(iterator,2);
-    return val;
+short int NBT::readShort(char* iterator, int &index, int bufferSize){
+    return ReadFromBuffer::read<short>(iterator, index, bufferSize);
 }
 
 int NBT::sizeNoData(){

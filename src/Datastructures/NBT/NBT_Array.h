@@ -12,7 +12,7 @@ protected:
     T* array = 0;
 public:
     NBT_Array(){};
-    NBT_Array(char* iterator, int &index, bool hasName = true);
+    NBT_Array(char* iterator, int &index, int bufferSize, bool hasName = true);
     virtual ~NBT_Array();
     NBT_Array<T>& operator=(const NBT_Array<T>& rhs);
 

@@ -170,7 +170,7 @@ void ThreadArea::run(){
         callbacks.exec_tick(tickNum, this);
 
         // Furnace UI updates
-        entities.windowPropertyUpdate(tickNum);
+        // entities.windowPropertyUpdate(tickNum);
         //Physics happens here
 
         //Send data
@@ -672,8 +672,6 @@ void ThreadArea::handleClientSlotChange(JobTicket* j){
     PlayerEntity* player = (PlayerEntity*) entities.getByEid(job->eid);
     if(!player)
         return;
-
-    cout << "Player cursor: " << job->cursor << endl;
 
     if(job->cursor >= 0){
         player->inventory.inventory.cursor = job->cursor + 36;

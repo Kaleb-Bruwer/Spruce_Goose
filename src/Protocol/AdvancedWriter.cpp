@@ -5,6 +5,7 @@
 #include "../Inventory/Crafting/Crafting.h"
 
 #include "../Inventory/BlockData/BaseChest.h"
+#include "../Inventory/BlockData/Furnace.h"
 #include "../Inventory/Inventory2.h"
 
 AdvancedWriter::AdvancedWriter(unsigned int size) :PacketWriter(size){};
@@ -365,6 +366,9 @@ bool AdvancedWriter::writeWindowItems(Inventory2* inv, BlockData* b, short int w
     case CHESTDOUBLE:
         numSlots = 54;
         break;
+    case FURNACE:
+        numSlots = 3;
+        break;
     default: //Either unknown or doesn't need a packet
         return false;
     }
@@ -390,6 +394,13 @@ bool AdvancedWriter::writeWindowItems(Inventory2* inv, BlockData* b, short int w
 
         for(int i=0; i<54; i++){
             baseThis << chest->slots[i];
+        }
+        break;
+    }
+    case FURNACE:{
+        Furnace* furnace = (Furnace*) b;
+        for(int i=0; i<3; i++){
+            baseThis << furnace->slots[i];
         }
         break;
     }

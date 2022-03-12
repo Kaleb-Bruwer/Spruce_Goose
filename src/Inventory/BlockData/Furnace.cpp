@@ -8,6 +8,8 @@
 
 #include "../../World/ThreadArea.h"
 
+#include "../../Protocol/AdvancedWriter.h"
+#include "../../JobTickets/SendPacket.h"
 
 using namespace std;
 
@@ -241,7 +243,7 @@ vector<Slot> Furnace::clickWindow(ClickWindowRequest request){
 
     // Check if a burn must be started or cancelled
     if(slots[0].isEmpty()){
-        cancelBurn();
+        cancelBurn(tArea->getTick());
     }
     else if(!oldBurn.typeMatch(slots[0])){
         // Note: inputs can be swapped without affecting burn progress,
@@ -252,9 +254,9 @@ vector<Slot> Furnace::clickWindow(ClickWindowRequest request){
         // New input doesn't smelt
         if(expected.isEmpty()
                 // Input changed, so check if output still matches
-                || (!slots[2].isEmpty() && expected.typeMatch(slots[2])) ){
+                || (!slots[2].isEmpty() && !expected.typeMatch(slots[2])) ){
 
-            cancelBurn();
+            cancelBurn(tArea->getTick());
         }
         else if(burnFinish == 0){
             startBurn(tArea);
@@ -579,18 +581,43 @@ void Furnace::startBurn(ThreadArea* tArea){
         // Set callback
         tArea->callbacks.add(burnFinish, &burnCallbackWrap, this);
 
-        // TODO: window update of some kind
-
+        sendWindowProperty(tArea->getTick());
     }
+
+    setProgressCallback(tArea);
 }
 
-void Furnace::cancelBurn(){
+void Furnace::cancelBurn(unsigned long long tick){
     if(burnFinish != 0){
-        // TODO: window update of some kind
+        burnFinish = 0;
+        sendWindowProperty(tick);
     }
 
     // Stop burn
     burnFinish = 0;
+}
+
+void Furnace::sendWindowProperty(unsigned long long tick){
+    AdvancedWriter writer;
+    int arrow = (burnFinish != 0) ? (200 - (burnFinish - tick)) : 0;
+    int fire = (fuelFinish != 0) ? (fuelFinish - tick) : 0;
+
+    int id = getWindowID();
+
+    writer.writeWindowProperty(id, 0, arrow);
+    writer.writeWindowProperty(id, 1, fire);
+
+    sendJobToAllOpenPlayers(new SendPacket(&writer));
+}
+
+void Furnace::sendSlots(){
+    AdvancedWriter writer;
+
+    for(int i=0; i<3; i++){
+        writer.writeSetSlot(getWindowID(), i, slots[i]);
+    }
+
+    sendJobToAllOpenPlayers(new SendPacket(&writer));
 }
 
 void Furnace::startNextFuel(ThreadArea* tArea){
@@ -615,6 +642,8 @@ void Furnace::startNextFuel(ThreadArea* tArea){
             slots[1].makeEmpty();
     }
 
+    sendSlots();
+
 }
 
 
@@ -637,6 +666,8 @@ void Furnace::burnCallback(ThreadArea* tArea){
     }
     else{
         burnFinish = 0;
+        sendWindowProperty(tArea->getTick());
+        sendSlots();
         return;
     }
     slots[0].itemCount--;
@@ -649,7 +680,8 @@ void Furnace::burnCallback(ThreadArea* tArea){
         slots[0].makeEmpty(); //reminiscent of a bad design choice a long time ago...
         burnFinish = 0;
     }
-
+    sendWindowProperty(tArea->getTick());
+    sendSlots();
 }
 
 void Furnace::fuelCallback(ThreadArea* tArea){
@@ -672,6 +704,24 @@ void Furnace::fuelCallback(ThreadArea* tArea){
     //       burnCallback to handle the rest
 }
 
+void Furnace::progressCallback(ThreadArea* tArea){
+    hasProgressCallback = false;
+    unsigned long long tick = tArea->getTick();
+
+    sendWindowProperty(tick);
+    setProgressCallback(tArea);
+}
+
+void Furnace::setProgressCallback(ThreadArea* tArea){
+    if(hasProgressCallback)
+        return;
+
+    if(fuelFinish != 0 || burnFinish != 0){
+        hasProgressCallback = true;
+        tArea->callbacks.add(tArea->getTick() + 10, &progressCallbackWrap, this);
+    }
+}
+
 void burnCallbackWrap(void* obj, ThreadArea* tArea){
     Furnace* furnace = (Furnace*) obj;
     furnace->burnCallback(tArea);
@@ -680,4 +730,9 @@ void burnCallbackWrap(void* obj, ThreadArea* tArea){
 void fuelCallbackWrap(void* obj, ThreadArea* tArea){
     Furnace* furnace = (Furnace*) obj;
     furnace->fuelCallback(tArea);
+}
+
+void progressCallbackWrap(void* obj, ThreadArea* tArea){
+    Furnace* furnace = (Furnace*) obj;
+    furnace->progressCallback(tArea);
 }

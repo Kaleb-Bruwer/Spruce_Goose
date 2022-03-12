@@ -263,7 +263,11 @@ Slot Crafting::getProduct(CraftingFrame frame){
 }
 
 Slot Crafting::getSmeltingProduct(Slot input){
-    auto it = smeltingRecipes.find(input);
+    Slot sanitised = input;
+    sanitised.itemCount = 1;
+
+
+    auto it = smeltingRecipes.find(sanitised);
     if(it == smeltingRecipes.end())
         return Slot();
     return it->second;

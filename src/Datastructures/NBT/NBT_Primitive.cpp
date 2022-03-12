@@ -2,7 +2,7 @@
 
 #include <cstring>
 
-#include "../../Protocol/ProtocolHelpers.h"
+#include "../../Protocol/ReadFromBuffer.h"
 
 using namespace std;
 
@@ -12,17 +12,12 @@ NBT_Primitive<T>::NBT_Primitive(T val){
 }
 
 template <class T>
-NBT_Primitive<T>::NBT_Primitive(char* iterator, int &index, bool hasName) : NBT(hasName){
+NBT_Primitive<T>::NBT_Primitive(char* iterator, int &index, int bufferSize,
+        bool hasName) : NBT(hasName){
     if(hasName){
-        readRawName(iterator, index);
+        readRawName(iterator, index, bufferSize);
     }
-    iterator += index; //Fresh data is now at iterator[0]
-
-    memcpy(&value, iterator, sizeof(value));
-    if(sizeof(value) > 1)
-        switchEndian(&value, sizeof(value));
-
-    index += sizeof(value);
+    value = ReadFromBuffer::read<T>(iterator, index, bufferSize);
 }
 
 template <class T>

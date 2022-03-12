@@ -6,8 +6,8 @@ Tag_Float::Tag_Float(float val) : NBT_Primitive<float>(val){
     typeID = 5;
 }
 
-Tag_Float::Tag_Float(char* iterator, int &index, bool hasName)
-        : NBT_Primitive<float>(iterator, index, hasName){
+Tag_Float::Tag_Float(char* iterator, int &index, int bufferSize, bool hasName)
+        : NBT_Primitive<float>(iterator, index, bufferSize, hasName){
     typeID = 5;
 }
 

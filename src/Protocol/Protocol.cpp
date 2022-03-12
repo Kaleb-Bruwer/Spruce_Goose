@@ -70,7 +70,9 @@ void Protocol::loop(){
         else if(errno == ENFILE){
             cout << "Operating Sysyem out of fds\n";
         }
-        //cout << "Failed connection attempted\n";
+        else{
+            cout << "Unknown error (" << errno << ") in Protocol\n";
+        }
     }
     else{
         addPlayer(clientSocket);

@@ -23,11 +23,16 @@ Tag_List::Tag_List(int t, int s){
         value[i] = 0;
 }
 
-Tag_List::Tag_List(char* iterator, int &index, bool hasName) : NBT(hasName){
+Tag_List::Tag_List(char* iterator, int &index, int bufferSize, bool hasName)
+        : NBT(hasName){
     typeID = 9;
     if(hasName)
-        readRawName(iterator, index);
+        readRawName(iterator, index, bufferSize);
+
     //Get TypeID of elements
+    if(index + 5 > bufferSize)
+        throw 0; //Can't read type and length
+
     char typeC = iterator[index];
     type = (unsigned int) typeC;
     index++;
@@ -39,10 +44,14 @@ Tag_List::Tag_List(char* iterator, int &index, bool hasName) : NBT(hasName){
     index += 4;
 
     value = new NBT*[size];
+    // Array initialized to 0 in case of premature deletion
+    memset(value, 0, size * sizeof(NBT*));
+
 
     for(int i=0; i<size; i++){
-        addItem(iterator, index, i);
+        addItem(iterator, index, bufferSize, i);
     }
+    currSize = size;
 }
 
 Tag_List::Tag_List(Tag_List* rhs){
@@ -51,7 +60,8 @@ Tag_List::Tag_List(Tag_List* rhs){
 
 Tag_List::~Tag_List(){
     for(int i=0; i<size; i++)
-        delete value[i];
+        if(value[i] != 0)
+            delete value[i];
     delete [] value;
 }
 
@@ -87,44 +97,44 @@ NBT* Tag_List::getValAt(int index){
     return value[index];
 }
 
-void Tag_List::addItem(char* iterator, int &index, int pos){
+void Tag_List::addItem(char* iterator, int &index, int bufferSize, int pos){
     //Call nameless constructor
     switch(type){
         case 1:
-            value[pos] = new Tag_Byte(iterator, index, false);
+            value[pos] = new Tag_Byte(iterator, index, bufferSize, false);
             break;
         case 2:
-            value[pos] = new Tag_Short(iterator, index, false);
+            value[pos] = new Tag_Short(iterator, index, bufferSize, false);
             break;
         case 3:
-            value[pos] = new Tag_Int(iterator, index, false);
+            value[pos] = new Tag_Int(iterator, index, bufferSize, false);
             break;
         case 4:
-            value[pos] = new Tag_Long(iterator, index, false);
+            value[pos] = new Tag_Long(iterator, index, bufferSize, false);
             break;
         case 5:
-            value[pos] = new Tag_Float(iterator, index, false);
+            value[pos] = new Tag_Float(iterator, index, bufferSize, false);
             break;
         case 6:
-            value[pos] = new Tag_Double(iterator, index, false);
+            value[pos] = new Tag_Double(iterator, index, bufferSize, false);
             break;
         case 7:
-            value[pos] = new Tag_Byte_Array(iterator, index, false);
+            value[pos] = new Tag_Byte_Array(iterator, index, bufferSize, false);
             break;
         case 8:
-            value[pos] = new Tag_String(iterator, index, false);
+            value[pos] = new Tag_String(iterator, index, bufferSize, false);
             break;
         case 9:
-            value[pos] = new Tag_List(iterator, index, false);
+            value[pos] = new Tag_List(iterator, index, bufferSize, false);
             break;
         case 10:
-            value[pos] = new Tag_Compound(iterator, index, false);
+            value[pos] = new Tag_Compound(iterator, index, bufferSize, false);
             break;
         case 11:
-            value[pos] = new Tag_Int_Array(iterator, index, false);
+            value[pos] = new Tag_Int_Array(iterator, index, bufferSize, false);
             break;
         case 12:
-            value[pos] = new Tag_Long_Array(iterator, index, false);
+            value[pos] = new Tag_Long_Array(iterator, index, bufferSize, false);
             break;
     }
 }

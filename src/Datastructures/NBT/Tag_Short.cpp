@@ -6,8 +6,8 @@ Tag_Short::Tag_Short(short val) : NBT_Primitive<short>(val){
     typeID = 2;
 }
 
-Tag_Short::Tag_Short(char* iterator, int &index, bool hasName)
-        : NBT_Primitive<short>(iterator, index, hasName){
+Tag_Short::Tag_Short(char* iterator, int &index, int bufferSize, bool hasName)
+        : NBT_Primitive<short>(iterator, index, bufferSize, hasName){
     typeID = 2;
 }
 

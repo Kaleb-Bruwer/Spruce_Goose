@@ -26,6 +26,10 @@ protected:
     World* world = 0;
     bool loggedIn = false;
 
+    char* buffer = 0; //When some data couldn't be sent, it waits here
+    int size = 0; //size of buffer
+    int end = 0; //how much data in buffer
+
     mutex followingMutex;
     vector<ThreadArea*> followingAreas; //Used to exit safely
     GetUUID* getUUIDObject = 0;

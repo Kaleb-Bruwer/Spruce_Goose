@@ -4,6 +4,7 @@
 
 #include "../World/World.h"
 
+#include "PacketReaderSub.h"
 
 #include "../JobTickets/JoinWorld.h"
 #include "../JobTickets/SendChunks.h"
@@ -34,7 +35,10 @@ PlayerConnection1_7::PlayerConnection1_7(int sock, World* w)
 
 }
 
-PlayerConnection1_7::~PlayerConnection1_7(){}
+PlayerConnection1_7::~PlayerConnection1_7(){
+    if(unread)
+        delete unread;
+}
 
 void PlayerConnection1_7::handleJobTickets(){
     if(quit)
@@ -284,86 +288,128 @@ void PlayerConnection1_7::handleMessage(char* start, int len){
 }
 
 void PlayerConnection1_7::handleMessage(PacketReader &p){
+    if(quit)
+        return;
+
     /*
     Packet length and Id are read here, then PacketReader is handed off
     to the correct method to read & handle the rest of its data
     */
 
+    if(unread){
+        // buffers are combined in unread and new one is then placed in p
+        unread->append(p);
+        p.swapGuts(*unread);
+        delete unread;
+        unread = 0;
+    }
+
     while(!p.reachedEnd()){
+        int packetStart = p.getIndex();
+
         int len = p.readVarint().getInt();
-        int currPos = p.getIndex();
-        int packetID = p.readPacketID();
 
-        bool hasRead = false;
-        switch(state){
-        case 0: //handshake
-            if(packetID == 0){
-                readHandshake(p);
-                hasRead = true;
-            }
-            break;
-        case 1://ping
-            if(packetID == 0){
-                readSLP(p);
-                hasRead = true;
-            }
-            else if(packetID == 1){
-                readPing(p, true);
-                hasRead = true;
-            }
-            break;
-        case 2://login
-            switch(packetID){
-                case 0:
-                    readLoginStart(p);
-                    hasRead = true;
-                    break;
-            }
-            break;
-        case 3://play
-            switch(packetID){
-            case 0:
-                readKeepAlive(p);
-                break;
-            case 1:
-                readChat(p);
-                break;
-            case 4:
-                readPlayerPosition(p);
-                break;
-            case 5:
-                readPlayerLook(p);
-                break;
-            case 6:
-                readPlayerPosAndLook(p);
-                break;
-            case 7:
-                readPlayerDigging(p);
-                break;
-            case 8:
-                readPlayerBlockPlacement(p);
-                break;
-            case 9:
-                readClientSlotChange(p);
-            case 0xa:
-                readAnimation(p);
-                break;
-            case 0xb:
-                readEntityAction(p);
-
-            case 0x0d:
-                readCloseWindow(p);
-                break;
-
-            case 0x0e:
-                readClickWindow(p);
-                break;
-            }
+        if(len > 8 *1024*1024){ //8mb packet limit
+            // kick player: packet too big
+            // Having no upper limit would cause some vulnerabilities
+            cout << "Packet size limit exceeded by " << username << "\n";
+            quit = true;
+            return;
         }
 
-        if(!hasRead){
-            //Skips unknown packets
-            p.setIndex(currPos + len);
+        if(p.lenRemaining() < len){
+            // if incomplete packet received, store packet in a buffer
+            unread = new PacketReader(max(len+16, 1024));
+            p.setIndex(packetStart);
+
+            // This is basically syntactic trickery to make life easier, it
+            // shouldn't introduce much overhead
+            PacketReaderSub remaining(&p);
+            unread->append(remaining);
+            return;
+        }
+
+        // Create a packet-reader specifically for this one packet, with
+        // buffer limit set at end of packet to prevent over-reading (especially in NBT)
+
+        // if an error is thrown, it means packet tried to read beyond its limit.
+        PacketReaderSub sub(&p, len);
+
+        try{
+            // int currPos = p.getIndex();
+            int packetID = sub.readPacketID();
+
+            switch(state){
+            case 0: //handshake
+                if(packetID == 0){
+                    readHandshake(sub);
+                }
+                break;
+            case 1://ping
+                if(packetID == 0){
+                    readSLP(sub);
+                }
+                else if(packetID == 1){
+                    readPing(sub, true);
+                }
+                break;
+            case 2://login
+                switch(packetID){
+                    case 0:
+                        readLoginStart(sub);
+                        break;
+                }
+                break;
+            case 3://play
+                switch(packetID){
+                case 0:
+                    readKeepAlive(sub);
+                    break;
+                case 1:
+                    readChat(sub);
+                    break;
+                case 4:
+                    readPlayerPosition(sub);
+                    break;
+                case 5:
+                    readPlayerLook(sub);
+                    break;
+                case 6:
+                    readPlayerPosAndLook(sub);
+                    break;
+                case 7:
+                    readPlayerDigging(sub);
+                    break;
+                case 8:
+                    readPlayerBlockPlacement(sub);
+                    break;
+                case 9:
+                    readClientSlotChange(sub);
+                    break;
+                case 0xa:
+                    readAnimation(sub);
+                    break;
+                case 0xb:
+                    readEntityAction(sub);
+                    break;
+
+                case 0x0d:
+                    readCloseWindow(sub);
+                    break;
+
+                case 0x0e:
+                    readClickWindow(sub);
+                    break;
+                }
+            }
+
+            p.skip(len);
+        }
+        catch(int e){
+            // Invalid data: attempted to read beyond packet limit
+            // kick player
+            quit = true;
+            return;
         }
     }
 }
@@ -396,7 +442,7 @@ void PlayerConnection1_7::readPing(PacketReader &p, bool mustClose){
 }
 
 void PlayerConnection1_7::readLoginStart(PacketReader &p){
-    if(loggedIn){//Ensures that sending this packet 2ce doesn't wreck server
+    if(loggedIn){//Ensures that sending this packet twice doesn't wreck server
         quit = true;
         return;
     }

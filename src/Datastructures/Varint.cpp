@@ -29,22 +29,32 @@ Varint::~Varint(){
 }
 
 Varint::Varint(char* nextChar, int&index, int sizeLim){
-    if(sizeLim != INT_MAX)
-        sizeLim += index;
-    nextChar += index;
-    char* start = nextChar;
+    // if(sizeLim != INT_MAX)
+    //     sizeLim += index;
+    // nextChar += index;
+    // char* start = nextChar;
+
+    char* start = nextChar + index;
+
+    if(sizeLim == 0){
+        throw 0; //Can't read from nothing
+    }
 
     nBytes = 1;
-    while(*nextChar < 0){
+    while(*nextChar < 0){ //means highest bit is 1
         nBytes++;
         nextChar++;
+
+        if(sizeLim < nBytes){
+            throw 0; //Data continues beyond limit
+        }
     }
     nextChar = start;
 
-    if(nBytes > sizeLim){ //Value too big
-        value = ULLONG_MAX;
-        return;
-    }
+    // if(nBytes > sizeLim){ //Value too big
+    //     value = ULLONG_MAX;
+    //     return;
+    // }
 
     charVersion = new char[nBytes+1];
     int currOffset = 0;

@@ -12,11 +12,11 @@ private:
     string value;
 
     //String prefixed with 2 byte length
-    string readShortString(char* iterator, int& index);
+    string readShortString(char* iterator, int& index, int bufferSize);
 public:
     Tag_String(){typeID = 8;};
     Tag_String(string val);
-    Tag_String(char* iterator, int &index, bool hasName = true);
+    Tag_String(char* iterator, int &index, int bufferSize, bool hasName = true);
     Tag_String(Tag_String* rhs);
     NBT* clone();
     Tag_String& operator=(const Tag_String& rhs);

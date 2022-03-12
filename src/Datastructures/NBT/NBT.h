@@ -12,10 +12,10 @@ protected:
     bool hasName = true;
     string name;
     const bool bigEndian = false; //Not properly used
-    void readRawName(char* iterator, int &index);
+    void readRawName(char* iterator, int &index, int bufferSize);
     void writeName(char* buffer, int &index);
     void switchEndian(void* iterator, int size);
-    short int readShort(char* iterator, int &index);
+    short int readShort(char* iterator, int &index, int bufferSize);
     int sizeNoData();
 public:
     NBT(bool hN = true){hasName = hN;};

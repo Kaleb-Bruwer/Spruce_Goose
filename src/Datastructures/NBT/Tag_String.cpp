@@ -9,11 +9,12 @@ Tag_String::Tag_String(string val){
     value = val;
 }
 
-Tag_String::Tag_String(char* iterator, int &index, bool hasName) : NBT(hasName){
+Tag_String::Tag_String(char* iterator, int &index, int bufferSize, bool hasName)
+        : NBT(hasName){
     typeID = 8;
     if(hasName)
-        readRawName(iterator, index);
-    value = readShortString(iterator, index);
+        readRawName(iterator, index, bufferSize);
+    value = readShortString(iterator, index, bufferSize);
 }
 
 Tag_String::Tag_String(Tag_String* rhs){
@@ -31,9 +32,12 @@ Tag_String& Tag_String::operator=(const Tag_String& rhs){
     value = rhs.value;
 }
 
-string Tag_String::readShortString(char* iterator, int &index){
+string Tag_String::readShortString(char* iterator, int &index, int bufferSize){
     //Short int-prepended string
-    int len = readShort(iterator, index);
+    int len = readShort(iterator, index, bufferSize);
+
+    if(index + len > bufferSize)
+        throw 0; //Can't read full string
 
     char save = iterator[len+index];
     iterator[len+index] = 0;

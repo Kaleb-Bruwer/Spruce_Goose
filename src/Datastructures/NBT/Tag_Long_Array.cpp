@@ -3,8 +3,8 @@
 #include <cstring>
 
 
-Tag_Long_Array::Tag_Long_Array(char* iterator, int &index, bool hasName)
-        : NBT_Array<long long>(iterator, index, hasName){
+Tag_Long_Array::Tag_Long_Array(char* iterator, int &index, int bufferSize, bool hasName)
+        : NBT_Array<long long>(iterator, index, bufferSize, hasName){
     typeID = 12;
 }
 

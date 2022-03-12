@@ -2,8 +2,8 @@
 
 #include <cstring>
 
-Tag_Byte_Array::Tag_Byte_Array(char* iterator, int &index, bool hasName)
-        : NBT_Array<char>(iterator, index, hasName){
+Tag_Byte_Array::Tag_Byte_Array(char* iterator, int &index, int bufferSize, bool hasName)
+        : NBT_Array<char>(iterator, index, bufferSize, hasName){
     typeID = 7;
 }
 

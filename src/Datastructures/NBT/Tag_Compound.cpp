@@ -20,18 +20,22 @@ Tag_Compound::Tag_Compound(){
     //Supposed to do nothing
 }
 
-Tag_Compound::Tag_Compound(char* iterator, int &index, bool hasName) : NBT(hasName){
+Tag_Compound::Tag_Compound(char* iterator, int &index, int bufferSize, bool hasName)
+        : NBT(hasName){
     //Create from raw data
     if(hasName)
-        readRawName(iterator, index);
+        readRawName(iterator, index, bufferSize);
 
     while(true){
+        if(index + 1 > bufferSize){
+            throw 0;
+        }
         //Breaks loop when a Tag_End shows up
         unsigned short type = iterator[index]; //1 byte
         index++;
         if(type == 0)
             break; //Tag_End
-        addItem(iterator, index, type);
+        addItem(iterator, index, type, bufferSize);
     }
 }
 
@@ -67,43 +71,44 @@ Tag_Compound& Tag_Compound::operator=(const Tag_Compound& rhs){
     }
 }
 
-void Tag_Compound::addItem(char* iterator, int &index, unsigned short int type){
+void Tag_Compound::addItem(char* iterator, int &index, unsigned short int type,
+        int bufferSize){
     switch(type){
         case 1:
-            children.push_back(new Tag_Byte(iterator, index));
+            children.push_back(new Tag_Byte(iterator, index, bufferSize));
             break;
         case 2:
-            children.push_back(new Tag_Short(iterator, index));
+            children.push_back(new Tag_Short(iterator, index, bufferSize));
             break;
         case 3:
-            children.push_back(new Tag_Int(iterator, index));
+            children.push_back(new Tag_Int(iterator, index, bufferSize));
             break;
         case 4:
-            children.push_back(new Tag_Long(iterator, index));
+            children.push_back(new Tag_Long(iterator, index, bufferSize));
             break;
         case 5:
-            children.push_back(new Tag_Float(iterator, index));
+            children.push_back(new Tag_Float(iterator, index, bufferSize));
             break;
         case 6:
-            children.push_back(new Tag_Double(iterator, index));
+            children.push_back(new Tag_Double(iterator, index, bufferSize));
             break;
         case 7:
-            children.push_back(new Tag_Byte_Array(iterator, index));
+            children.push_back(new Tag_Byte_Array(iterator, index, bufferSize));
             break;
         case 8:
-            children.push_back(new Tag_String(iterator, index));
+            children.push_back(new Tag_String(iterator, index, bufferSize));
             break;
         case 9:
-            children.push_back(new Tag_List(iterator, index));
+            children.push_back(new Tag_List(iterator, index, bufferSize));
             break;
         case 10:
-            children.push_back(new Tag_Compound(iterator, index));
+            children.push_back(new Tag_Compound(iterator, index, bufferSize));
             break;
         case 11:
-            children.push_back(new Tag_Int_Array(iterator, index));
+            children.push_back(new Tag_Int_Array(iterator, index, bufferSize));
             break;
         case 12:
-            children.push_back(new Tag_Long_Array(iterator, index));
+            children.push_back(new Tag_Long_Array(iterator, index, bufferSize));
             break;
     }
 }

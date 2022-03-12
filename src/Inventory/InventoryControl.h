@@ -21,6 +21,7 @@ public:
 
     //only sends if neccesary
     void sendWindowUpdate();
+    void sendJobToPlayer(JobTicket* job);
 
     void openBlock(BlockData* b);
     vector<Slot> closeBlock(bool byPlayer = true);
