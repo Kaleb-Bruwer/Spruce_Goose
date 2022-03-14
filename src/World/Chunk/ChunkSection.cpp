@@ -32,7 +32,7 @@ void ChunkSection::setBlock(Coordinate<int> coord, Block block){
     int index = ((coord.y*sectionW) + coord.z)* sectionW + coord.x;
 
     if(blocks[index].id == 0 && block.id != 0)
-        nonAirCount++;
+        nonAirCount--;
     else if(blocks[index].id != 0 && block.id == 0)
         nonAirCount++;
 

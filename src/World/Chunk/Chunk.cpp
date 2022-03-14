@@ -243,7 +243,7 @@ void Chunk::makeChest(Coordinate<int> coord, ChestSingle* chest){
 
     pos.x--;
     auto it = blockData.find(pos);
-    if(it != blockData.end()){
+    if(it != blockData.end() && it->second->getType() == CHESTSINGLE){
         target = pos;
         found = true;
         lower = true;
@@ -251,16 +251,16 @@ void Chunk::makeChest(Coordinate<int> coord, ChestSingle* chest){
     else{
         pos.x++;
         pos.z--;
-        auto it = blockData.find(pos);
-        if(it != blockData.end()){
+        it = blockData.find(pos);
+        if(it != blockData.end() && it->second->getType() == CHESTSINGLE){
             target = pos;
             found = true;
             lower = true;
         }
         else{
             pos.z += 2;
-            auto it = blockData.find(pos);
-            if(it != blockData.end()){
+            it = blockData.find(pos);
+            if(it != blockData.end() && it->second->getType() == CHESTSINGLE){
                 target = pos;
                 found = true;
                 lower = false;
@@ -268,8 +268,8 @@ void Chunk::makeChest(Coordinate<int> coord, ChestSingle* chest){
             else{
                 pos.z--;
                 pos.x++;
-                auto it = blockData.find(pos);
-                if(it != blockData.end()){
+                it = blockData.find(pos);
+                if(it != blockData.end() && it->second->getType() == CHESTSINGLE){
                     target = pos;
                     found = true;
                     lower = false;
@@ -282,6 +282,7 @@ void Chunk::makeChest(Coordinate<int> coord, ChestSingle* chest){
         // Found an adjacent chest
         ChestDoubleWrapper* wrap = new ChestDoubleWrapper();
         ChestDouble* cd;
+        it = blockData.find(target);
 
         // Passing by reference can't be combined with a type cast
         ChestSingle* c1 = (ChestSingle*) it->second;
@@ -497,9 +498,19 @@ vector<Item*> Chunk::breakBlock(Coordinate<int> coord, Slot tool){
             }
             break;
         }
+        case FURNACE:{
+            Furnace* f = (Furnace*) bd;
+            for(int i=0; i<3; i++){
+                if(!f->slots[i].isEmpty()){
+                    Item* item = new Item(f->slots[i]);
+                    item->setPos(coord);
+                    drops.push_back(item);
+                }
+            }
+            break;
+        }
         }
     }
-
 
     return drops;
 }

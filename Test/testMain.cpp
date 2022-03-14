@@ -24,7 +24,7 @@
 #include "./World/EntityStore/EntityStoreRemoveFunctorTest.cpp"
 
 #include "./World/ThreadAreaCallbacksTest.cpp"
-#include "./World/Chunk/ChunkTest.cpp"
+#include "./World/Chunk/ChunkSetBlockTest.cpp"
 #include "./World/Chunk/ChunkChangeTrackerTest.cpp"
 
 

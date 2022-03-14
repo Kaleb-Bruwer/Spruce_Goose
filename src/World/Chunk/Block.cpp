@@ -362,3 +362,7 @@ double Block::getStrength(){
     BlockStrengths* b = BlockStrengths::getInstance();
     return b->getStrength(id);
 }
+
+bool operator==(const Block& lhs, const Block& rhs){
+    return (lhs.id == rhs.id && lhs.metadata == rhs.metadata);
+}
