@@ -475,13 +475,9 @@ vector<Item*> Chunk::breakBlock(Coordinate<int> coord, Slot tool){
                 broke = single2;
             }
 
-            for(int i=0; i<27; i++){
-                if(!broke->slots[i].isEmpty()){
-                    Item* item = new Item(broke->slots[i]);
-                    item->setPos(coord);
-                    drops.push_back(item);
-                }
-            }
+            vector<Item*> contentDrop = broke->getDrops(coord);
+            drops.insert(drops.end(), contentDrop.begin(), contentDrop.end());
+
             delete wrap;
             delete broke;
 
@@ -489,24 +485,15 @@ vector<Item*> Chunk::breakBlock(Coordinate<int> coord, Slot tool){
         }
         case CHESTSINGLE:{
             ChestSingle* c = (ChestSingle*) bd;
-            for(int i=0; i<27; i++){
-                if(!c->slots[i].isEmpty()){
-                    Item* item = new Item(c->slots[i]);
-                    item->setPos(coord);
-                    drops.push_back(item);
-                }
-            }
+
+            vector<Item*> contentDrop = c->getDrops(coord);
+            drops.insert(drops.end(), contentDrop.begin(), contentDrop.end());
             break;
         }
         case FURNACE:{
             Furnace* f = (Furnace*) bd;
-            for(int i=0; i<3; i++){
-                if(!f->slots[i].isEmpty()){
-                    Item* item = new Item(f->slots[i]);
-                    item->setPos(coord);
-                    drops.push_back(item);
-                }
-            }
+            vector<Item*> contentDrop = f->getDrops(coord);
+            drops.insert(drops.end(), contentDrop.begin(), contentDrop.end());
             break;
         }
         }

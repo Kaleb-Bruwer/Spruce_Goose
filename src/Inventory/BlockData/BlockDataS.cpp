@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include "../../Entities/Item.h"
+
 using namespace std;
 
 template class BlockDataS<3>;  //Furnace
@@ -123,4 +125,19 @@ int BlockDataS<nSlots>::availableSpace(Slot in, int start, int end){
         }
     }
     return total;
+}
+
+template <int nSlots>
+vector<Item*> BlockDataS<nSlots>::getDrops(Coordinate<int> itemPos){
+    vector<Item*> result;
+
+    for(int i=0; i<nSlots; i++){
+        if(!slots[i].isEmpty()){
+            Item* item = new Item(slots[i]);
+            item->setPos(itemPos);
+            result.push_back(item);
+        }
+    }
+
+    return result;
 }
