@@ -25,6 +25,7 @@
 
 #include "./World/ThreadAreaCallbacksTest.cpp"
 #include "./World/Chunk/ChunkSetBlockTest.cpp"
+#include "./World/Chunk/ChunkBreakBlockTest.cpp"
 #include "./World/Chunk/ChunkChangeTrackerTest.cpp"
 
 
