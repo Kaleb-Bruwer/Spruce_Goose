@@ -485,7 +485,7 @@ vector<Item*> Chunk::breakBlock(Coordinate<int> coord, Slot tool){
             delete wrap;
             delete broke;
 
-            break;
+            return drops; //Bypasses the usual deletion code
         }
         case CHESTSINGLE:{
             ChestSingle* c = (ChestSingle*) bd;
@@ -510,6 +510,9 @@ vector<Item*> Chunk::breakBlock(Coordinate<int> coord, Slot tool){
             break;
         }
         }
+
+        delete bd;
+        blockData.erase(coord);
     }
 
     return drops;
