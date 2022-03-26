@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 
 #C++ standard
 set(CMAKE_BUILD_TYPE DEBUG)
@@ -10,9 +10,15 @@ project(Widecraft)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-# Locate GTest
-find_package(GTest REQUIRED)
-include_directories(${GTEST_INCLUDE_DIRS})
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  # Specify the commit you depend on and update it regularly.
+  URL https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a459f54a28552929.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 
 add_subdirectory(src/zlib)
 
@@ -301,10 +307,11 @@ add_executable(test
 )
 
 
-target_link_libraries(test ${GTEST_LIBRARIES} pthread)
+target_link_libraries(test gtest_main pthread)
 target_link_libraries(test zlib)
 target_link_libraries(test curl)
 
 target_link_libraries(Widecraft zlib)
+target_link_libraries(Widecraft gtest_main)
 target_link_libraries(Widecraft curl)
 target_link_libraries(Widecraft Threads::Threads)
