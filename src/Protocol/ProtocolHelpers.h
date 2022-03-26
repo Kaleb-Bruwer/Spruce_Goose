@@ -6,7 +6,7 @@
 using namespace std;
 
 unsigned int varintToInt(char* nextChar, int& size, int sizeLim = INT_MAX);
-unsigned long varlongToLong(char* nextChar, int& size, int sizeLim = LLONG_MAX);
+unsigned long varlongToLong(char* nextChar, int& size, long long sizeLim = LLONG_MAX);
 string stringFromBuffer(char* buffer, int &index);
 string lenPrependedString(string in);
 char* intToVarint(int val);

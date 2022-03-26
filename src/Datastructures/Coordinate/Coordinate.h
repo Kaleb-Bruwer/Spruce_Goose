@@ -43,6 +43,7 @@ public:
 
     friend ostream& operator<< (ostream &out, const Coordinate<T> &rhs){
         out << "(" << rhs.x << ", " << rhs.y << ", " << rhs.z << ")";
+        return out;
     };
 
 };

@@ -26,6 +26,7 @@ public:
 
     friend ostream& operator<< (ostream &out, const ChunkCoord &rhs){
         out << "(" << rhs.x << ", " << rhs.z << ")";
+        return out;
     };
 
 
