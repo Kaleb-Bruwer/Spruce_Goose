@@ -28,6 +28,7 @@
 #include "./World/Chunk/ChunkSetBlockTest.cpp"
 #include "./World/Chunk/ChunkBreakBlockTest.cpp"
 #include "./World/Chunk/ChunkStartBreakTest.cpp"
+#include "./World/Chunk/ChunkCheckBreaksTest.cpp"
 
 
 int main(int argc, char **argv){
