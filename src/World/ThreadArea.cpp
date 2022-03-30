@@ -438,6 +438,8 @@ void ThreadArea::handleJobTicket(JobTicket* job, PlayerEntity* p){
 
 void ThreadArea::handleJobTickets(){
     //Handle JobTickets given directly to ThreadArea
+
+    auto ticketsStart = chrono::system_clock::now();
     while(true){
         JobTicket* job = inQueue.pop();
         if(job == 0)
@@ -446,9 +448,9 @@ void ThreadArea::handleJobTickets(){
         handleJobTicket(job);
 
         auto currTime = chrono::system_clock::now();
-        auto elapsed = chrono::duration_cast<chrono::milliseconds>(currTime - tickStart);
+        auto elapsed = chrono::duration_cast<chrono::milliseconds>(currTime - ticketsStart);
         int numUs = elapsed.count();
-        if(numUs > 30)
+        if(numUs > 20)
             break;
     }
 
@@ -462,9 +464,9 @@ void ThreadArea::handleJobTickets(){
             handleJobTicket(job, pe);
 
             auto currTime = chrono::system_clock::now();
-            auto elapsed = chrono::duration_cast<chrono::milliseconds>(currTime - tickStart);
+            auto elapsed = chrono::duration_cast<chrono::milliseconds>(currTime - ticketsStart);
             int numUs = elapsed.count();
-            if(numUs > 45)
+            if(numUs > 40)
                 break;
         }
     }
