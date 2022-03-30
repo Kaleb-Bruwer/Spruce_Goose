@@ -4,6 +4,8 @@
 #include "../../../src/Inventory/BlockData/Furnace.h"
 #include "../../../src/Inventory/BlockData/BaseChest.h"
 
+#include "../../../src/Entities/Item.h"
+
 using namespace std;
 
 class ChunkBreakBlockTest : public ::testing::Test{

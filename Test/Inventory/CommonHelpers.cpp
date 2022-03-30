@@ -1,12 +1,6 @@
-#pragma once
+#include "CommonHelpers.h"
 
 #include<gtest/gtest.h>
-
-#include "../../src/Inventory/Inventory2.h"
-#include "../../src/Inventory/BlockData/Furnace.h"
-#include "../../src/Inventory/BlockData/BaseChest.h"
-#include "../../src/Inventory/BlockData/CraftingTable.h"
-
 
 void validateInventory(Inventory2& inventory2, vector<int> pos, vector<Slot> items, Slot hover){
     ASSERT_TRUE(pos.size() == items.size()) << "Test config invalid";

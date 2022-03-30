@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include "CommonHelpers.h"
+
 #include "../../src/Inventory/BlockData/Furnace.h"
 #include "../../src/Inventory/Crafting/Crafting.h"
 #include "../../src/World/ThreadArea.h"

@@ -9,6 +9,8 @@
 
 #include "../../../src/Protocol/PlayerConnection1_7.h"
 
+#include "../../../src/Entities/PlayerEntity.h"
+
 using namespace std;
 
 namespace ns_cct{

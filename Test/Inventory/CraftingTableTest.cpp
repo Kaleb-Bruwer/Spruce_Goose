@@ -1,7 +1,7 @@
 #include<gtest/gtest.h>
 #include <cmath>
 
-#include "CommonHelpers.cpp"
+#include "CommonHelpers.h"
 
 #include "../../src/Inventory/Inventory2.h"
 #include "../../src/Inventory/BlockData/CraftingTable.h"

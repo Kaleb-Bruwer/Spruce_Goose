@@ -293,17 +293,51 @@ SET (SRCS
     ./src/Datastructures/Octree/OctRoot.h
     ./src/Datastructures/Octree/OctRoot.cpp
     ./src/Datastructures/Octree/Positional.h
-    )
+)
+
+SET(TESTCPP
+    ./Test/World/Chunk/ChunkChangeTrackerTest.cpp
+    ./Test/World/Chunk/ChunkSetBlockTest.cpp
+    ./Test/World/Chunk/ChunkBreakBlockTest.cpp
+    ./Test/World/Chunk/ChunkStartBreakTest.cpp
+    ./Test/World/Chunk/ChunkCheckBreaksTest.cpp
+
+    ./Test/World/EntityStore/EntityStoreAddTest.cpp
+    ./Test/World/EntityStore/EntityStoreOutsideTest.cpp
+    ./Test/World/EntityStore/EntityStoreRemoveTest.cpp
+    ./Test/World/EntityStore/EntityStoreGetTest.cpp
+    ./Test/World/EntityStore/EntityStoreRemoveFunctorTest.cpp
+
+    ./Test/Datastructures/Octree/OctLeafTest.cpp
+    ./Test/Datastructures/Octree/OctInternalTest.cpp
+    ./Test/Datastructures/Octree/OctRootTest.cpp
+    ./Test/Datastructures/Octree/OctreeTest.cpp
+
+    ./Test/Inventory/CommonHelpers.cpp
+    ./Test/Inventory/Inventory2Test.cpp
+    ./Test/Inventory/CraftingTableTest.cpp
+    ./Test/Inventory/CraftingTest.cpp
+    ./Test/Inventory/CraftingFrameTest.cpp
+    ./Test/Inventory/BaseChestTest.cpp
+    ./Test/Inventory/FurnaceTest.cpp
+
+    ./Test/Protocol/PacketReaderTest.cpp
+    ./Test/Datastructures/NBTReadTest.cpp
+
+    ./Test/General/FuelTableTest.cpp
+    ./Test/World/ThreadArea/ThreadAreaCallbacksTest.cpp
+)
 
 add_executable(Widecraft
     ./src/main.cpp
     ${SRCS}
-    )
+)
 
 add_executable(test
     ./Test/testMain.cpp
 
     ${SRCS}
+    ${TESTCPP}
 )
 
 

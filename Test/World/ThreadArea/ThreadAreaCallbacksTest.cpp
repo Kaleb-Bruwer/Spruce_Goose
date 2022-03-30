@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-#include "../../src/World/ThreadArea.h"
+#include "../../../src/World/ThreadArea.h"
 
 // TESTING CALLBACKS
 
