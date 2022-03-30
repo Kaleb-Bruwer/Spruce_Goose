@@ -579,6 +579,15 @@ void Chunk::startBreak(int nTicks, Coordinate<int> pos){
     if(nTicks == 0){
         //immediately break block, don't add to pendingBreaks
         setBlock(pos, Block(0));
+
+        // Get rid of pending breaks on this block
+        for(auto it = pendingBreaks.begin(); it != pendingBreaks.end(); it++){
+            if(it->second == pos){
+                pendingBreaks.erase(it);
+                break;
+            }
+        }
+
     }
     else{
         //first check for duplicates

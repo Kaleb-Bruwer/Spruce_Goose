@@ -24,9 +24,10 @@
 #include "./World/EntityStore/EntityStoreRemoveFunctorTest.cpp"
 
 #include "./World/ThreadAreaCallbacksTest.cpp"
+#include "./World/Chunk/ChunkChangeTrackerTest.cpp"
 #include "./World/Chunk/ChunkSetBlockTest.cpp"
 #include "./World/Chunk/ChunkBreakBlockTest.cpp"
-#include "./World/Chunk/ChunkChangeTrackerTest.cpp"
+#include "./World/Chunk/ChunkStartBreakTest.cpp"
 
 
 int main(int argc, char **argv){
