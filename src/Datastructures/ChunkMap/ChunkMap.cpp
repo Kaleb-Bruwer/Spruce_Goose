@@ -12,7 +12,7 @@ template <class T>
 ChunkMap<T>::~ChunkMap(){}
 
 template <class T>
-T ChunkMap<T>::getVal(ChunkCoord c){
+T ChunkMap<T>::getVal(ChunkCoord c) const{
     auto it = values.find(c);
     if(it == values.end())
         return 0;
@@ -20,12 +20,12 @@ T ChunkMap<T>::getVal(ChunkCoord c){
 }
 
 template <class T>
-T ChunkMap<T>::getVal(Coordinate<int> c){
+T ChunkMap<T>::getVal(Coordinate<int> c) const{
     return getVal(c.getContainingChunk());
 }
 
 template <class T>
-T ChunkMap<T>::getVal(Coordinate<double> c){
+T ChunkMap<T>::getVal(Coordinate<double> c) const{
     return getVal(c.getContainingChunk());
 }
 

@@ -26,9 +26,9 @@ public:
     ChunkMap();
     virtual ~ChunkMap();
 
-    T getVal(ChunkCoord c);
-    T getVal(Coordinate<int> c);
-    T getVal(Coordinate<double> c);
+    T getVal(ChunkCoord c) const;
+    T getVal(Coordinate<int> c) const;
+    T getVal(Coordinate<double> c) const;
     void setVal(ChunkCoord c, T a);
     T getClosest(ChunkCoord c, int cutoff = 8);
     vector<T> getAllNearby(ChunkCoord c, int radius = 0);
