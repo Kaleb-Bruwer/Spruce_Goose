@@ -229,6 +229,8 @@ void ThreadArea::checkForDisconnects(){
     vector<PlayerEntity*> players = entities.getAllPlayers();
 
     for(PlayerEntity* p : players){
+        // This check is useless right now, since outside players aren't even checked
+        // Not that it matters, I doubt we'll ever do a multiple TAreas per SArea model
         if(p->connection->quit && (p->connection->getNThreadAreas() == 1)){
             //Has to be the last one to remove it since this is where it gets deleted
             removePlayerFromChunks(p);

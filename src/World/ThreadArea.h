@@ -126,6 +126,7 @@ protected:
     FRIEND_TEST(ThreadAreaSplitTest, emptySplit);
     FRIEND_TEST(ThreadAreaSplitTest, realSplit);
     FRIEND_TEST(ThreadAreaSplitTest, entitySplit);
+    FRIEND_TEST(ThreadAreaGeneralTests, checkDisconnects);
 
 public:
     ThreadArea(bool start = true);//Might be problematic since run() will launch with worldLoader still 0
