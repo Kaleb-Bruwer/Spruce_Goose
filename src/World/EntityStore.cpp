@@ -492,24 +492,6 @@ void EntityStore::executeFunctorPlayers(Functor<PlayerEntity*> &f){
         }
     }
 
-    /*
-    for(auto it = players.begin(); it != players.end();){
-        f(*it);
-        if((*it)->mustDelete){
-            delete *it;
-            removed.push_back(*it);
-            it = players.erase(it);
-        }
-        else if((*it)->mustRemove){
-            removed.push_back(*it);
-            it = players.erase(it);
-        }
-        else{
-            it++;
-        }
-    }
-    */
-
     for(Positional* p : removed){
         tree.remove(p);
         remFromAllEnts((Entity*) p);
