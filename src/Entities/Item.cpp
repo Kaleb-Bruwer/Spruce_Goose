@@ -18,8 +18,7 @@ Item::Item(Slot &s) : Entity(){
     itemDamage = s.itemDamage;
 };
 
-template <class T>
-Item::Item(Block &b, Coordinate<T> pos) : Entity(){
+Item::Item(Block b, Coordinate<double> pos) : Entity(){
     itemID = blockToItem(b.id);
     itemDamage = b.metadata;
     count = 1;
@@ -31,8 +30,7 @@ Item::Item(Block &b, Coordinate<T> pos) : Entity(){
     oldPosition = position;
 }
 
-template <>
-Item::Item(Block &b, Coordinate<int> pos) : Entity(){
+Item::Item(Block b, Coordinate<int> pos) : Entity(){
     itemID = blockToItem(b.id);
     itemDamage = b.metadata;
     count = 1;

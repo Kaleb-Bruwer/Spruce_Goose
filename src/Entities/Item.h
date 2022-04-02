@@ -22,8 +22,8 @@ public:
     Item() : Entity(-1){};//Prevents a call to EIDAllocator for blank Entity
     Item(int it, int c = 1);
     Item(Slot &s);
-    template <class T>
-    Item(Block &b, Coordinate<T> pos);
+    Item(Block b, Coordinate<int> pos);
+    Item(Block b, Coordinate<double> pos);
     Item(Item*); //Identical, down to the eid. Not for copying items in-game
 
     EntityType getType(){return ITEM;};

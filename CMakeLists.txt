@@ -323,9 +323,11 @@ SET(TESTCPP
 
     ./Test/Protocol/PacketReaderTest.cpp
     ./Test/Datastructures/NBTReadTest.cpp
-
     ./Test/General/FuelTableTest.cpp
+
+    ./Test/World/ThreadArea/ThreadAreaTestHelpers.cpp
     ./Test/World/ThreadArea/ThreadAreaCallbacksTest.cpp
+    ./Test/World/ThreadArea/ThreadAreaSplitTest.cpp
 )
 
 add_executable(Widecraft
