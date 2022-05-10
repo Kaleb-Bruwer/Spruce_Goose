@@ -25,4 +25,13 @@ namespace ns_ta{
 
         virtual bool hasRegion(RegionCoord r);
     };
+
+    class CountingFunctor : public Functor<Entity*>{
+    public:
+        int counter = 0;
+
+        void operator()(Entity* p){
+            counter++;
+        };
+    };
 }

@@ -133,6 +133,7 @@ protected:
     FRIEND_TEST(ThreadAreaGeneralTests, includeChunk);
     FRIEND_TEST(ThreadAreaGeneralTests, includeChunkPlayers);
     FRIEND_TEST(ThreadAreaGeneralTests, includeChunkRedirect);
+    FRIEND_TEST(ThreadAreaGeneralTests, clickWindow);
 
 public:
     ThreadArea(bool start = true);//Might be problematic since run() will launch with worldLoader still 0

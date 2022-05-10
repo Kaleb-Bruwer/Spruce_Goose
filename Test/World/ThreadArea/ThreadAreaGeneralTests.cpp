@@ -3,6 +3,7 @@
 #include "../../../src/Protocol/PlayerConnection1_7.h"
 #include "../../../src/World/World.h"
 #include "../../../src/JobTickets/WorldToWorld/ChunkToThreadArea.h"
+#include "../../../src/JobTickets/ProtocolToWorld/ClickWindowJob.h"
 
 #include "../EntityStore/ESHelpers.cpp"
 
@@ -136,4 +137,34 @@ TEST_F(ThreadAreaGeneralTests, includeChunkRedirect){
     ASSERT_TRUE(world.inQueue.size() == 1) << "World didn't receive redirect";
 
     delete s;
+}
+
+TEST_F(ThreadAreaGeneralTests, clickWindow){
+    // Set up player + inventory
+    PlayerConnection* conn = new PlayerConnection1_7(0, 0);
+    PlayerEntity* player = new PlayerEntity(conn);
+    player->position = Coordinate<double>(1,70,1);
+
+    player->inventory.inventory.slots[9] = Slot(1);
+
+    // Add player to tArea
+    tArea.entities.addPlayerEntity(player);
+
+    // Construct and send requests
+    // Mode 4, Button 0: (Drop key)
+    ClickWindowJob* job = new ClickWindowJob();
+    job->mode = 4;
+    job->button = 0;
+    job->slotNum = 9;
+
+    tArea.clickWindowHandler(job, player);
+
+    // Verify item was dropped
+    ns_ta::CountingFunctor func;
+    tArea.entities.executeFunctorAll(func);
+    // Player + dropped item
+    ASSERT_TRUE(func.counter == 2) << "Item wasn't created";
+
+    delete player;
+    delete conn;
 }
