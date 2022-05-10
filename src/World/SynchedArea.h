@@ -122,7 +122,7 @@ public:
     //as claimer if claim was successful. 0 if chunk is out of bounds
     //for this SynchedArea
     void releaseChunk(ChunkCoord c, ThreadArea* owner);
-    bool hasRegion(RegionCoord r);
+    virtual bool hasRegion(RegionCoord r);
     ThreadArea* claimChunk(ChunkCoord coord, ThreadArea* claimer);
     ThreadArea* getOwner(ChunkCoord coord);
 

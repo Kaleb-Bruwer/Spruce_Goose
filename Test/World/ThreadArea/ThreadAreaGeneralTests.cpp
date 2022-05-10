@@ -1,6 +1,10 @@
 #include "ThreadAreaTestHelpers.h"
 
 #include "../../../src/Protocol/PlayerConnection1_7.h"
+#include "../../../src/World/World.h"
+#include "../../../src/JobTickets/WorldToWorld/ChunkToThreadArea.h"
+
+#include "../EntityStore/ESHelpers.cpp"
 
 using namespace std;
 
@@ -57,4 +61,79 @@ TEST_F(ThreadAreaGeneralTests, checkDisconnects){
     Entity* res = tArea.getEntity(players[numPlayers-1]->getEid());
     ASSERT_TRUE(res == players[numPlayers-1]) << "wrong player was removed";
 
+}
+
+TEST_F(ThreadAreaGeneralTests, includeChunk){
+    SynchedArea* s = new ns_ta::SynchedArea_mock(0, true);
+    ThreadArea tArea2 = ThreadArea(s, 0, false);
+
+    // Prepare threadArea
+    tAreaClaimChunks(tArea2, vector<ChunkCoord>{ChunkCoord(1,1)});
+
+    // Send job
+    ChunkToThreadArea* job = new ChunkToThreadArea();
+
+    // Needs to be a real chunk
+    Chunk* c = new Chunk(1,1);
+    job->chunk = c;
+
+
+    tArea2.includeChunk(job);
+
+    // Assert that chunk was included
+
+    verifyChunks(tArea2, vector<ChunkCoord>{ChunkCoord(1,1)},
+            vector<Chunk*>{c});
+
+    delete s;
+}
+
+TEST_F(ThreadAreaGeneralTests, includeChunkPlayers){
+    SynchedArea* s = new ns_ta::SynchedArea_mock(0, true);
+    ThreadArea tArea2 = ThreadArea(s, 0, false);
+
+    // Prepare threadArea
+    tAreaClaimChunks(tArea2, vector<ChunkCoord>{ChunkCoord(1,1)});
+
+    // Add player
+    ns_es::DummyPlayer* player = new ns_es::DummyPlayer(101);
+    tArea2.entities.addPlayerEntity(player);
+
+    // Send job
+    ChunkToThreadArea* job = new ChunkToThreadArea();
+
+    // Needs to be a real chunk
+    Chunk* c = new Chunk(1,1);
+    job->chunk = c;
+
+
+    tArea2.includeChunk(job);
+
+    // Assert that chunk was included
+
+    ASSERT_TRUE(c->hasPlayers());
+
+    delete s;
+    delete player;
+}
+
+TEST_F(ThreadAreaGeneralTests, includeChunkRedirect){
+    World world(false);
+    SynchedArea* s = new ns_ta::SynchedArea_mock(&world, false);
+    ThreadArea tArea2 = ThreadArea(s, &world, false);
+
+    // Send job
+    ChunkToThreadArea* job = new ChunkToThreadArea();
+
+    // Needs to be a real chunk
+    Chunk* c = new Chunk(1,1);
+    job->chunk = c;
+
+    tArea2.includeChunk(job);
+
+    // Assert that chunk was included
+
+    ASSERT_TRUE(world.inQueue.size() == 1) << "World didn't receive redirect";
+
+    delete s;
 }

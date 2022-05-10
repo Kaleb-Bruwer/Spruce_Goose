@@ -19,7 +19,8 @@ using namespace std;
 World::World(bool multiT){
     synchedAreaMap.setWorld(this);
 
-    myThread = new thread(&World::run,this);
+    if(multiT)
+        myThread = new thread(&World::run,this);
 }
 
 World::~World(){

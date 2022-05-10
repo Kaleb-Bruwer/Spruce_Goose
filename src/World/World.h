@@ -2,6 +2,7 @@
 #define WORLD_H
 
 #include <thread>
+#include <gtest/gtest.h>
 
 #include "ThreadArea.h"
 #include "../Datastructures/BlockingQueue.h"
@@ -36,6 +37,9 @@ private:
     ThreadArea* getThreadArea(Coordinate<double> &c);
 
     void joinThreadAreas();
+
+    // Has to validate job received
+    FRIEND_TEST(ThreadAreaGeneralTests, includeChunkRedirect);
 
 public:
     World(bool multiT=true);

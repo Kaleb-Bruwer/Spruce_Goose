@@ -119,14 +119,20 @@ protected:
     friend class SynchedArea;
 
     // Testing friends
+    friend void tAreaClaimChunks(ThreadArea &tArea, std::vector<ChunkCoord> coords);
     friend void tAreaSetChunks(ThreadArea &tArea, std::vector<ChunkCoord> coords);
     friend void tAreaUnsetChunks(ThreadArea &tArea, std::vector<ChunkCoord> coords);
     friend void verifyChunks(const ThreadArea &tArea, std::vector<ChunkCoord> coords);
     friend void verifyChunksNull(const ThreadArea &tArea, std::vector<ChunkCoord> coords);
+    friend void verifyChunks(const ThreadArea &tArea, std::vector<ChunkCoord> coords,
+                std::vector<Chunk*> chunks);
     FRIEND_TEST(ThreadAreaSplitTest, emptySplit);
     FRIEND_TEST(ThreadAreaSplitTest, realSplit);
     FRIEND_TEST(ThreadAreaSplitTest, entitySplit);
     FRIEND_TEST(ThreadAreaGeneralTests, checkDisconnects);
+    FRIEND_TEST(ThreadAreaGeneralTests, includeChunk);
+    FRIEND_TEST(ThreadAreaGeneralTests, includeChunkPlayers);
+    FRIEND_TEST(ThreadAreaGeneralTests, includeChunkRedirect);
 
 public:
     ThreadArea(bool start = true);//Might be problematic since run() will launch with worldLoader still 0
