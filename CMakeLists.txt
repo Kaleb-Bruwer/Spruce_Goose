@@ -329,6 +329,8 @@ SET(TESTCPP
     ./Test/World/ThreadArea/ThreadAreaCallbacksTest.cpp
     ./Test/World/ThreadArea/ThreadAreaSplitTest.cpp
     ./Test/World/ThreadArea/ThreadAreaGeneralTests.cpp
+
+    ./Test/World/Functors/PlayerCheckBreaksTest.cpp
 )
 
 add_executable(Widecraft

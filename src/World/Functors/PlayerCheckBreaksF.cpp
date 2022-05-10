@@ -8,10 +8,11 @@
 using namespace std;
 
 void PlayerCheckBreaksF::operator()(PlayerEntity* p){
-    if(!p->isBreaking && p->breakCooldown > 0){
-        p->breakCooldown--;
-
-        if(p->breakCooldown == 0 && p->doneBreaking == true){
+    if(!p->isBreaking){
+        if(p->breakCooldown > 0)
+            p->breakCooldown--;
+        else if(p->breakCooldown == 0 && p->doneBreaking){
+            p->doneBreaking = false;
             area->startDigging(p, p->breakTarget);
         }
         return;
@@ -31,15 +32,6 @@ void PlayerCheckBreaksF::operator()(PlayerEntity* p){
                 area->entities.addEntity(drops[i]);
             }
 
-            // c->setBlock(p->breakTarget, Block(0));
-
-            // Slot dropS = target.getDrop(p->inventory.getHeldItem());
-            // if(!dropS.isEmpty()){
-            //     Item* drop = new Item(dropS);
-            //     drop->setPos(p->breakTarget);
-            //     area->newItemToPlayers(drop);
-            //     area->entities.addEntity(drop);
-            // }
             p->isBreaking = false;
             p->doneBreaking = false;
         }

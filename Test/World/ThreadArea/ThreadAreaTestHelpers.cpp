@@ -15,6 +15,16 @@ void tAreaSetChunks(ThreadArea &tArea, std::vector<ChunkCoord> coords){
     }
 }
 
+void tAreaSetChunks(ThreadArea &tArea, std::vector<ChunkCoord> coords,
+            std::vector<Chunk*> chunks){
+    ASSERT_TRUE(coords.size() == chunks.size()) << "Invalid validation";
+
+    for(int i=0; i<coords.size(); i++){
+        tArea.claims.setVal(coords[i], true);
+        tArea.chunks.setVal(coords[i], chunks[i]);
+    }
+}
+
 void tAreaUnsetChunks(ThreadArea &tArea, std::vector<ChunkCoord> coords){
     for(ChunkCoord c : coords){
         tArea.chunks.setVal(c, 0);

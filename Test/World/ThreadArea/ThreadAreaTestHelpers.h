@@ -8,6 +8,8 @@
 void tAreaClaimChunks(ThreadArea &tArea, std::vector<ChunkCoord> coords);
 // Uses fake chunks, don't use this if Chunks actually need to be used
 void tAreaSetChunks(ThreadArea &tArea, std::vector<ChunkCoord> coords);
+void tAreaSetChunks(ThreadArea &tArea, std::vector<ChunkCoord> coords,
+        std::vector<Chunk*> chunks);
 // Prevents a segfault upon ThreadArea destruction
 void tAreaUnsetChunks(ThreadArea &tArea, std::vector<ChunkCoord> coords);
 

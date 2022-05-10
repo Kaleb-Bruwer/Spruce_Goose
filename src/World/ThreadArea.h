@@ -121,6 +121,8 @@ protected:
     // Testing friends
     friend void tAreaClaimChunks(ThreadArea &tArea, std::vector<ChunkCoord> coords);
     friend void tAreaSetChunks(ThreadArea &tArea, std::vector<ChunkCoord> coords);
+    friend void tAreaSetChunks(ThreadArea &tArea, std::vector<ChunkCoord> coords,
+                std::vector<Chunk*> chunks);
     friend void tAreaUnsetChunks(ThreadArea &tArea, std::vector<ChunkCoord> coords);
     friend void verifyChunks(const ThreadArea &tArea, std::vector<ChunkCoord> coords);
     friend void verifyChunksNull(const ThreadArea &tArea, std::vector<ChunkCoord> coords);
