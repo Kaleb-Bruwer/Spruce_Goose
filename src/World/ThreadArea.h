@@ -39,6 +39,8 @@ class PlayerCheckBreaksF;
 
 class ThreadArea{
 protected:
+    const int renderDist = 6;
+
     chrono::high_resolution_clock::time_point tickStart;
     const chrono::milliseconds tickLen{50}; //In milliseconds
     chrono::high_resolution_clock::time_point nextTick;

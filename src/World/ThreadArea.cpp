@@ -349,6 +349,8 @@ ThreadArea* ThreadArea::claimChunk(ChunkCoord coord){
     return owner;
 }
 void ThreadArea::loadChunk(vector<ChunkCoord> c, Coordinate<int> playerPos){
+    if(c.empty())
+        return;
     GenChunkReq2* job = new GenChunkReq2();
     job->chunks = c;
     job->playerPos = playerPos;
@@ -475,7 +477,6 @@ void ThreadArea::handleJobTickets(){
 }
 
 void ThreadArea::addPlayer(JobTicket* j){
-    const int renderDist = 6;
     JoinThreadArea* job = (JoinThreadArea*)j;
 
     //Create & store Player object
@@ -594,6 +595,7 @@ void ThreadArea::receivePlayerPos(JobTicket* j){
         ChunkCoord oldChunk = player->oldPosition.getContainingChunk();
         ChunkCoord newChunk = player->position.getContainingChunk();
         if(newChunk != oldChunk){
+            player->oldPosition = player->position; //updates every time a new chunk is entered
             vector<ChunkCoord> toUnload = player->getUnloads();
             for(ChunkCoord c : toUnload){
                 Chunk* chunk = chunks.getVal(c);
