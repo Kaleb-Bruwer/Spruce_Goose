@@ -5,7 +5,7 @@ set(CMAKE_BUILD_TYPE DEBUG)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++17")
 
 #Project name
-project(Widecraft)
+project(Spruce_Goose)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
@@ -23,7 +23,7 @@ FetchContent_MakeAvailable(googletest)
 add_subdirectory(src/zlib)
 
 
-#Excludes main.cpp so that this can be used in test _and_ Widecraft
+#Excludes main.cpp so that this can be used in test _and_ spruce_goose
 SET (SRCS
     ./src/TestFunctions.h
     ./src/TestFunctions.cpp
@@ -333,7 +333,7 @@ SET(TESTCPP
     ./Test/World/Functors/PlayerCheckBreaksTest.cpp
 )
 
-add_executable(Widecraft
+add_executable(spruce_goose
     ./src/main.cpp
     ${SRCS}
 )
@@ -350,7 +350,7 @@ target_link_libraries(test gtest_main pthread)
 target_link_libraries(test zlib)
 target_link_libraries(test curl)
 
-target_link_libraries(Widecraft zlib)
-target_link_libraries(Widecraft gtest_main)
-target_link_libraries(Widecraft curl)
-target_link_libraries(Widecraft Threads::Threads)
+target_link_libraries(spruce_goose zlib)
+target_link_libraries(spruce_goose gtest_main)
+target_link_libraries(spruce_goose curl)
+target_link_libraries(spruce_goose Threads::Threads)
