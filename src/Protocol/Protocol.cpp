@@ -73,6 +73,7 @@ void Protocol::loop(){
         else{
             cout << "Unknown error (" << errno << ") in Protocol\n";
         }
+        throw errno;
     }
     else{
         addPlayer(clientSocket);
