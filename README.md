@@ -6,16 +6,22 @@ This is a Minecraft server written from scratch in C++, that is compatible with 
 
 It is recommended to build the project using docker:
 ```
-sudo docker build . -t spruce_goose/spruce_goose
+docker build . -t spruce_goose/spruce_goose
 ```
 When you run the container, you need to map port 25565 and directory sg/Save:
 ```
-sudo docker run -v ./Save:/sg/Save -p 25565:25565 spruce_goose/spruce_goose
+docker run -v ./Save:/sg/Save -p 25565:25565 spruce_goose/spruce_goose
 ```
 
 Once the server is running, a 1.7.9 Minecraft client can be used to connect to it as with any other multiplayer server. If connecting from the same computer, the address will be ```localhost:[port number]```.
 
-The build process also produces a ```test``` executable, which contains the project's unit tests.
+The build process also produces a ```test``` executable, which contains the project's unit tests. Do the following to run the unit tests:
+```
+docker run -d --name spruce_test spruce_goose/spruce_goose
+docker exec -it spruce_test ./Build/test
+docker kill spruce_test
+docker rm spruce_test
+```
 
 ## Features
 
