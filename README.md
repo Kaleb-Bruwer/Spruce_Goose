@@ -4,23 +4,24 @@ This is a Minecraft server written from scratch in C++, that is compatible with 
 
 ## How to use
 
-From a linux terminal, run the following commands to compile from source:
+It is recommended to build the project using docker:
 ```
-mkdir Build
-cd Build
-cmake ..
-make
+docker build . -t spruce_goose/spruce_goose
+```
+When you run the container, you need to map port 25565 and directory sg/Save:
+```
+docker run -v ./Save:/sg/Save -p 25565:25565 spruce_goose/spruce_goose
 ```
 
-Then, the server can be launched with
-```
-./spruce_goose 25565
-```
-where 25565 is an optional argument to specify the port number to be used. The default is 25565.
+Once the server is running, a 1.7.9 Minecraft client can be used to connect to it as with any other multiplayer server. If connecting from the same computer, the address will be ```localhost:[port number]```.
 
-Once the server is running, a 1.7.9 Minecraft client can be used to connect to it as with any other multiplayer server. If connecting from the same computer, the address will likely be ```localhost:25565```.
-
-The build process also produces a ```test``` executable, which contains the project's unit tests.
+The build process also produces a ```test``` executable, which contains the project's unit tests. Do the following to run the unit tests:
+```
+docker run -d --name spruce_test spruce_goose/spruce_goose
+docker exec -it spruce_test ./Build/test
+docker kill spruce_test
+docker rm spruce_test
+```
 
 ## Features
 
@@ -30,10 +31,11 @@ The build process also produces a ```test``` executable, which contains the proj
 4. Crafting
 5. Load/unload chunks as player(s) move
 6. Compatability with minecraft's file format for terrain (.mca)
+7. Random segfaults
 
 ## Motivation
 
-This project started out of a curiosity with physics/game engines, but quickly morphed into an opportunity to build experience in C++ and the development of (relatively) large computer programs. This project spanned a wide range of topics, including network communication, multithreading, the design of efficient and task-specific datastructures, the use of spatial data and software testing.
+I started this project due to a curiosity for physics/game engines, but it quickly morphed into an opportunity to build experience in C++ as my first (relatively) large development. This project spanned a wide range of topics, including TCP network communication, multithreading, the design of efficient and task-specific datastructures, the use of spatial data and software testing.
 
 ## Why the name?
 
