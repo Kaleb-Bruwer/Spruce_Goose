@@ -1,0 +1,9 @@
+# Ignore everything
+**
+
+# Include specific directories and file
+!Data/
+!src/
+!Test/
+!build_container.sh
+!CMakeLists.txt
