@@ -5,6 +5,8 @@
 #include <vector>
 #include <tuple>
 
+#include <gtest/gtest.h>
+
 #include "Chunk/Chunk.h"
 #include "SynchedArea.h"
 #include "EntityStore.h"
@@ -37,6 +39,8 @@ class PlayerCheckBreaksF;
 
 class ThreadArea{
 protected:
+    const int renderDist = 6;
+
     chrono::high_resolution_clock::time_point tickStart;
     const chrono::milliseconds tickLen{50}; //In milliseconds
     chrono::high_resolution_clock::time_point nextTick;
@@ -116,6 +120,25 @@ protected:
     friend class PlayerCheckBreaksF;
     friend class SynchedArea;
 
+    // Testing friends
+    friend void tAreaClaimChunks(ThreadArea &tArea, std::vector<ChunkCoord> coords);
+    friend void tAreaSetChunks(ThreadArea &tArea, std::vector<ChunkCoord> coords);
+    friend void tAreaSetChunks(ThreadArea &tArea, std::vector<ChunkCoord> coords,
+                std::vector<Chunk*> chunks);
+    friend void tAreaUnsetChunks(ThreadArea &tArea, std::vector<ChunkCoord> coords);
+    friend void verifyChunks(const ThreadArea &tArea, std::vector<ChunkCoord> coords);
+    friend void verifyChunksNull(const ThreadArea &tArea, std::vector<ChunkCoord> coords);
+    friend void verifyChunks(const ThreadArea &tArea, std::vector<ChunkCoord> coords,
+                std::vector<Chunk*> chunks);
+    FRIEND_TEST(ThreadAreaSplitTest, emptySplit);
+    FRIEND_TEST(ThreadAreaSplitTest, realSplit);
+    FRIEND_TEST(ThreadAreaSplitTest, entitySplit);
+    FRIEND_TEST(ThreadAreaGeneralTests, checkDisconnects);
+    FRIEND_TEST(ThreadAreaGeneralTests, includeChunk);
+    FRIEND_TEST(ThreadAreaGeneralTests, includeChunkPlayers);
+    FRIEND_TEST(ThreadAreaGeneralTests, includeChunkRedirect);
+    FRIEND_TEST(ThreadAreaGeneralTests, clickWindow);
+
 public:
     ThreadArea(bool start = true);//Might be problematic since run() will launch with worldLoader still 0
     ThreadArea(SynchedArea* s, World* w, bool multiT = true);
@@ -141,6 +164,7 @@ public:
     BlockData* getBlockData(Coordinate<int> coord);
 
     //idk what addEntity was for, but I now use it in MovEntitiesToSplitF
+    // This is also used in testing
     void addEntity(Entity* e);
     Entity* getEntity(int eid);
 

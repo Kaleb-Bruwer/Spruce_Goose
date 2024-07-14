@@ -243,7 +243,7 @@ void Chunk::makeChest(Coordinate<int> coord, ChestSingle* chest){
 
     pos.x--;
     auto it = blockData.find(pos);
-    if(it != blockData.end()){
+    if(it != blockData.end() && it->second->getType() == CHESTSINGLE){
         target = pos;
         found = true;
         lower = true;
@@ -251,16 +251,16 @@ void Chunk::makeChest(Coordinate<int> coord, ChestSingle* chest){
     else{
         pos.x++;
         pos.z--;
-        auto it = blockData.find(pos);
-        if(it != blockData.end()){
+        it = blockData.find(pos);
+        if(it != blockData.end() && it->second->getType() == CHESTSINGLE){
             target = pos;
             found = true;
             lower = true;
         }
         else{
             pos.z += 2;
-            auto it = blockData.find(pos);
-            if(it != blockData.end()){
+            it = blockData.find(pos);
+            if(it != blockData.end() && it->second->getType() == CHESTSINGLE){
                 target = pos;
                 found = true;
                 lower = false;
@@ -268,8 +268,8 @@ void Chunk::makeChest(Coordinate<int> coord, ChestSingle* chest){
             else{
                 pos.z--;
                 pos.x++;
-                auto it = blockData.find(pos);
-                if(it != blockData.end()){
+                it = blockData.find(pos);
+                if(it != blockData.end() && it->second->getType() == CHESTSINGLE){
                     target = pos;
                     found = true;
                     lower = false;
@@ -282,6 +282,7 @@ void Chunk::makeChest(Coordinate<int> coord, ChestSingle* chest){
         // Found an adjacent chest
         ChestDoubleWrapper* wrap = new ChestDoubleWrapper();
         ChestDouble* cd;
+        it = blockData.find(target);
 
         // Passing by reference can't be combined with a type cast
         ChestSingle* c1 = (ChestSingle*) it->second;
@@ -474,32 +475,32 @@ vector<Item*> Chunk::breakBlock(Coordinate<int> coord, Slot tool){
                 broke = single2;
             }
 
-            for(int i=0; i<27; i++){
-                if(!broke->slots[i].isEmpty()){
-                    Item* item = new Item(broke->slots[i]);
-                    item->setPos(coord);
-                    drops.push_back(item);
-                }
-            }
+            vector<Item*> contentDrop = broke->getDrops(coord);
+            drops.insert(drops.end(), contentDrop.begin(), contentDrop.end());
+
             delete wrap;
             delete broke;
 
-            break;
+            return drops; //Bypasses the usual deletion code
         }
         case CHESTSINGLE:{
             ChestSingle* c = (ChestSingle*) bd;
-            for(int i=0; i<27; i++){
-                if(!c->slots[i].isEmpty()){
-                    Item* item = new Item(c->slots[i]);
-                    item->setPos(coord);
-                    drops.push_back(item);
-                }
-            }
+
+            vector<Item*> contentDrop = c->getDrops(coord);
+            drops.insert(drops.end(), contentDrop.begin(), contentDrop.end());
+            break;
+        }
+        case FURNACE:{
+            Furnace* f = (Furnace*) bd;
+            vector<Item*> contentDrop = f->getDrops(coord);
+            drops.insert(drops.end(), contentDrop.begin(), contentDrop.end());
             break;
         }
         }
-    }
 
+        delete bd;
+        blockData.erase(coord);
+    }
 
     return drops;
 }
@@ -578,6 +579,15 @@ void Chunk::startBreak(int nTicks, Coordinate<int> pos){
     if(nTicks == 0){
         //immediately break block, don't add to pendingBreaks
         setBlock(pos, Block(0));
+
+        // Get rid of pending breaks on this block
+        for(auto it = pendingBreaks.begin(); it != pendingBreaks.end(); it++){
+            if(it->second == pos){
+                pendingBreaks.erase(it);
+                break;
+            }
+        }
+
     }
     else{
         //first check for duplicates

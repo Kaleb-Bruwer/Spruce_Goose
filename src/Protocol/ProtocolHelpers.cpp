@@ -32,7 +32,7 @@ unsigned int varintToInt(char* nextChar, int& size, int sizeLim){
     return result;
 }
 
-unsigned long varlongToLong(char* nextChar, int& size, int sizeLim){
+unsigned long varlongToLong(char* nextChar, int& size, long long sizeLim){
     //If this function returns UINT_MAX, it couldn't read whole value
 
     nextChar += size;

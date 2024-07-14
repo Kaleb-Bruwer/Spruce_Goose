@@ -8,18 +8,13 @@
 
 using namespace std;
 
-int main(){
+int main(int argc, char *argv[]){
+    int socket = 25565;
+    if(argc >=2){
+        socket = atoi(argv[1]);
+    }
+    cout << "Socket set to " << socket << endl;
 
-    Server widecraftServer(25565); //It all happens in constructor
+    Server spruceGoose(socket); //It all happens in constructor
     cout << "main() exits\n";
-
-
-    /*
-    double a = 1023;
-    double b = 1024;
-
-    double c = marginFloor(a/b);
-
-    cout << c * b << endl;
-    */
 }

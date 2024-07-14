@@ -73,6 +73,7 @@ public:
         itemDamage = rhs.itemDamage;
         if(rhs.nbtData)
             nbtData = new Tag_Compound(rhs.nbtData);
+        return *this;
     };
 
     //This is used to order crafting recipes for efficient searching

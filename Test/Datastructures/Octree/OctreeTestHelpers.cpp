@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../../src/Datastructures/Octree/Positional.h"
+#include "../../../src/Datastructures/Octree/OctNode.h"
 #include "../../../src/General/Functor.h"
 
 namespace ns_oc{

@@ -49,7 +49,9 @@ private:
         0b0100000000, //dead bush/grass/fern
         0b0100000000, //dead bush
         0b0000011111, //piston
+        0b0000000000, //piston head
         0b0010000001, //wool 35
+        0,
         0b1, //dandelion
         0b1, //poppy
         0b1, //brown mushroom
@@ -66,8 +68,8 @@ private:
         0b1, //torch 50
         0b1, //fire
         0b0000011110, //spawner
-        0b0001000001, //oak wooden stairs
-        0b0001000001, //chest
+        0b0000100001, //oak wooden stairs
+        0b0000100001, //chest
         0b1, //redstone 55
         0b0000011000, //diamond ore
         0b0000011000, //diamond block

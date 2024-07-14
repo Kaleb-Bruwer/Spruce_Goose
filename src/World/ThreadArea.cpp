@@ -229,6 +229,8 @@ void ThreadArea::checkForDisconnects(){
     vector<PlayerEntity*> players = entities.getAllPlayers();
 
     for(PlayerEntity* p : players){
+        // This check is useless right now, since outside players aren't even checked
+        // Not that it matters, I doubt we'll ever do a multiple TAreas per SArea model
         if(p->connection->quit && (p->connection->getNThreadAreas() == 1)){
             //Has to be the last one to remove it since this is where it gets deleted
             removePlayerFromChunks(p);
@@ -347,6 +349,8 @@ ThreadArea* ThreadArea::claimChunk(ChunkCoord coord){
     return owner;
 }
 void ThreadArea::loadChunk(vector<ChunkCoord> c, Coordinate<int> playerPos){
+    if(c.empty())
+        return;
     GenChunkReq2* job = new GenChunkReq2();
     job->chunks = c;
     job->playerPos = playerPos;
@@ -438,6 +442,8 @@ void ThreadArea::handleJobTicket(JobTicket* job, PlayerEntity* p){
 
 void ThreadArea::handleJobTickets(){
     //Handle JobTickets given directly to ThreadArea
+
+    auto ticketsStart = chrono::system_clock::now();
     while(true){
         JobTicket* job = inQueue.pop();
         if(job == 0)
@@ -446,9 +452,9 @@ void ThreadArea::handleJobTickets(){
         handleJobTicket(job);
 
         auto currTime = chrono::system_clock::now();
-        auto elapsed = chrono::duration_cast<chrono::milliseconds>(currTime - tickStart);
+        auto elapsed = chrono::duration_cast<chrono::milliseconds>(currTime - ticketsStart);
         int numUs = elapsed.count();
-        if(numUs > 30)
+        if(numUs > 20)
             break;
     }
 
@@ -462,16 +468,15 @@ void ThreadArea::handleJobTickets(){
             handleJobTicket(job, pe);
 
             auto currTime = chrono::system_clock::now();
-            auto elapsed = chrono::duration_cast<chrono::milliseconds>(currTime - tickStart);
+            auto elapsed = chrono::duration_cast<chrono::milliseconds>(currTime - ticketsStart);
             int numUs = elapsed.count();
-            if(numUs > 45)
+            if(numUs > 40)
                 break;
         }
     }
 }
 
 void ThreadArea::addPlayer(JobTicket* j){
-    const int renderDist = 6;
     JoinThreadArea* job = (JoinThreadArea*)j;
 
     //Create & store Player object
@@ -590,6 +595,7 @@ void ThreadArea::receivePlayerPos(JobTicket* j){
         ChunkCoord oldChunk = player->oldPosition.getContainingChunk();
         ChunkCoord newChunk = player->position.getContainingChunk();
         if(newChunk != oldChunk){
+            player->oldPosition = player->position; //updates every time a new chunk is entered
             vector<ChunkCoord> toUnload = player->getUnloads();
             for(ChunkCoord c : toUnload){
                 Chunk* chunk = chunks.getVal(c);

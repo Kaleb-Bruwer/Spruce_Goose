@@ -73,7 +73,7 @@ public:
     virtual void loginRoutine();
 
     void setState(int s){state = s;};
-    void pushJobToPlayer(JobTicket* job); //To client
+    virtual void pushJobToPlayer(JobTicket* job); //To client
 
     //May add params to handle data transfer to threadArea objects
     //Message is everything from the packetID

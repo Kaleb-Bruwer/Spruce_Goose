@@ -25,6 +25,8 @@ void ItemPickupF::operator()(Entity* e){
         return;
 
     //If here, item is close enough to pick up.
+    // ThreadArea::inventoryUpdates is called every tick, so what is written to
+    // alteredSlots won't be forgotten
     int pickedUp = player->inventory.inventory
         .tryPickup(item,player->inventory.alteredSlots);
     if(pickedUp == 0)

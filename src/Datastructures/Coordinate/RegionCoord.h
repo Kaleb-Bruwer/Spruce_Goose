@@ -27,6 +27,7 @@ public:
 
     friend ostream& operator<< (ostream &out, const RegionCoord &rhs){
         out << "(" << rhs.x << ", " << rhs.z << ")";
+        return out;
     };
 
     void movNegX();

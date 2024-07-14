@@ -30,6 +30,7 @@ NBT* Tag_String::clone(){
 Tag_String& Tag_String::operator=(const Tag_String& rhs){
     NBT::operator=(rhs);
     value = rhs.value;
+    return *this;
 }
 
 string Tag_String::readShortString(char* iterator, int &index, int bufferSize){

@@ -8,6 +8,13 @@
 
 using namespace std;
 
+// Testing constructor
+ChunkChangeTracker::ChunkChangeTracker(ChunkCoord coord, ChunkChangeToken* chunk){
+    cCoord = coord;
+    changes.push_back(chunk);
+}
+
+
 ChunkChangeTracker::ChunkChangeTracker(Chunk* c){
     create(c);
 }
@@ -29,51 +36,10 @@ void ChunkChangeTracker::sendChanges(){
         ChangeTokenType type = (*it)->getType();
 
         switch(type){
-        case PLAYERTOKEN:{
-            PlayerToken* pt = ((PlayerToken*)(*it));
-            auto next = it;
-            next++;
-            if(next == changes.end())
-                break;//In this case player is up to date
-
-            ChangeTokenType nextType = (*next)->getType();
-            if(nextType == PLAYERTOKEN){
-                pt->merge((PlayerToken*) *next);
-                delete *next;
-                changes.erase(next);
-                moveOn = false;
-                break; //Breaks so that PlayerToken doesn't get moved forward
-            }
-            else if(nextType == BLOCKCHANGES){
-                pt->sendJob(((BlockChanges*)(*next))->getJob());
-                passedData = true;
-            }
-            else if(nextType == COMPCHUNK){
-                if(!passedData){
-                    //Only if players haven't already received a CompChunk
-                    if(((CompChunkPacket*)(*next))->isDone()){
-                        pt->sendJob(((CompChunkPacket*) *next)->getJob(), cCoord);
-                        //pt->sendPlayerOwnPos();
-                        passedData = true;
-                    }
-                    else{
-                        //Can't send packets out of order, so stopping here is needed
-                        return;
-                    }
-                }
-                else{
-                    //Will replace current CompChunk
-                    if(((CompChunkPacket*) *next)->isDone())
-                        newCompChunk = index;
-                }
-            }
-            //If this part is reached, the PlayerToken must move on
-            ChunkChangeToken* temp = *it;
-            *it = *next;
-            *next = temp;
-
+        case PLAYERTOKEN:
+            // This one's big enough to move into a separate function for readability
+            moveOn = casePlayerToken(it, passedData, newCompChunk, index);
             break;
-        }
         case COMPCHUNK:{
             if(passedData){
                 //This gets skipped if it's the first data element
@@ -119,6 +85,53 @@ void ChunkChangeTracker::sendChanges(){
         it--;
         changes.erase(changes.begin(), it);
     }
+}
+
+bool ChunkChangeTracker::casePlayerToken( std::list<ChunkChangeToken*>::iterator it,
+        bool &passedData, int &newCompChunk, int index){
+
+    PlayerToken* pt = ((PlayerToken*)(*it));
+    auto next = it;
+    next++;
+    if(next == changes.end())
+        return true;//In this case player is up to date
+
+    ChangeTokenType nextType = (*next)->getType();
+    if(nextType == PLAYERTOKEN){
+        pt->merge((PlayerToken*) *next);
+        delete *next;
+        changes.erase(next);
+        return false; //Breaks so that PlayerToken doesn't get moved forward
+    }
+    else if(nextType == BLOCKCHANGES){
+        pt->sendJob(((BlockChanges*)(*next))->getJob());
+        passedData = true;
+    }
+    else if(nextType == COMPCHUNK){
+        if(!passedData){
+            //Only if players haven't already received a CompChunk
+            if(((CompChunkPacket*)(*next))->isDone()){
+                pt->sendJob(((CompChunkPacket*) *next)->getJob(), cCoord);
+                //pt->sendPlayerOwnPos();
+                passedData = true;
+            }
+            else{
+                //Can't send packets out of order, so stopping here is needed
+                return true;
+            }
+        }
+        else{
+            //Will replace current CompChunk
+            if(((CompChunkPacket*) *next)->isDone())
+                newCompChunk = index;
+        }
+    }
+    //If this part is reached, the PlayerToken must move on
+    ChunkChangeToken* temp = *it;
+    *it = *next;
+    *next = temp;
+
+    return true;
 }
 
 void ChunkChangeTracker::addPlayer(PlayerEntity* p){

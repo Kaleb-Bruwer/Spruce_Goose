@@ -226,7 +226,5 @@ bool OctInternal::fixPos(Positional* p, Coordinate<double> oldPos, bool flag){
         return false;
     }
 
-    if(children[i]->fixPos(p, oldPos, flag)){
-        // insert(p, flag);
-    }
+    return children[i]->fixPos(p, oldPos, flag);
 }

@@ -37,6 +37,8 @@ public:
     double getStrength();
 
     Slot getDrop(Slot tool);
+
+    friend bool operator==(const Block& lhs, const Block& rhs);
 };
 
 #endif

@@ -8,6 +8,10 @@
 
 using namespace std;
 
+namespace ns_cct{
+    class MockCompChunkPacket;
+}
+
 class CompChunkPacket : public ChunkChangeToken{
 private:
     bool done = false;
@@ -18,6 +22,11 @@ private:
     //These are only used by the compression thread
     void run(Chunk* c);
 //    void writeData(Chunk* chunk, PacketWriterOld &p);
+
+    CompChunkPacket(){};
+
+    friend class ns_cct::MockCompChunkPacket;
+
 public:
     CompChunkPacket(Chunk* c);
     ~CompChunkPacket(); //Don't delete until done=true

@@ -1,23 +1,29 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 
 #C++ standard
 set(CMAKE_BUILD_TYPE DEBUG)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++17")
 
 #Project name
-project(Widecraft)
+project(Spruce_Goose)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-# Locate GTest
-find_package(GTest REQUIRED)
-include_directories(${GTEST_INCLUDE_DIRS})
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  # Specify the commit you depend on and update it regularly.
+  URL https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a459f54a28552929.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 
 add_subdirectory(src/zlib)
 
 
-#Excludes main.cpp so that this can be used in test _and_ Widecraft
+#Excludes main.cpp so that this can be used in test _and_ spruce_goose
 SET (SRCS
     ./src/TestFunctions.h
     ./src/TestFunctions.cpp
@@ -287,24 +293,64 @@ SET (SRCS
     ./src/Datastructures/Octree/OctRoot.h
     ./src/Datastructures/Octree/OctRoot.cpp
     ./src/Datastructures/Octree/Positional.h
-    )
+)
 
-add_executable(Widecraft
+SET(TESTCPP
+    ./Test/World/Chunk/ChunkChangeTrackerTest.cpp
+    ./Test/World/Chunk/ChunkSetBlockTest.cpp
+    ./Test/World/Chunk/ChunkBreakBlockTest.cpp
+    ./Test/World/Chunk/ChunkStartBreakTest.cpp
+    ./Test/World/Chunk/ChunkCheckBreaksTest.cpp
+
+    ./Test/World/EntityStore/EntityStoreAddTest.cpp
+    ./Test/World/EntityStore/EntityStoreOutsideTest.cpp
+    ./Test/World/EntityStore/EntityStoreRemoveTest.cpp
+    ./Test/World/EntityStore/EntityStoreGetTest.cpp
+    ./Test/World/EntityStore/EntityStoreRemoveFunctorTest.cpp
+
+    ./Test/Datastructures/Octree/OctLeafTest.cpp
+    ./Test/Datastructures/Octree/OctInternalTest.cpp
+    ./Test/Datastructures/Octree/OctRootTest.cpp
+    ./Test/Datastructures/Octree/OctreeTest.cpp
+
+    ./Test/Inventory/CommonHelpers.cpp
+    ./Test/Inventory/Inventory2Test.cpp
+    ./Test/Inventory/CraftingTableTest.cpp
+    ./Test/Inventory/CraftingTest.cpp
+    ./Test/Inventory/CraftingFrameTest.cpp
+    ./Test/Inventory/BaseChestTest.cpp
+    ./Test/Inventory/FurnaceTest.cpp
+
+    ./Test/Protocol/PacketReaderTest.cpp
+    ./Test/Datastructures/NBTReadTest.cpp
+    ./Test/General/FuelTableTest.cpp
+
+    ./Test/World/ThreadArea/ThreadAreaTestHelpers.cpp
+    ./Test/World/ThreadArea/ThreadAreaCallbacksTest.cpp
+    ./Test/World/ThreadArea/ThreadAreaSplitTest.cpp
+    ./Test/World/ThreadArea/ThreadAreaGeneralTests.cpp
+
+    ./Test/World/Functors/PlayerCheckBreaksTest.cpp
+)
+
+add_executable(spruce_goose
     ./src/main.cpp
     ${SRCS}
-    )
+)
 
 add_executable(test
     ./Test/testMain.cpp
 
     ${SRCS}
+    ${TESTCPP}
 )
 
 
-target_link_libraries(test ${GTEST_LIBRARIES} pthread)
+target_link_libraries(test gtest_main pthread)
 target_link_libraries(test zlib)
 target_link_libraries(test curl)
 
-target_link_libraries(Widecraft zlib)
-target_link_libraries(Widecraft curl)
-target_link_libraries(Widecraft Threads::Threads)
+target_link_libraries(spruce_goose zlib)
+target_link_libraries(spruce_goose gtest_main)
+target_link_libraries(spruce_goose curl)
+target_link_libraries(spruce_goose Threads::Threads)
